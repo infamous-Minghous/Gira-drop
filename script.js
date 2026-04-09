@@ -620,17 +620,15 @@ function confirmCash() {
 async function fetchDailyHistory() {
     const list = document.getElementById('history-list');
     document.getElementById('history-section').classList.remove('hidden');
-    list.innerHTML = "<p>Loading today's logs...</p>";
-
+    list.innerHTML = "<p>Calculating today's summaries...</p>";
     // Get today's date in YYYY-MM-DD format
     const today = new Date().toISOString().split('T')[0];
 
-    // Fetch ONLY today's records from Supabase
+    // Fetch all logs for today
     const { data, error } = await window.supabase
         .from('daily_history')
         .select('*')
-        .eq('created_at', today) // Filter for today only
-        .order('rider_name', { ascending: true });
+        .eq('created_at', today);
 
     if (error) {
         list.innerHTML = "<p style='color:red;'>Error: " + error.message + "</p>";
@@ -642,13 +640,30 @@ async function fetchDailyHistory() {
         return;
     }
 
-    list.innerHTML = "";
+    // --- GROUP BY RIDER LOGIC ---
+    const riderTotals = {};
+
     data.forEach(log => {
+        if (!riderTotals[log.rider_name]) {
+            riderTotals[log.rider_name] = 0;
+        }
+        riderTotals[log.rider_name] += parseInt(log.amount);
+    });
+
+    list.innerHTML = "";
+
+    Object.keys(riderTotals).forEach(name => {
         const row = document.createElement('div');
-        row.style = "padding:12px; border-bottom:1px solid #eee; display:flex; justify-content:space-between;";
+        row.style = "padding:15px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; background:#fff; margin-bottom:5px; border-radius:8px;";
+        
         row.innerHTML = `
-            <span><strong>Today</strong> - ${log.rider_name}</span>
-            <span style="color:var(--primary); font-weight:bold;">KSh ${log.amount.toLocaleString()}</span>
+            <div>
+                <span style="font-weight:600; font-size:1.1rem;">${name}</span>
+                <br><small style="color:gray;">Today's Total</small>
+            </div>
+            <div style="text-align:right;">
+                <span style="color:var(--primary); font-weight:bold; font-size:1.2rem;">KSh ${riderTotals[name].toLocaleString()}</span>
+            </div>
         `;
         list.appendChild(row);
     });
