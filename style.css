@@ -1,0 +1,505 @@
+:root{
+    --primary: #f97316;
+    --dark:#1f2937;
+    --light:#f3f4f6;
+}
+
+body{
+    font-family: 'Inter', sans-serif;
+    background-color: var(--light);
+    margin: 0;
+    padding: 10px;
+}
+
+header{
+    text-align: center;
+    padding: 20px 0;
+}
+
+.breadcrumb{
+    color: var(--primary);
+    font-weight: bold;
+    margin-top: 5px;
+    cursor: pointer;
+}
+
+#app-container{
+    position: relative;
+    display: grid;
+    grid-template-columns:1fr 1fr;
+    gap: 15px;
+    max-width: 500px;
+    padding: 60px;  
+    margin: 20px auto;
+    justify-content: center;
+    text-align:center;
+    height: 250px;
+    background-position: center;
+    padding-bottom: 80px;
+    min-height: 400px;
+
+}
+
+/* Base Card Style */
+
+.card{
+    position: relative;
+    aspect-ratio: 1 / 1;
+    height: 150px;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items:center;
+    justify-content: center;
+    margin: 10px;
+    background: white;
+    padding: 15px;
+    overflow: hidden;
+    color: white;
+    border-radius: 12px;
+    text-align: center;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid transparent;
+    cursor: pointer;
+    border-radius: 15px;
+}
+
+.card:active{
+    transform: scale(0.95);
+    border-color: var(--primary);
+}
+
+.card h3{
+    margin: 0;
+    color: white;
+    position: relative;
+    z-index: 2;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+}
+
+.card::after{
+    content: "";
+    position: absolute;
+    top: 0;left: 0; width: 100%;height: 100%;
+    background:linear-gradient(to top, rgba(0,0,0,0.7));
+    z-index: 1;
+}
+.card:hover{
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+}
+
+/* Rider Card Specifics */
+.rider-card{
+     grid-column: span 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #4b4b4b; /* Matches your screenshot */
+    border-radius: 15px;
+    padding: 20px;
+    color: white;
+    height: auto !important; /* Allow card to grow with content */
+    min-height: 160px;
+}
+
+.btn-group{
+    display: flex;
+    gap: 10px;
+}
+
+.btn{
+    padding: 10px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: white;
+    font-size: 14px;
+}
+
+.btn-call{background: #2563eb;}
+.btn-wa{ background: #22c55e; white-space: nowrap;}
+
+/* Rider View Overlay */
+#rider-view {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    z-index: 100;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto; /* Allow scrolling */
+    display: flex;    /* Keep as flex */
+    flex-direction: column;
+    align-items: center; /* Center the numpad and buttons */
+}
+
+/* Hide class toggle */
+
+.hidden{
+    display: none !important;
+}
+
+.rider-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+    margin-bottom: 20px;
+}
+
+.rider-header button{
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+}
+
+/* Amount Display */
+
+.amount-display{
+    font-size: 2.5rem;
+    font-weight: 800;
+    text-align: center;
+    margin: 20px 0;
+    color: #f97316;
+}
+
+/* Numpad Grid */
+.numpad{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    max-width: 350px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.numpad button:active{
+    background-color:#e5e7eb;
+    transform: scale(0.95);
+}
+
+/* Clear button (c) special color */
+.numpad-actions{
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 20px;
+}
+
+/* Styling the actual numpad buttons */
+.numpad button {
+    padding: 15px;
+    font-size: 1.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn {
+    width: 100%;
+    padding: 18px; /* Fixed padding property */
+    border-radius: 12px;
+    border: none;
+    font-size: 1.1rem; /* Fixed from 11rem */
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+/* Add space between the last row of numbers and the M-Pesa button */
+.payment-actions {
+    margin-top: 30px; /* Adjust this value (20px to 40px) to your liking */
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 350px; /* Keeps buttons aligned with the numpad width */
+    padding-bottom: 40px; /* Extra space so they don't touch the screen edge */
+}
+
+/* Optional: Make the buttons feel more like a footer */
+.btn {
+    margin-bottom: 5px; /* Small gap between M-Pesa and Cash buttons */
+}
+
+
+.btn-mpesa {background-color: #22c55e;}
+.btn-cash{background-color: #1f2937;}
+.btn:active{opacity: 0.8;}
+
+.btn-pcm {
+    background-color: #3b82f6; /* A nice blue color */
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+    display: block;
+    margin-top: 5px;
+}
+
+.btn-pcm:active {
+    background-color: #2563eb;
+    transform: scale(0.98);
+}
+
+/* Reverse Call - Dark Grey/Black */
+.btn-reverse {
+    background-color: #334155;
+    text-align: center;
+    font-size: 12px;
+}
+
+.btn-pcm:active, .btn-reverse:active {
+    opacity: 0.8;
+    transform: scale(0.95);
+}
+.btn-group-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 140px; /* Fixed width prevents horizontal overflow */
+    flex-shrink: 0; /* Prevents the buttons from getting squashed */
+}
+
+/* Ensure Call/WA buttons share the top row evenly */
+.btn-top-row {
+    display: flex;
+    gap: 5px;
+    width: 100%;
+}
+
+.btn-top-row .btn {
+    flex: 1; /* Makes them equal width */
+    text-align: center;
+    padding: 8px 2px;
+     text-align: center;
+}
+
+/* Header Naviigation */
+.nav-bar{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eee;
+}
+
+.nav-btn{
+    background-color: var(--dark);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+/* Rider App Section */
+
+#rider-app{
+    padding: 20px;
+    text-align: center;
+    background: white;
+    min-height: 80vh;
+    border-radius: 20px 20px 0 0;
+    margin-top: 20px;
+}
+
+.rider-actions{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 40px;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+}
+.btn-dark{
+    background-color: black;
+}
+/* Loading Overlay */
+#loading-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid var(--light);
+    border-top: 5px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    margin-top: 15px;
+    font-weight: bold;
+    color: var(--dark);
+}
+
+.payment-container {
+    padding-bottom: 40px; /* Extra space at the bottom so buttons aren't cut off */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Center the Login Box on the screen */
+#login-modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); /* Semi-transparent background */
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-box {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.login-input {
+    width: 100%;
+    padding: 15px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    box-sizing: border-box; /* Ensures padding doesn't break width */
+}
+
+/* Style for the Login Modal Cancel Button */
+.btn-text {
+    background: none;
+    border: none;
+    color: #000000;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 15px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    text-decoration: underline; /* Optional: adds a classic link feel */
+}
+
+.btn-text:hover {
+    color: var(--dark);
+    background-color: #f0f0f0;
+    text-decoration: none;
+}
+
+.btn-text:active {
+    transform: scale(0.95);
+}
+
+
+#admin-login-modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7); /* Darker backdrop for Admin */
+    z-index: 3000; /* Higher than everything else */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+footer {
+    clear: both;
+    width: 100%;
+    margin-top: 60px; /* Pushes it away from the cards */
+    padding: 20px 0;
+    position: relative; /* Ensures it stays in the normal flow of the page */
+    z-index: 1;
+}
+
+
+/* Locked Building Style */
+.card.locked {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* Adds space between icon, name, and status */
+    filter: grayscale(1) brightness(0.7);
+    border: 2px dashed #999;
+    cursor: not-allowed;
+
+}
+.card.locked:active {
+    transform: none; /* Prevents the "press" animation on locked cards */
+}
+
+.lock-icon {
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+    z-index: 2;
+    animation: pulse 2s infinite;
+}
+
+.locked h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.locked small {
+    font-weight: bold;
+    color: #f97316; /* Keeping your primary orange for the status */
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.8; }
+}
+
+/* Ensure avatars look clean */
+.rider-card img {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+#app-search {
+    margin-top: 15px; /* Pushes the search bar down from the breadcrumb */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); /* Makes it look premium */
+}
+
+.rider-card {
+    margin-top: 20px; /* Pushes the rider card away from the search bar */
+}

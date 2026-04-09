@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maseno Delivery</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="nav-bar">
+            <h1>Maseno Fast-Drop</h1>
+            <button class="nav-btn" onclick="toggleRiderApp()">Rider Portal</button>
+        </div>
+        <div id="breadcrumb" class="breadcrumb">Select Area</div>
+        
+        <div class="search-container" style="padding: 0 15px; max-width: 500px; margin: 0 auto;">
+            <!-- This "sacrificial" field catches the autofill so your search bar stays empty -->
+            <input type="text" style="display:none;" aria-hidden="true">
+            <input type="text" id="app-search" placeholder="Search buildings..." 
+                oninput="handleSearch()" 
+                autocomplete="new-password" 
+                readonly onfocus="this.removeAttribute('readonly');"
+                style="width:100%; padding:12px; border:2px solid #eee; border-radius:12px; font-size:1rem;">
+        </div>
+
+    </header>
+    
+    <main id="app-container">
+        <!--cards wil be injected here by the javascript-->
+    </main>
+
+    <section id="rider-app" class="hidden">
+        <div class="rider-dashboard">
+            <h2>Rider Dashboard</h2>
+            <p>Active Delivery: <span id="active-orders">0</span></p>
+
+            <div class="rider-actions">
+                <button class="btn btn-primary" onclick="openRiderView()">New Payment Request</button>
+                <button class="btn btn-dark" onclick="toggleRiderApp()">Back to Student View</button>
+            </div>
+        </div>
+    </section>
+
+    <div id="rider-view" class="hidden">
+        <div class="rider-header">
+            <button onclick="closeRiderView()">x</button>
+            <h2>Collect Payment</h2>
+        </div>
+        <div class="payment-container">
+
+            <div class="input-group" style="padding: 0 20px; margin-bottom: 20px;">
+                <label style="display:block; font-size:0.8rem; color:#666; margin-bottom:5px;">Customer Phone (2547...)</label>
+                <input type="tel" id="customer-phone" placeholder="07... or 01..." 
+                    maxlength="10" inputmode="tel"
+                    style="width:100%; padding:15px; border:2px solid #eee; border-radius:12px; font-size:1.2rem;">
+            </div>
+            <div class="amount-display">KSh <span id="display-amount">0</span></div>
+            <div class="numpad">
+
+                <button onclick="appendNum(1)">1</button><button onclick="appendNum(2)">2</button><button onclick="appendNum(3)">3</button>
+                <button onclick="appendNum(4)">4</button><button onclick="appendNum(5)">5</button><button onclick="appendNum(6)">6</button>
+                <button onclick="appendNum(7)">7</button><button onclick="appendNum(8)">8</button><button onclick="appendNum(9)">9</button>
+                <button onclick="clearNum()">C</button><button onclick="appendNum(0)">0</button>
+            </div>
+            <div class="payment-actions">
+                <button class="btn btn-mpesa" onclick="initiateSTK()">Mp-Pesa Push</button>
+                <button class="btn btn-cash" onclick="confirmCash()">Manual Cash</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading-overlay" class="hidden">
+        <div class="spinner"></div>
+        <p class="loading-text">Waiting for Student PIN...</p>
+    </div>
+
+    <div id="login-modal" class="hidden">
+        <div class="login-box">
+
+            <!-- These sacrificial fields catch the browser's autofill -->
+            <input type="text" name="fake-user" style="display:none;" aria-hidden="true">
+            <input type="password" name="fake-pass" style="display:none;" aria-hidden="true">
+            <h2>Rider Portal Access</h2>
+            <p>Contact Admin for your credentials</p>
+        
+            <input type="text" id="rider-portal-id" placeholder="Rider Name" 
+                class="login-input" autocomplete="new-password"
+                readonly onfocus="this.removeAttribute('readonly');">
+            <input type="text" id="rider-portal-key" placeholder="Secret Key" 
+                class="login-input" autocomplete="new-password"
+                readonly onfocus="this.removeAttribute('readonly'); this.type='password';"
+                onblur="if(this.value==='') this.type='text';">
+        
+            <button class="btn btn-primary" onclick="authenticateRider()">Unlock Portal</button>
+            <button onclick="hideLogin()" class="btn-text">Cancel</button>
+        </div>
+    </div>
+
+    <div id="admin-login-modal" class="hidden">
+        <div class="login-box">
+            <h2 style="color:var(--primary);">Admin Access</h2>
+            <p>Master authentication required</p>
+        
+            <input type="password" id="admin-master-key" placeholder="Enter Admin Password" class="login-input">
+        
+            <button class="btn btn-primary" onclick="verifyAdminAccess()">Enter Master View</button>
+            <button onclick="closeAdminLogin()" class="btn-text">Cancel</button>
+        </div>
+    </div>
+
+    
+
+<section id="admin-panel" class="hidden" style="padding: 20px; background: white; min-height: 100vh;">
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #eee; padding-bottom:10px;">
+        <h2>Admin Master View</h2>
+        <div style="display:flex; gap:10px;">
+            <!-- New History Button -->
+            <button onclick="fetchDailyHistory()" class="nav-btn" style="background:#3b82f6;">
+                View Today's Archive
+            </button>
+            <button onclick="closeAdmin()" class="nav-btn">Exit Admin</button>
+        </div>
+    </div>
+
+    <!-- Active Rider Totals -->
+    <div id="admin-rider-list" class="stats-grid" style="margin-top:20px;"></div>
+
+    <!-- History Display Section (Hidden by default) -->
+    <div id="history-section" class="hidden" style="margin-top:40px;">
+        <h3 style="border-bottom: 2px solid var(--primary); padding-bottom:10px;">Daily Earnings History</h3>
+        <div id="history-list" style="margin-top:15px;"></div>
+    </div>
+
+   
+</section>
+
+<!-- At the bottom of your body -->
+<footer style="text-align:center; padding:20px; opacity:0.3;">
+    <!-- Clicking this text triggers the Admin login -->
+    <span onclick="openAdminPortal()" style="cursor:pointer; font-size:0.7rem;">&copy; 2024 Maseno Fast-Drop Admin</span>
+</footer>
+
+   <!-- 1. CORRECTED: Full path to the Supabase library -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- 2. Initialize the Client properly -->
+<script>
+  const SUPABASE_URL = 'https://zaowprlwooltppxmcccu.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inphb3dwcmx3b29sdHBweG1jY2N1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2MzYyMDQsImV4cCI6MjA5MTIxMjIwNH0.9r1PbaP4HMUJmOaDFHbXJiBfHANq0rY9kpfV5uXOQcs';
+
+  if (typeof supabase !== 'undefined') {
+      window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      console.log("✅ Supabase is now ready!");
+  } else {
+      console.error("❌ Failed to load Supabase from the CDN.");
+  }
+</script>
+    <script src="script.js?v=1"></script>
+</body>
+</html>
