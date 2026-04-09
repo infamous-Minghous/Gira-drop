@@ -180,6 +180,12 @@ function showRiders(area, buildingName) {
 async function simulateStudentPayment(riderName) {
     // 1. Ask for the amount first
     const amount = prompt(`How much are you paying ${riderName}?`, "50");
+    const payBtn = document.querySelector('.btn-mpesa');
+    const originalText = payBtn.innerText;
+
+    payBtn.innerText = "Processing..."; // Tactile feedback
+    payBtn.disabled = true; 
+    payBtn.style.opacity = "0.5";
     
     // Validate the amount
     if (!amount || isNaN(amount) || parseInt(amount) <= 0) {
@@ -207,6 +213,9 @@ async function simulateStudentPayment(riderName) {
         currentLoggedInRider = riderName; 
         
         await updateDailyEarnings(parseInt(amount));
+        payBtn.innerText = originalText;
+        payBtn.disabled = false;
+        payBtn.style.opacity = "1";
         
         // Restore previous session state
         currentLoggedInRider = originalRider; 
