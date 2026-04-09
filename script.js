@@ -358,7 +358,7 @@ function formatPhoneNumber(phone) {
 }
 
 function initiateSTK() {
-    const phoneInput = document.getElementById('customer-phone').value;
+     const phoneInput = document.getElementById('customer-phone').value;
     const formattedPhone = formatPhoneNumber(phoneInput);
     
     if (formattedPhone.length !== 12) {
@@ -367,10 +367,28 @@ function initiateSTK() {
     
     if (typedAmount === "0") return alert("Enter amount.");
 
-    alert(`Sending M-Pesa Prompt to ${formattedPhone} for KSh ${typedAmount}`);
-    // Record payment locally
-    updateDailyEarnings(typedAmount, 'M-Pesa', phone); // Pass 'M-Pesa' here
-    closeRiderView();
+    // 1. Show the Spinner
+    const overlay = document.getElementById('loading-overlay');
+    const loadingText = document.querySelector('.loading-text');
+    
+    overlay.classList.remove('hidden');
+    loadingText.innerHTML = `Requesting KSh ${typedAmount} <br> <small style="color:#ccc">Sending to ${formattedPhone}...</small>`;
+// 2. Simulate the Wait (Real STK Push time)
+    setTimeout(async () => {
+        // 3. Log the payment to Supabase
+        await updateDailyEarnings(typedAmount, 'M-Pesa', formattedPhone);
+        
+        // 4. Hide overlay and close rider view
+        overlay.classList.add('hidden');
+        closeRiderView();
+        
+        // Final success feedback
+        alert("STK Push Sent! Check your phone.");
+    }, 3500); 
+
+    
+
+   
 }
 
 // 2. Update Earnings (Payment Logic)
