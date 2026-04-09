@@ -29,11 +29,11 @@ header{
     grid-template-columns:1fr 1fr;
     gap: 15px;
     max-width: 500px;
-    padding: 60px;  
+    padding: 15px;  
     margin: 20px auto;
     justify-content: center;
     text-align:center;
-    height: 250px;
+    height: auto;
     background-position: center;
     padding-bottom: 80px;
     min-height: 400px;
@@ -45,13 +45,13 @@ header{
 .card{
     position: relative;
     aspect-ratio: 1 / 1;
-    height: 150px;
+    height: 120px;
     background-size: cover;
     background-position: center;
     display: flex;
     align-items:center;
     justify-content: center;
-    margin: 10px;
+    margin: 0;
     background: white;
     padding: 15px;
     overflow: hidden;
@@ -92,10 +92,14 @@ header{
     transform: translateY(-5px);
     box-shadow: 0 8px 15px rgba(0,0,0,0.2);
 }
-
+/* Optional: Make the text easier to read on the dark background */
+.rider-card h3 {
+    text-shadow: none;
+    font-size: 1rem;
+}
 /* Rider Card Specifics */
 .rider-card{
-     grid-column: span 2;
+     grid-column: 1 / -1;
     display: flex;
     justify-content: space-between;
     align-items: center;
