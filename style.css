@@ -1,3 +1,9 @@
+
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden; /* Prevents side-scrolling if an element overflows */
+    position: relative;
+}
 :root{
     --primary: #f97316;
     --dark:#1f2937;
@@ -406,7 +412,8 @@ header{
     margin: 10px 0;
     border: 1px solid #ddd;
     border-radius: 12px;
-    box-sizing: border-box; /* Ensures padding doesn't break width */
+    font-size: 16px !important; /* Forces browser to stop auto-zooming */
+    box-sizing: border-box; /* Prevents input from pushing past screen edge */
 }
 
 /* Style for the Login Modal Cancel Button */
@@ -502,8 +509,19 @@ footer {
 #app-search {
     margin-top: 15px; /* Pushes the search bar down from the breadcrumb */
     box-shadow: 0 4px 10px rgba(0,0,0,0.05); /* Makes it look premium */
+    font-size: 16px !important; /* Forces browser to stop auto-zooming */
+    width: 100%;
+    box-sizing: border-box; /* Prevents input from pushing past screen edge */
 }
 
 .rider-card {
     margin-top: 20px; /* Pushes the rider card away from the search bar */
+}
+/* Update your existing login-input style */
+.login-input, 
+#app-search, 
+#customer-phone {
+    font-size: 16px !important; /* Forces browser to stop auto-zooming */
+    width: 100%;
+    box-sizing: border-box; /* Prevents input from pushing past screen edge */
 }
