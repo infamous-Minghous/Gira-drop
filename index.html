@@ -4,6 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Maseno Delivery</title>
+    <!-- Place these inside the <head> tags of your index.html -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#22c55e">
+
+<script>
+  // Automatically register your mobile service worker handler on application boot
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('🚀 Mobile Service Worker successfully armed!', reg))
+        .catch(err => console.error('❌ Service worker initialization failed:', err));
+    });
+  }
+</script>
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,23 +32,24 @@
         <div class="search-container" style="padding: 0 15px; max-width: 500px; margin: 0 auto;">
             <!-- This "sacrificial" field catches the autofill so your search bar stays empty -->
             <input type="text" style="display:none;" aria-hidden="true">
+            <input type="password" style="display:none;" aria-hidden="true">
             <input type="text" id="app-search" placeholder="Search buildings..." 
                 oninput="handleSearch()" 
                 autocomplete="new-password" 
                 readonly onfocus="this.removeAttribute('readonly');"
-                style="width:100%; padding:12px; border:2px solid #eee; border-radius:12px; font-size:1rem;">
+                style="width:100%; padding:12px; border:2px solid #eee; border-radius:12px; font-size:1rem; box-sizing: border-box;">
         </div>
-
     </header>
+
     
-    <main id="app-container">
-        <!--cards wil be injected here by the javascript-->
+        <main id="app-container">
+        <!--cards will be injected here by the javascript-->
     </main>
 
     <section id="rider-app" class="hidden">
         <div class="rider-dashboard">
             <h2>Rider Dashboard</h2>
-            <p>Active Delivery: <span id="active-orders">0</span></p>
+            <p>Active Delivery Total: KSh <span id="active-orders">0</span></p>
 
             <div class="rider-actions">
                 <button class="btn btn-primary" onclick="openRiderView()">New Payment Request</button>
@@ -49,22 +65,22 @@
         </div>
         <div class="payment-container">
 
-            <div class="input-group" style="padding: 0 20px; margin-bottom: 20px;">
-                <label style="display:block; font-size:0.8rem; color:#666; margin-bottom:5px;">Customer Phone (2547...)</label>
+            <div class="input-group" style="padding: 0 20px; margin-bottom: 20px; box-sizing: border-box;">
+                <label style="display:block; font-size:0.8rem; color:#666; margin-bottom:5px; text-align: left;">Customer Phone (2547...)</label>
                 <input type="tel" id="customer-phone" placeholder="07... or 01..." 
                     maxlength="10" inputmode="tel"
-                    style="width:100%; padding:15px; border:2px solid #eee; border-radius:12px; font-size:1.2rem;">
+                    style="width:100%; padding:15px; border:2px solid #eee; border-radius:12px; font-size:1.2rem; box-sizing: border-box;">
             </div>
             <div class="amount-display">KSh <span id="display-amount">0</span></div>
             <div class="numpad">
-
                 <button onclick="appendNum(1)">1</button><button onclick="appendNum(2)">2</button><button onclick="appendNum(3)">3</button>
                 <button onclick="appendNum(4)">4</button><button onclick="appendNum(5)">5</button><button onclick="appendNum(6)">6</button>
                 <button onclick="appendNum(7)">7</button><button onclick="appendNum(8)">8</button><button onclick="appendNum(9)">9</button>
                 <button onclick="clearNum()">C</button><button onclick="appendNum(0)">0</button>
             </div>
             <div class="payment-actions">
-                <button class="btn btn-mpesa" onclick="initiateSTK()">Mp-Pesa Push</button>
+                <!-- REDIRECTION PROTECTION: Pointed to a dedicated namespace container to prevent caching bugs -->
+                <button class="btn btn-mpesa" onclick="window.cleanProductionSTKGateway()">M-Pesa Push</button>
                 <button class="btn btn-cash" onclick="confirmCash()">Manual Cash</button>
             </div>
         </div>
@@ -75,39 +91,76 @@
         <p class="loading-text">Waiting for Student PIN...</p>
     </div>
 
-    <div id="login-modal" class="hidden">
-        <div class="login-box">
+    <!-- ==========================================================================
+     RIDER LOGIN MODAL WITH FORGOT PASSWORD TRIGGER
+     ========================================================================== -->
+<div id="login-modal" class="hidden">
+    <div class="login-box">
+        <!-- These sacrificial fields catch the browser's autofill -->
+        <input type="text" name="fake-user" style="display:none;" aria-hidden="true">
+        <input type="password" name="fake-pass" style="display:none;" aria-hidden="true">
+        <h2>Rider Portal Access</h2>
+        <p>Contact Admin for your credentials</p>
+    
+        <input type="text" id="rider-portal-id" placeholder="Rider Name" 
+            class="login-input" autocomplete="new-password"
+            readonly onfocus="this.removeAttribute('readonly');">
+        <input type="text" id="rider-portal-key" placeholder="Secret Key" 
+            class="login-input" autocomplete="new-password"
+            readonly onfocus="this.removeAttribute('readonly'); this.type='password';"
+            onblur="if(this.value==='') this.type='text';">
 
-            <!-- These sacrificial fields catch the browser's autofill -->
-            <input type="text" name="fake-user" style="display:none;" aria-hidden="true">
-            <input type="password" name="fake-pass" style="display:none;" aria-hidden="true">
-            <h2>Rider Portal Access</h2>
-            <p>Contact Admin for your credentials</p>
-        
-            <input type="text" id="rider-portal-id" placeholder="Rider Name" 
-                class="login-input" autocomplete="new-password"
-                readonly onfocus="this.removeAttribute('readonly');">
-            <input type="text" id="rider-portal-key" placeholder="Secret Key" 
-                class="login-input" autocomplete="new-password"
-                readonly onfocus="this.removeAttribute('readonly'); this.type='password';"
-                onblur="if(this.value==='') this.type='text';">
-        
-            <button class="btn btn-primary" onclick="authenticateRider()">Unlock Portal</button>
-            <button onclick="hideLogin()" class="btn-text">Cancel</button>
+        <!-- INTEGRATED ACTION: Forgot Password Trigger Link Node -->
+        <div style="text-align: right; margin-top: -5px; margin-bottom: 15px;">
+            <span onclick="window.triggerForgotPassword()" style="color: var(--primary); font-size: 0.8rem; font-weight: bold; cursor: pointer; text-decoration: underline;">
+                Forgot Secret Key?
+            </span>
         </div>
-    </div>
+    
+        <!-- Dynamic Namespace Gate Bypass -->
+        <button class="btn btn-primary" onclick="window.forceCloudProductionAuth()">Unlock Portal</button>
 
-    <div id="admin-login-modal" class="hidden">
-        <div class="login-box">
-            <h2 style="color:var(--primary);">Admin Access</h2>
-            <p>Master authentication required</p>
-        
-            <input type="password" id="admin-master-key" placeholder="Enter Admin Password" class="login-input">
-        
-            <button class="btn btn-primary" onclick="verifyAdminAccess()">Enter Master View</button>
-            <button onclick="closeAdminLogin()" class="btn-text">Cancel</button>
-        </div>
+
+        <button onclick="hideLogin()" class="btn-text">Cancel</button>
     </div>
+</div>
+
+
+<!-- ==========================================================================
+     INTEGRATED PRODUCTION SYSTEM VIEW: OTP RESET CODE VERIFICATION MODAL
+     ========================================================================== -->
+<div id="otp-modal" class="hidden">
+    <div class="login-box">
+        <h2 style="color: var(--primary);">Rider Key Reset</h2>
+        <p id="otp-status-text" style="font-size:0.85rem; color:#666; margin-bottom: 15px;">
+            Enter your registered rider name to receive a phone verification text.
+        </p>
+        
+        <input type="text" id="otp-rider-name" placeholder="Confirm Rider Name" class="login-input">
+        <input type="text" id="otp-verification-code" placeholder="Enter 6-Digit OTP" class="login-input hidden" maxlength="6" inputmode="numeric">
+        <input type="password" id="otp-new-key" placeholder="Enter New 4-Digit Key" class="login-input hidden" maxlength="4" inputmode="numeric">
+        
+        <button id="otp-action-btn" class="btn btn-primary" onclick="window.requestVerificationOTP()">Send Verification SMS</button>
+        <button onclick="document.getElementById('otp-modal').classList.add('hidden')" class="btn-text">Cancel</button>
+    </div>
+</div>
+
+<!-- ==========================================================================
+     ADMIN MASTER VIEW ACCESS CONTROL MODAL
+     ========================================================================== -->
+<div id="admin-login-modal" class="hidden">
+    <div class="login-box">
+        <h2 style="color:var(--primary);">Admin Access</h2>
+        <p>Master authentication required</p>
+    
+        <input type="password" id="admin-master-key" placeholder="Enter Admin Password" class="login-input">
+    
+        <button class="btn btn-primary" onclick="window.verifyAdminAccess()">Enter Master View</button>
+        <button onclick="closeAdminLogin()" class="btn-text">Cancel</button>
+    </div>
+</div>
+
+
 
     
 
@@ -116,10 +169,10 @@
         <h2>Admin Master View</h2>
         <div style="display:flex; gap:10px;">
             <!-- New History Button -->
-            <button onclick="fetchDailyHistory()" class="nav-btn" style="background:#3b82f6;">
+            <button onclick="window.fetchDailyHistory()" class="nav-btn" style="background:#3b82f6;">
                 View Today's Archive
             </button>
-            <button onclick="closeAdmin()" class="nav-btn">Exit Admin</button>
+            <button onclick="window.closeAdmin()" class="nav-btn">Exit Admin</button>
         </div>
     </div>
 
@@ -131,32 +184,135 @@
         <h3 style="border-bottom: 2px solid var(--primary); padding-bottom:10px;">Daily Earnings History</h3>
         <div id="history-list" style="margin-top:15px;"></div>
     </div>
-
-   
 </section>
 
-<!-- At the bottom of your body -->
+
+
+
+<!-- ==========================================================================
+     APPLICATION FOOTER & SECURITY ROUTING NODES
+     ========================================================================== -->
 <footer style="text-align:center; padding:20px; opacity:0.3;">
-    <!-- Clicking this text triggers the Admin login -->
-    <span onclick="openAdminPortal()" style="cursor:pointer; font-size:0.7rem;">&copy; 2024 Maseno Fast-Drop Admin</span>
+    <span onclick="window.openAdminPortal()" style="cursor:pointer; font-size:0.7rem;">&copy; 2024 Maseno Fast-Drop Admin</span>
 </footer>
 
-   <!-- 1. CORRECTED: Full path to the Supabase library -->
-
+<!-- 1. Native Supabase JavaScript Client Engine Library CDN -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- 2. Initialize the Client properly -->
+<!-- 2. Global Cloud Client Parameter Workspace Initialization -->
 <script>
   const SUPABASE_URL = 'https://zaowprlwooltppxmcccu.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inphb3dwcmx3b29sdHBweG1jY2N1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2MzYyMDQsImV4cCI6MjA5MTIxMjIwNH0.9r1PbaP4HMUJmOaDFHbXJiBfHANq0rY9kpfV5uXOQcs';
 
   if (typeof supabase !== 'undefined') {
       window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      console.log("✅ Supabase is now ready!");
+      console.log("✅ Supabase context successfully initialized in global window space!");
   } else {
-      console.error("❌ Failed to load Supabase from the CDN.");
+      console.error("❌ Critical Error: Supabase client script engine CDN connection timed out.");
   }
 </script>
-    <script src="script.js?v=1"></script>
+
+<!-- 3. Primary Local Core Code Scripts File Connection (Cache Bust Suffix Enforced) -->
+<script src="script.js?v=8.0_production_final"></script>
+
+<!-- Replace the script block at the absolute bottom of index.html with this -->
+<script>
+window.forceCloudProductionAuth = async function() {
+    const nameInput = document.getElementById('rider-portal-id');
+    const keyInput = document.getElementById('rider-portal-key');
+    if (!nameInput || !keyInput) return;
+
+    const name = nameInput.value.trim();
+    const key = keyInput.value.trim();
+    if (!name || !key) return alert("Please fill in all fields.");
+
+    const loginModalBtn = document.querySelector("#login-modal .btn-primary");
+    let originalText = "Unlock Portal";
+
+    try {
+        if (loginModalBtn) {
+            originalText = loginModalBtn.innerText;
+            loginModalBtn.innerText = "Authenticating securely...";
+            loginModalBtn.disabled = true;
+        }
+
+        // 1. Strict anti-extension fragmentation path assembly
+        const scheme = "ht" + "tps" + ":/";
+        const subdomain = "/zao" + "wprl" + "wool" + "tppx" + "mcccu";
+        const domain = ".su" + "pa" + "ba" + "se" + ".co";
+        const path = "/re" + "st/v" + "1/ri" + "der_" + "auth";
+        
+        const unbreakableTargetRoute = scheme + subdomain + domain + path + "?rider_name=eq." + encodeURIComponent(name) + "&secret_key=eq." + encodeURIComponent(key) + "&select=rider_name";
+        
+        console.log("🛡️ SECURITY HANDSHAKE EXECUTING - Routing securely via fragment bridge out to standard REST gateway...");
+
+        // --- UPDATE: PLACE YOUR NEW REFRESHED COPIED PUBLISHABLE KEY HERE ---
+        const prodAnonKey = "sb_publishable_heGUzSkPNMOhDUoGXyabww_GG7Tl__6";
+
+        const response = await fetch(unbreakableTargetRoute, {
+            method: 'GET',
+            headers: {
+                'apikey': prodAnonKey,
+                'Authorization': 'Bearer ' + prodAnonKey,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (loginModalBtn) {
+            loginModalBtn.innerText = originalText;
+            loginModalBtn.disabled = false;
+        }
+
+        if (!response.ok) {
+            alert("Access Denied! Key authorization mismatch.");
+            if (keyInput) keyInput.value = "";
+            return;
+        }
+
+        const dbRecords = await response.json();
+
+        // --- 2. AUTHENTICATION SUCCESS LIFE-CYCLE ---
+        if (dbRecords && dbRecords.length > 0) {
+            window.currentLoggedInRider = name;
+            
+            document.getElementById('login-modal').classList.add('hidden');
+            document.getElementById('app-container').classList.add('hidden');
+            document.getElementById('rider-app').classList.remove('hidden');
+            document.getElementById('breadcrumb').classList.add('hidden');
+            
+            const portalToggleBtn = document.querySelector('.nav-btn');
+            if (portalToggleBtn) portalToggleBtn.innerText = "Log Out";
+
+            const dashboardTitle = document.querySelector('#rider-app h2');
+            if (dashboardTitle) dashboardTitle.innerText = name + "'s Dashboard";
+            
+            // Re-sync your real-time WebSocket dashboard indicators smoothly
+            if (window.loadRiderStats) {
+                window.loadRiderStats(name);
+            }
+            
+            nameInput.value = "";
+            keyInput.value = "";
+            console.log("🎉 PRODUCTION LEDGER UNLOCKED! SUCCESS!");
+        } else {
+            alert("Access Denied! Invalid credentials.");
+            if (keyInput) keyInput.value = ""; 
+        }
+
+    } catch (err) {
+        console.error("🔒 Security module runtime validation exception caught:", err);
+        if (loginModalBtn) {
+            loginModalBtn.innerText = originalText;
+            loginModalBtn.disabled = false;
+        }
+        alert("Server handshake failure. Check your connection or database status.");
+    }
+};
+console.log("🔥 ABSOLUTE PRODUCTION BRIDGE IS ACTIVE! Click Unlock Portal now.");
+
+</script>
+
+
+
 </body>
 </html>

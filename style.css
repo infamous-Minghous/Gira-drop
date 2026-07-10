@@ -285,7 +285,7 @@ header{
     display: flex;
     flex-direction: column;
     gap: 8px;
-    width: 140px; /* Fixed width prevents horizontal overflow */
+   width: auto;
     flex-shrink: 0; /* Prevents the buttons from getting squashed */
 }
 
@@ -526,4 +526,23 @@ footer {
     font-size: 16px !important; /* Forces browser to stop auto-zooming */
     width: 100%;
     box-sizing: border-box; /* Prevents input from pushing past screen edge */
+}
+
+/* Add this rule at the absolute bottom of style.css */
+.hidden {
+    display: none !important;
+}
+
+#otp-modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); /* Matching semi-transparent modal look */
+    z-index: 2500; /* Makes it sit clearly on top of the login modal layer */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#otp-modal.hidden {
+    display: none !important;
 }

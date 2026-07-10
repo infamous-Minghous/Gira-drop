@@ -1,0 +1,21 @@
+{
+  "short_name": "FastDrop",
+  "name": "Maseno Fast-Drop Delivery",
+  "icons": [
+    {
+      "src": "https://unsplash.com",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://unsplash.com",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "index.html",
+  "background_color": "#22c55e",
+  "theme_color": "#22c55e",
+  "display": "standalone",
+  "orientation": "portrait"
+}
