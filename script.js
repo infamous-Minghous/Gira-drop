@@ -407,8 +407,8 @@ window.authenticateRider = async function() {
 
     try {
         if (loginModalBtn) {
-            originalText = loginModalBtn.innerText;
-            loginModalBtn.innerText = "Authenticating securely...";
+            originalText = loginModalBtn.textContent;
+            loginModalBtn.textContent = "Authenticating securely...";
             loginModalBtn.disabled = true;
         }
 
@@ -417,22 +417,24 @@ window.authenticateRider = async function() {
 
         console.log(`🛡️ SECURITY HANDSHAKE EXECUTING - Querying record verification metrics for: ${name}`);
 
-        // Clean SDK execution layer replacing dangerous hand-crafted URL string fetches
-        const { data: dbRecords, error } = await window.supabase
+        // FIX: Added explicit maybeSingle() parameter block to terminate the Promise chain securely
+        const { data: authRecord, error } = await window.supabase
             .from('rider_auth')
             .select('rider_name')
             .eq('rider_name', name)
-            .eq('secret_key', key);
+            .eq('secret_key', key)
+            .maybeSingle();
 
         if (error) throw error;
 
         if (loginModalBtn) {
-            loginModalBtn.innerText = originalText;
+            loginModalBtn.textContent = originalText;
             loginModalBtn.disabled = false;
         }
 
         // --- AUTHENTICATION SUCCESS LIFECYCLE ---
-        if (dbRecords && dbRecords.length > 0) {
+        // Adjusted evaluation constraint check to look directly at the mapped record row block object safely
+        if (authRecord && authRecord.rider_name) {
             // Lock down memory values
             currentLoggedInRider = name;
             
@@ -442,8 +444,11 @@ window.authenticateRider = async function() {
 
             // Smooth UI Single Page Transitions
             document.getElementById('login-modal').classList.add('hidden');
-            document.getElementById('app-container').classList.add('hidden');
-            document.getElementById('rider-app').classList.remove('hidden');
+            
+            const appContainerNode = document.getElementById('app-container');
+            const riderAppNode = document.getElementById('rider-app');
+            if (appContainerNode) appContainerNode.classList.add('hidden');
+            if (riderAppNode) riderAppNode.classList.remove('hidden');
             
             const breadcrumbNode = document.getElementById('breadcrumb');
             if (breadcrumbNode) breadcrumbNode.classList.add('hidden');
@@ -470,7 +475,7 @@ window.authenticateRider = async function() {
     } catch (err) {
         console.error("🔒 Security module runtime validation exception caught:", err);
         if (loginModalBtn) {
-            loginModalBtn.innerText = originalText;
+            loginModalBtn.textContent = originalText;
             loginModalBtn.disabled = false;
         }
         alert("Server handshake failure. Check your connection or database authentication metrics.");
@@ -548,12 +553,11 @@ window.triggerForgotPassword = function() {
 window.requestVerificationOTP = async function() {
     const nameField = document.getElementById('otp-rider-name');
     const actionBtn = document.getElementById('otp-action-btn');
-    if (!nameField || !actionBtn) return;
+    if (!nameField || !actionBtn || !window.supabase) return;
 
     const riderName = nameField.value.trim();
     if (!riderName) return alert("Please enter your registered rider name first!");
 
-    // Ensure the tracking variable state is bounded safely inside your global execution track
     if (typeof window.otpStageState === 'undefined') {
         window.otpStageState = "REQUEST";
     }
@@ -564,28 +568,40 @@ window.requestVerificationOTP = async function() {
             actionBtn.disabled = true;
             actionBtn.style.opacity = "0.6";
 
-            // Secure programmatic generation of 6-digit numeric verification tokens
-            const generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-            const expirationTime = new Date(Date.now() + 5 * 60000).toISOString(); // 5-minute lifespan windows
-
-            // Step 1: Push authorization requirements directly up to your secure cloud ledger
-            const { error: dbError } = await window.supabase
-                .from('rider_auth')
-                .update({ active_otp: generatedOTP, otp_expires_at: expirationTime })
-                .eq('rider_name', riderName);
-
-            if (dbError) throw new Error("Database token injection rejected.");
-
-            // Step 2: Extract cellular routing pathways safely from the cloud infrastructure
-            const { data: profile } = await window.supabase
+            // 1. SECURITY FIX: Validate rider profile exists before injecting database keys
+            const { data: profileCheck, error: checkError } = await window.supabase
                 .from('rider_auth')
                 .select('phone_number')
                 .eq('rider_name', riderName)
                 .maybeSingle();
 
-            let targetPhone = (profile && profile.phone_number) ? profile.phone_number : null;
+            if (checkError) throw checkError;
+            
+            // Instantly trigger defensive warning feedback to halt fake name lookups
+            if (!profileCheck) {
+                alert("🚫 Identity Error: The rider name entered is not registered on this platform.");
+                actionBtn.disabled = false;
+                actionBtn.style.opacity = "1";
+                actionBtn.textContent = "Send Verification SMS";
+                return;
+            }
 
-            // FIX: Normalization Correction Loop. Safely locate names within our key-value directory object
+            // Secure programmatic generation of 6-digit numeric verification tokens
+            const generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+            const expirationTime = new Date(Date.now() + 5 * 60000).toISOString(); // 5-minute lifespan windows
+
+            // Step 2: Push authorization requirements directly up to your secure cloud ledger
+            const { error: dbError } = await window.supabase
+                .from('rider_auth')
+                .update({ active_otp: generatedOTP, otp_expires_at: expirationTime })
+                .eq('rider_name', riderName);
+
+            if (dbError) throw dbError;
+
+            // Step 3: Extract cellular routing pathways safely from the verified profile object
+            let targetPhone = profileCheck.phone_number || null;
+
+            // Normalization Fallback Loop matching your local dictionaries
             if (!targetPhone) {
                 const matchedWorker = Object.values(approvedRiders).find(
                     worker => worker.name.toLowerCase() === riderName.toLowerCase()
@@ -593,7 +609,7 @@ window.requestVerificationOTP = async function() {
                 if (matchedWorker) targetPhone = matchedWorker.phone;
             }
 
-            if (!targetPhone) throw new Error("Rider profile contains no verified phone routes.");
+            if (!targetPhone) throw new Error("Rider profile contains no verified phone routing links.");
 
             // Output simulation log cleanly inside your staging dashboard consoles
             console.log(`✉️ PRODUCTION SMS LOG: Token ${generatedOTP} routed to device destination: ${targetPhone}`);
@@ -606,7 +622,7 @@ window.requestVerificationOTP = async function() {
             const displayMask = targetPhone.slice(-4);
             document.getElementById('otp-status-text').textContent = `Enter the 6-digit verification code sent to your registered device ending in ...${displayMask}`;
             
-            // Adjust visual component flags cleanly
+            // Smooth SPA visual component state transitions
             nameField.classList.add('hidden');
             
             const codeInput = document.getElementById('otp-verification-code');
@@ -615,6 +631,7 @@ window.requestVerificationOTP = async function() {
             if (codeInput) {
                 codeInput.classList.remove('hidden');
                 codeInput.value = "";
+                codeInput.focus(); // Usability Fix: Automatically bring up the mobile keyboard container
             }
             if (keyInput) {
                 keyInput.classList.remove('hidden');
@@ -640,6 +657,7 @@ window.requestVerificationOTP = async function() {
 
 
 
+
 // ==========================================================================
 // SECTION 7: PART 4 - VERIFY TOKENS AND COMMIT LIVE BALANCE RESETS
 // ==========================================================================
@@ -648,7 +666,7 @@ window.executeFinalPasswordReset = async function(riderName) {
     const newKeyInputField = document.getElementById('otp-new-key');
     const actionBtn = document.getElementById('otp-action-btn');
 
-    if (!codeInputField || !newKeyInputField) return;
+    if (!codeInputField || !newKeyInputField || !window.supabase) return;
 
     const codeInput = codeInputField.value.trim();
     const newKeyInput = newKeyInputField.value.trim();
@@ -691,15 +709,15 @@ window.executeFinalPasswordReset = async function(riderName) {
 
         if (resetError) throw new Error("Key rewrite procedure dropped.");
 
-        // FIX: Normalization Cache Correction. Locate the matching record index via object key evaluation loops
+        // FIX: Synchronized local dictionary property signatures to prevent state-drift locks
         const matchedWorkerId = Object.keys(approvedRiders).find(
             key => approvedRiders[key].name.toLowerCase() === riderName.toLowerCase()
         );
 
         if (matchedWorkerId) {
-            approvedRiders[matchedWorkerId].key = newKeyInput;
-            approvedRiders[matchedWorkerId].token = btoa(newKeyInput);
-            console.log(`✅ Runtime cache registry updated securely for worker profile index: ${matchedWorkerId}`);
+            // Updated property parameter mappings from .key straight to .secret_key
+            approvedRiders[matchedWorkerId].secret_key = newKeyInput;
+            console.log(`✅ Runtime dictionary registry synchronized for worker profile index: ${matchedWorkerId}`);
         }
 
         if (actionBtn) {
@@ -715,7 +733,9 @@ window.executeFinalPasswordReset = async function(riderName) {
         // Reset state tracker references cleanly back to base default entry points
         window.otpStageState = "REQUEST";
         
-        document.getElementById('otp-modal').classList.add('hidden');
+        const otpModalNode = document.getElementById('otp-modal');
+        if (otpModalNode) otpModalNode.classList.add('hidden');
+        
         alert("🎉 Security PIN successfully reset! You can now log into your Rider Dashboard using your new code.");
     } catch (err) {
         console.error("❌ Reset engine exception caught:", err);
@@ -727,7 +747,6 @@ window.executeFinalPasswordReset = async function(riderName) {
         alert("Verification workflow rejected by security rules. Check server handshake configurations.");
     }
 };
-
 
 // ==========================================================================
 // SECTION 7: PART 5 - ALLOW RIDERS TO SELF-UPDATE PINS INSIDE DASHBOARD
@@ -757,30 +776,30 @@ window.changeRiderPassword = async function() {
 
     try {
         if (changeBtn) {
+            originalText = changeBtn.textContent;
             changeBtn.textContent = "Syncing with cloud...";
             changeBtn.disabled = true;
             changeBtn.style.opacity = "0.6";
         }
 
-        console.log(`🔒 INITIATING LEAVE PROFILE OVERWRITE - Target: ${currentLoggedInRider}`);
+        console.log(`🔒 INITIATING LIVE PROFILE OVERWRITE - Target: ${currentLoggedInRider}`);
 
         // Safe SDK modification layer using explicit row filtering rules to shield neighboring worker keys
-        const { data, error } = await window.supabase
+        const { error } = await window.supabase
             .from('rider_auth')
             .update({ secret_key: newKey })
-            .eq('rider_name', currentLoggedInRider)
-            .select();
+            .eq('rider_name', currentLoggedInRider);
 
         if (error) throw error;
 
-        // Synchronize local normalized memory caches securely
+        // FIX: Synchronized local normalized memory caches cleanly using correct properties
         const matchedWorkerId = Object.keys(approvedRiders).find(
             id => approvedRiders[id].name.toLowerCase() === currentLoggedInRider.toLowerCase()
         );
 
         if (matchedWorkerId) {
-            approvedRiders[matchedWorkerId].key = newKey;
-            approvedRiders[matchedWorkerId].token = btoa(newKey);
+            // Updated property parameter mappings from .key straight to .secret_key
+            approvedRiders[matchedWorkerId].secret_key = newKey;
             console.log(`✅ Core internal ledger sync matched for worker ID: ${matchedWorkerId}`);
         }
 
