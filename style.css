@@ -136,6 +136,32 @@ header{
     display: flex;
     gap: 8px;
 }
+/* ==========================================================================
+   FIXES CARRIER BUTTON CLICK BLOCKS
+   ========================================================================== */
+.btn-group-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    
+    /* 💥 THE CRITICAL FIXES: Pulls buttons above the dark card overlay gradient */
+    position: relative !important;
+    z-index: 5 !important; 
+    
+    /* Forces the phone browser to treat this block as an active touch target */
+    pointer-events: auto !important; 
+}
+
+/* Ensure the anchor tags inside follow the same rules */
+.btn-top-row a,
+.btn-pcm,
+.btn-mpesa {
+    position: relative !important;
+    z-index: 6 !important;
+    pointer-events: auto !important;
+}
+
 
 .btn {
     padding: 10px 14px;
@@ -602,6 +628,46 @@ footer {
 /* #otp-modal.hidden {
     display: none !important;
 } */
+
+
+/* ==========================================================================
+   PREMIUM SEARCH INPUT BAR STYLING REFINEMENTS
+   ========================================================================== */
+#app-search {
+    width: 100%;
+    max-width: 500px;
+    padding: 14px 16px;
+    margin: 15px auto 0 auto;
+    display: block;
+    
+    /* Clean, soft modern borders replacing the harsh default black line */
+    border: 2px solid #e5e7eb; 
+    border-radius: 12px;
+    background-color: #ffffff;
+    
+    font-family: 'Inter', sans-serif;
+    font-size: 16px !important; /* Mobile Fix: Halts auto-zoom scaling on iOS/Android */
+    color: var(--dark);
+    box-sizing: border-box;
+    outline: none;
+    
+    /* Premium soft visual shadow effect */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Dynamic Interactive Focus Highlight States */
+#app-search:focus {
+    border-color: var(--primary); /* Glows with your core Maseno Orange highlight */
+    box-shadow: 0 4px 14px rgba(249, 115, 22, 0.15); 
+    background-color: #ffffff;
+}
+
+/* Adjust modern placeholder placeholder styling text colors cleanly */
+#app-search::placeholder {
+    color: #9ca3af;
+    font-weight: 500;
+}
 
 
 /* Add this rule at the absolute bottom of style.css */
