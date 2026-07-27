@@ -835,8 +835,13 @@ async function loadRiderStats(name) {
 
     // Safely detach previous active streaming listener instances to prevent memory leaks on the device
     if (riderChannel) {
-        window.supabase.removeChannel(riderChannel);
-        console.log(`🔌 Safely disconnected previous WebSocket channel tracking session.`);
+        try {
+            window.supabase.removeChannel(riderChannel);
+            console.log(`🔌 Safely disconnected previous WebSocket channel tracking session.`);
+        } catch (removeErr) {
+            console.warn("⚠️ Soft issue removing legacy network channel channel:", removeErr);
+        }
+        riderChannel = null; // Security Reset: Clear memory reference cleanly
     }
 
     try {
@@ -863,8 +868,12 @@ async function loadRiderStats(name) {
             if (earningsDisplay) earningsDisplay.textContent = "0";
         }
 
-        // FIX: Dynamic Scope Namespaces. Keeps multiple delivery workers' streams isolated from each other
-        const customChannelId = `rider_updates_${name.toLowerCase().replace(/\s+/g, '_')}`;
+        // FIX: Sanitized alpha-numeric dynamically scoped namespaces for safe multi-tenant operation
+        const cleanChannelName = name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+        const customChannelId = `rider_updates_${cleanChannelName}`;
+
+        // FIX: Enforced strict URL escapement on your filter string to prevent whitespace socket drops
+        const secureFilterString = `name=eq.${encodeURIComponent(name)}`;
 
         // Initialize the WebSocket change subscription stream pipeline live
         riderChannel = window.supabase
@@ -873,7 +882,7 @@ async function loadRiderStats(name) {
                 event: 'UPDATE', 
                 schema: 'public', 
                 table: 'riders', 
-                filter: `name=eq.${name}` 
+                filter: secureFilterString // Armed with safe, escaped validation query strings
             }, (payload) => {
                 console.log(`⚡ Real-time ledger updates received via WebSocket for worker: ${name}`);
                 
