@@ -1,21 +1,32 @@
 {
   "short_name": "FastDrop",
   "name": "Maseno Fast-Drop Delivery",
+  "description": "Instant, reliable campus deliveries for Maseno University students.",
+  "lang": "en-US",
+  "start_url": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f3f4f6", 
+  "theme_color": "#f97316", 
+  "categories": ["shopping", "productivity"],
   "icons": [
     {
-      "src": "https://unsplash.com",
+      "src": "images/icon-192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any"
     },
     {
-      "src": "https://unsplash.com",
+      "src": "images/icon-512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "images/icon-maskable.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
     }
-  ],
-  "start_url": "index.html",
-  "background_color": "#22c55e",
-  "theme_color": "#22c55e",
-  "display": "standalone",
-  "orientation": "portrait"
+  ]
 }

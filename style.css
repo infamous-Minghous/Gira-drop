@@ -8,40 +8,48 @@ html, body {
     --primary: #f97316;
     --dark:#1f2937;
     --light:#f3f4f6;
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 body{
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     background-color: var(--light);
     margin: 0;
     padding: 10px;
+    -webkit-font-smoothing: antialiased;
 }
 
 header{
     text-align: center;
-    padding: 20px 0;
+    padding: 16px 0;
 }
 
 .breadcrumb{
     color: var(--primary);
-    font-weight: bold;
-    margin-top: 5px;
+    font-weight: 700;
+    margin-top: 6px;
     cursor: pointer;
+    font-size: 0.9rem;
 }
+
+/* ==========================================================================
+   CORE INTERACTIVE MAIN GRID WORKSPACE
+   ========================================================================== */
 
 #app-container{
     position: relative;
     display: grid;
-    grid-template-columns:1fr 1fr;
-    gap: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
     max-width: 500px;
-    padding: 15px;  
-    margin: 20px auto;
+    padding: 12px;  
+    margin: 10px auto;
     justify-content: center;
-    text-align:center;
-    height: auto;
-    background-position: center;
-    padding-bottom: 80px;
+    /* text-align:center; */
+    /* height: auto; */
+    /* background-position: center; */
+    padding-bottom: 90px;
     min-height: 400px;
 
 }
@@ -51,7 +59,6 @@ header{
 .card{
     position: relative;
     aspect-ratio: 1 / 1;
-    height: 120px;
     background-size: cover;
     background-position: center;
     display: flex;
@@ -59,21 +66,21 @@ header{
     justify-content: center;
     margin: 0;
     background: white;
-    padding: 15px;
+    padding: 16px;
     overflow: hidden;
     color: white;
-    border-radius: 12px;
+    border-radius: 16px;
     text-align: center;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     border: 2px solid transparent;
     cursor: pointer;
-    border-radius: 15px;
+    -webkit-user-select: none; /* Prevents text-selection highlighting while tapping fast */
+    user-select: none;
 }
 
 .card:active{
-    transform: scale(0.95);
+    transform: scale(0.96);
     border-color: var(--primary);
 }
 
@@ -82,56 +89,73 @@ header{
     color: white;
     position: relative;
     z-index: 2;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 700;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+    line-height: 1.3;
+    
 }
 
-.card::after{
+/* Dark Background Overlay (Guarantees white text readability over any background image) */
+.card::after {
     content: "";
     position: absolute;
-    top: 0;left: 0; width: 100%;height: 100%;
-    background:linear-gradient(to top, rgba(0,0,0,0.7));
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.2) 100%);
     z-index: 1;
 }
-.card:hover{
-    transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+/* Desktop Hover Adjustments */
+@media (min-width: 768px) {
+    .card:hover {
+        transform: translateY(-4px);
+    }
 }
 /* Optional: Make the text easier to read on the dark background */
-.rider-card h3 {
-    text-shadow: none;
-    font-size: 1rem;
-}
-/* Rider Card Specifics */
-.rider-card{
-     grid-column: 1 / -1;
+.rider-card {
+    grid-column: 1 / -1; /* Spans across both grid rows cleanly */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #4b4b4b; /* Matches your screenshot */
-    border-radius: 15px;
+    background-color: var(--dark); 
+    border-radius: 16px;
     padding: 20px;
-    color: white;
-    height: auto !important; /* Allow card to grow with content */
-    min-height: 160px;
+    color: #ffffff;
+    min-height: 120px;
+    box-shadow: var(--card-shadow);
 }
 
-.btn-group{
+.rider-card h3 {
+    text-shadow: none;
+    font-size: 1.1rem;
+    margin: 0 0 4px 0;
+}
+
+.btn-group {
     display: flex;
-    gap: 10px;
+    gap: 8px;
 }
 
-.btn{
-    padding: 10px;
+.btn {
+    padding: 10px 14px;
     border-radius: 8px;
     text-decoration: none;
-    color: white;
+    color: #ffffff;
     font-size: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
 }
 
-.btn-call{background: #2563eb;}
-.btn-wa{ background: #22c55e; white-space: nowrap;}
+.btn:active {
+    opacity: 0.85;
+}
+
+.btn-call { background-color: #2563eb; }
+.btn-wa { background-color: #22c55e; white-space: nowrap; }
+
 
 /* Rider View Overlay */
 #rider-view {
@@ -140,61 +164,72 @@ header{
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: white;
+    background-color: #ffffff;
     z-index: 100;
-    padding: 20px;
     box-sizing: border-box;
-    overflow-y: auto; /* Allow scrolling */
-    display: flex;    /* Keep as flex */
+    overflow-y: auto;
+    display: flex;   
     flex-direction: column;
-    align-items: center; /* Center the numpad and buttons */
 }
 
-/* Hide class toggle */
 
-.hidden{
-    display: none !important;
-}
 
-.rider-header{
+.rider-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 16px 20px;
     position: sticky;
     top: 0;
-    background: white;
+    background-color: #ffffff;
     z-index: 10;
-    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.rider-header button{
+.rider-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: var(--dark);
+}
+
+.rider-header button {
     background: none;
     border: none;
-    font-size: 24px;
+    font-size: 28px;
     cursor: pointer;
-    color: #666;
+    color: #9ca3af;
+    line-height: 1;
 }
+
+
 
 /* Amount Display */
 
-.amount-display{
-    font-size: 2.5rem;
+.amount-display {
+    font-size: 3rem;
     font-weight: 800;
     text-align: center;
-    margin: 20px 0;
-    color: #f97316;
+    margin: 30px 0;
+    color: var(--primary);
+    font-feature-settings: "tnum"; /* Enforces tabular lining figures so numbers don't jump around */
 }
 
-/* Numpad Grid */
-.numpad{
+.numpad {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    max-width: 350px;
+    gap: 12px;
+    max-width: 320px;
     margin: 0 auto;
     width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+/* Custom CSS utility helper class for global application hooks */
+.hidden {
+    display: none !important;
 }
 
 .numpad button:active{
@@ -223,17 +258,29 @@ header{
     transition: background 0.2s;
 }
 
+/* Core Base Class for stand-alone layout wrappers */
 .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
-    padding: 18px; /* Fixed padding property */
+    padding: 16px; 
     border-radius: 12px;
     border: none;
-    font-size: 1.1rem; /* Fixed from 11rem */
-    font-weight: bold;
-    color: white;
+    font-size: 1.05rem; 
+    font-weight: 700;
+    color: #ffffff;
     cursor: pointer;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+    transition: background-color 0.15s, transform 0.1s, opacity 0.1s;
+    box-sizing: border-box;
 }
+
+.btn:active {
+    opacity: 0.85;
+    transform: scale(0.98);
+}
+
 
 /* Add space between the last row of numbers and the M-Pesa button */
 .payment-actions {
@@ -252,57 +299,38 @@ header{
 }
 
 
-.btn-mpesa {background-color: #22c55e;}
-.btn-cash{background-color: #1f2937;}
-.btn:active{opacity: 0.8;}
+.btn-mpesa { background-color: #22c55e; } /* Safaricom Live Green */
+.btn-cash { background-color: #1f2937; }
+.btn-primary { background-color: var(--primary); }
+.btn-dark { background-color: #000000; }
+.btn-pcm { background-color: #3b82f6; }
+.btn-pcm:active { background-color: #2563eb; }
+.btn-reverse { background-color: #334155; font-size: 0.8rem; }
 
-.btn-pcm {
-    background-color: #3b82f6; /* A nice blue color */
-    text-align: center;
-    width: 100%;
-    box-sizing: border-box;
-    display: block;
-    margin-top: 5px;
-}
-
-.btn-pcm:active {
-    background-color: #2563eb;
-    transform: scale(0.98);
-}
-
-/* Reverse Call - Dark Grey/Black */
-.btn-reverse {
-    background-color: #334155;
-    text-align: center;
-    font-size: 12px;
-}
-
-.btn-pcm:active, .btn-reverse:active {
-    opacity: 0.8;
-    transform: scale(0.95);
-}
+/* Contact Integration Grid Layouts */
 .btn-group-vertical {
     display: flex;
     flex-direction: column;
     gap: 8px;
-   width: auto;
-    flex-shrink: 0; /* Prevents the buttons from getting squashed */
+    width: 100%;
+    flex-shrink: 0;
 }
 
 /* Ensure Call/WA buttons share the top row evenly */
 .btn-top-row {
     display: flex;
-    gap: 5px;
+    gap: 6px;
     width: 100%;
 }
 
+/* Fixes the width conflict by overriding the global button block properties here safely */
 .btn-top-row .btn {
-    flex: 1; /* Makes them equal width */
-    text-align: center;
-    padding: 8px 2px;
-     text-align: center;
+    flex: 1; 
+    width: auto;
+    padding: 10px 4px;
+    font-size: 0.85rem;
+    margin-bottom: 0;
 }
-
 /* Header Naviigation */
 .nav-bar{
     display: flex;
@@ -312,47 +340,60 @@ header{
     border-bottom: 2px solid #eee;
 }
 
-.nav-btn{
+/* ==========================================================================
+   HEADER NAVIGATION MANAGEMENT
+   ========================================================================== */
+.nav-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.nav-btn {
     background-color: var(--dark);
-    color: white;
+    color: #ffffff;
     border: none;
-    padding: 8px 15px;
+    padding: 8px 16px;
     border-radius: 20px;
     font-size: 0.8rem;
+    font-weight: 600;
     cursor: pointer;
+    transition: opacity 0.15s;
 }
 
-/* Rider App Section */
+.nav-btn:active {
+    opacity: 0.85;
+}
 
-#rider-app{
+/* ==========================================================================
+   RIDER CONTEXT APP LAYOUTS
+   ========================================================================== */
+#rider-app {
     padding: 20px;
     text-align: center;
-    background: white;
+    background: #ffffff;
     min-height: 80vh;
-    border-radius: 20px 20px 0 0;
+    border-radius: 24px 24px 0 0;
     margin-top: 20px;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
 }
 
-.rider-actions{
+.rider-actions {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    margin-top: 40px;
+    gap: 12px;
+    margin-top: 30px;
 }
 
-.btn-primary {
-    background-color: var(--primary);
-}
-.btn-dark{
-    background-color: black;
-}
-/* Loading Overlay */
+
 #loading-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.7); /* Darker blur effect */
-    backdrop-filter: blur(5px);    /* Modern blurred background */
-    z-index: 1000;
+    background: rgba(15, 23, 42, 0.75); /* Deep high-contrast backdrop */
+    backdrop-filter: blur(6px);    
+    z-index: 500;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -360,24 +401,23 @@ header{
 }
 
 .spinner {
-    width: 60px;
-    height: 60px;
-    border: 6px solid rgba(255,255,255,0.3);
-    border-top: 6px solid var(--primary); /* Your orange color */
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255, 255, 255, 0.2);
+    border-top: 5px solid var(--primary); 
     border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 20px;
+    animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-
 .loading-text {
-    margin-top: 15px;
-    font-weight: bold;
-    color: var(--dark);
+    margin-top: 16px;
+    font-weight: 700;
+    color: #ffffff; /* Visibility Fix: Changed from var(--dark) to clean white */
+    font-size: 1rem;
 }
 
 .payment-container {
@@ -387,55 +427,58 @@ header{
     align-items: center;
 }
 
-/* Center the Login Box on the screen */
-#login-modal {
+/* Central Overlay Authentication Wrappers */
+#login-modal, #admin-login-modal {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5); /* Semi-transparent background */
-    z-index: 2000;
+    background: rgba(15, 23, 42, 0.6); 
+    backdrop-filter: blur(4px);
+    z-index: 600; /* Unified z-index management */
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 16px;
+    box-sizing: border-box;
 }
 
+
 .login-box {
-    background: white;
-    padding: 30px;
+    background: #ffffff;
+    padding: 24px;
     border-radius: 20px;
-    width: 90%;
-    max-width: 400px;
+    width: 100%;
+    max-width: 360px;
     text-align: center;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .login-input {
     width: 100%;
-    padding: 15px;
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    font-size: 16px !important; /* Forces browser to stop auto-zooming */
-    box-sizing: border-box; /* Prevents input from pushing past screen edge */
+    padding: 14px;
+    margin: 8px 0;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    font-size: 16px !important; /* Prevents auto-zoom scaling breaks on iOS devices */
+    box-sizing: border-box; 
 }
 
-/* Style for the Login Modal Cancel Button */
 .btn-text {
     background: none;
     border: none;
-    color: #000000;
-    font-size: 0.9rem;
+    color: #6b7280;
+    font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
-    margin-top: 15px;
-    padding: 10px 20px;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-    text-decoration: underline; /* Optional: adds a classic link feel */
+    margin-top: 12px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+    text-decoration: underline;
 }
 
 .btn-text:hover {
     color: var(--dark);
-    background-color: #f0f0f0;
+    background-color: #f3f4f6;
     text-decoration: none;
 }
 
@@ -444,105 +487,124 @@ header{
 }
 
 
-#admin-login-modal {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.7); /* Darker backdrop for Admin */
-    z-index: 3000; /* Higher than everything else */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
+/* Standardized Page Footer Layout Flow */
 footer {
-    clear: both;
     width: 100%;
-    margin-top: 60px; /* Pushes it away from the cards */
-    padding: 20px 0;
-    position: relative; /* Ensures it stays in the normal flow of the page */
-    z-index: 1;
+    margin-top: 40px; 
+    padding: 24px 0;
+    box-sizing: border-box;
 }
 
-
-/* Locked Building Style */
+/* ==========================================================================
+   LOCKED BOUNDARY LOCATION LAYOUTS
+   ========================================================================= */
 .card.locked {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 8px; /* Adds space between icon, name, and status */
-    filter: grayscale(1) brightness(0.7);
-    border: 2px dashed #999;
+    gap: 6px; 
+    filter: grayscale(100%) brightness(75%);
+    border: 2px dashed #9ca3af;
     cursor: not-allowed;
+}
 
-}
+/* Prevent accidental click scaling states on locked nodes */
 .card.locked:active {
-    transform: none; /* Prevents the "press" animation on locked cards */
+    transform: none !important;
+    border-color: #9ca3af !important;
 }
+
 
 .lock-icon {
-    font-size: 1.8rem;
-    margin-bottom: 5px;
+    font-size: 1.75rem;
+    margin-bottom: 4px;
     z-index: 2;
-    animation: pulse 2s infinite;
+    /* Uses hardware accelerated composition pathways cleanly */
+    animation: lockPulse 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
-.locked h3 {
+.card.locked h3,
+.card.locked small {
     margin: 0;
-    font-size: 1.1rem;
+    position: relative;
+    z-index: 2; /* Visibility Fix: Forces layout text above background gradients */
 }
 
-.locked small {
-    font-weight: bold;
-    color: #f97316; /* Keeping your primary orange for the status */
+.card.locked h3 {
+    font-size: 1.05rem;
 }
 
-@keyframes pulse {
-    0% { transform: scale(1); opacity: 0.8; }
-    50% { transform: scale(1.1); opacity: 1; }
-    100% { transform: scale(1); opacity: 0.8; }
+.card.locked small {
+    font-weight: 700;
+    color: var(--primary); 
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
 }
 
-/* Ensure avatars look clean */
+@keyframes lockPulse {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.06); opacity: 1; }
+}
+
+/* ==========================================================================
+   AVATAR & GLOBAL SPACING ADJUSTMENTS
+   ========================================================================== */
 .rider-card img {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-}
-
-#app-search {
-    margin-top: 15px; /* Pushes the search bar down from the breadcrumb */
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05); /* Makes it look premium */
-    font-size: 16px !important; /* Forces browser to stop auto-zooming */
-    width: 100%;
-    box-sizing: border-box; /* Prevents input from pushing past screen edge */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 .rider-card {
-    margin-top: 20px; /* Pushes the rider card away from the search bar */
+    margin-top: 16px; 
 }
-/* Update your existing login-input style */
+
+
+
+
+/* ==========================================================================
+   INPUT SYSTEM GLOBAL STANDARDIZATION
+   ========================================================================== */
 .login-input, 
 #app-search, 
 #customer-phone {
-    font-size: 16px !important; /* Forces browser to stop auto-zooming */
+    font-size: 16px !important; /* Critical: Halts invasive auto-zoom patterns on mobile */
     width: 100%;
-    box-sizing: border-box; /* Prevents input from pushing past screen edge */
+    box-sizing: border-box; 
 }
 
-/* Add this rule at the absolute bottom of style.css */
-.hidden {
-    display: none !important;
+#app-search {
+    margin-top: 12px; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); 
 }
 
+
+
+
+/* ==========================================================================
+   OTP CONTROL PANEL VIEW DIALOG
+   ========================================================================== */
 #otp-modal {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5); /* Matching semi-transparent modal look */
-    z-index: 2500; /* Makes it sit clearly on top of the login modal layer */
+    background: rgba(15, 23, 42, 0.6); 
+    backdrop-filter: blur(4px);
+    z-index: 650; /* Sits naturally higher than standard login interfaces */
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 16px;
+    box-sizing: border-box;
 }
 
-#otp-modal.hidden {
+/* #otp-modal.hidden {
+    display: none !important;
+} */
+
+
+/* Add this rule at the absolute bottom of style.css */
+.hidden {
     display: none !important;
 }
