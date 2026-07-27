@@ -212,36 +212,34 @@
 
 
 
-
     <!-- ==========================================================================
          APPLICATION FOOTER & SECURITY ROUTING NODES
          ========================================================================== -->
     <footer style="text-align:center; padding:24px 0; opacity:0.4;">
-        <!-- Accessibility Fix: Changed from generic span click target triggers to semantic flat interactive buttons elements layout -->
         <button type="button" onclick="window.openAdminPortal()" style="background:none; border:none; color:inherit; font-family:inherit; font-size:0.75rem; font-weight:600; cursor:pointer; text-decoration:underline;">
             &copy; 2026 Maseno Fast-Drop Admin
         </button>
     </footer>
 
-    <!-- 1. Native Supabase Client Library CDN Framework Implementation -->
-    <script src="https://jsdelivr.net"></script>
+    <!-- 1. Offline-Safe Local Supabase Client Library Framework Implementation -->
+    <!-- Purged the broken, unmapped jsdelivr domain script tag to prevent pipeline execution halts -->
+    <script src="supabase-js.js"></script>
 
     <!-- 2. Global Cloud Workspace Parameters Configuration & SDK Instantiation -->
     <script>
-      // NOTE: For clean security deployment operations, ensure Row Level Security (RLS) is active on your Postgres cluster tables!
-      const SUPABASE_URL = 'https://supabase.co';
-      const SUPABASE_KEY = 'YOUR_ROTATED_SUPABASE_ANON_KEY'; // Ensure you rotate your anon key if the previous string leaked publicly!
+      // NOTE: Ensure Row Level Security (RLS) is active on your tables inside your Supabase project settings dashboard!
+      const SUPABASE_URL = 'https://zaowprlwooltppxmcccu.supabase.co';
+      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inphb3dwcmx3b29sdHBweG1jY2N1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2MzYyMDQsImV4cCI6MjA5MTIxMjIwNH0.9r1PbaP4HMUJmOaDFHbXJiBfHANq0rY9kpfV5uXOQcs'; 
 
       if (typeof supabase !== 'undefined') {
           window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
           console.log("✅ Supabase framework context successfully initialized in global window space!");
       } else {
-          console.error("❌ Critical Error: Supabase client library connection engine CDN link timed out or failed to load.");
+          console.error("❌ Critical Error: Supabase client library connection engine failed to mount.");
       }
     </script>
 
     <!-- 3. Primary Local Core Code Scripts File Connection (Streamlined Modularity Pattern) -->
-    <!-- Removed dead inline blocks to let your polished script.js orchestrate all application states securely -->
     <script src="script.js"></script>
 
     <!-- 4. Native Mobile PWA Service Worker Registration Lifecycle Hook -->

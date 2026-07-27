@@ -250,17 +250,16 @@ function showRiders(area, buildingName) {
 // SECTION 5: STUDENT-SIDE TRANSACTION GATEWAY AUTOMATION
 // ==========================================================================
 window.simulateStudentPayment = async function(riderId) {
-    // Look up the rider record from our normalized registry to get their human-readable name
     const riderRecord = approvedRiders[riderId];
     const targetRiderName = riderRecord ? riderRecord.name : "Rider";
 
     // 1. Prompt user data parameters safely
     const inputAmount = prompt(`How much are you paying ${targetRiderName}? (KSh):`, "50");
-    if (!inputAmount) return; // Silent return if the student cancels the prompt
+    if (!inputAmount) return; 
 
     const parsedAmount = parseInt(inputAmount, 10);
     
-    // Validate the amount entry and enforce a logical cap for safety (e.g., Max KSh 10,000 per order)
+    // Financial boundary auditing protection
     if (isNaN(parsedAmount) || parsedAmount <= 0 || parsedAmount > 10000) {
         return alert("Please enter a valid amount between KSh 1 and KSh 10,000.");
     }
@@ -269,23 +268,19 @@ window.simulateStudentPayment = async function(riderId) {
     const studentPhone = prompt("Enter your M-Pesa Number (e.g., 0712345678):");
     if (!studentPhone) return;
 
-    // Direct Inline Number Formatting Engine: Strips layout artifacts into clean 12-digit format (254...)
-    // Clean, streamlined production layout:
-const formattedPhone = formatPhoneNumber(studentPhone);
+    // Streamlined global formatting engine validation
+    const formattedPhone = formatPhoneNumber(studentPhone);
 
-if (formattedPhone.length !== 12 || !(formattedPhone.startsWith('2547') || formattedPhone.startsWith('2541'))) {
-    return alert("Invalid M-Pesa format. Please provide a standard Kenyan number (07... or 01...).");
-}
+    if (formattedPhone.length !== 12 || !(formattedPhone.startsWith('2547') || formattedPhone.startsWith('2541'))) {
+        return alert("Invalid M-Pesa format. Please provide a standard Kenyan number (07... or 01...).");
+    }
 
-
-
-    // Capture visual indicators safely from current template scope
     const payBtn = document.querySelector('.btn-mpesa');
     let originalText = "Pay Rider via M-Pesa";
 
     if (payBtn) {
-        originalText = payBtn.innerText;
-        payBtn.innerText = "Processing Push...";
+        originalText = payBtn.textContent;
+        payBtn.textContent = "Processing Push...";
         payBtn.disabled = true; 
         payBtn.style.opacity = "0.6";
     }
@@ -304,13 +299,13 @@ if (formattedPhone.length !== 12 || !(formattedPhone.startsWith('2547') || forma
         if (overlay) overlay.classList.add('hidden');
         
         try {
-            /* FIX: We decoupled database parameters away from memory variables. 
-               We now explicitly pass riderId and targetRiderName into the update engine */
+            /* FIX: Updated the fourth parameter reference to read 'formattedPhone' 
+               instead of the non-existent 'cleanPhone' variable string to stop runtime freezes */
             if (typeof window.updateDailyEarnings === 'function') {
                 await window.updateDailyEarnings(
                     parsedAmount, 
                     'M-Pesa Student Prompt', 
-                    cleanPhone, 
+                    formattedPhone, 
                     riderId, 
                     targetRiderName
                 );
@@ -325,13 +320,14 @@ if (formattedPhone.length !== 12 || !(formattedPhone.startsWith('2547') || forma
             alert("Payment processed, but ledger sync failed. Please inform your rider.");
         } finally {
             if (payBtn) {
-                payBtn.innerText = originalText;
+                payBtn.textContent = originalText;
                 payBtn.disabled = false;
                 payBtn.style.opacity = "1";
             }
         }
     }, 4000);
 };
+
 
 
 
