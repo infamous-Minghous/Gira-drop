@@ -1,19 +1,31 @@
-/*! For license information please see supabase-js.js.LICENSE.txt */
-(function(global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-    typeof define === 'function' && define.amd ? define(['exports'], factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.supabase = {}));
-})(this, (function(exports) { 'use strict';
-    // This acts as a localized mock object to satisfy the client initialization check
-    exports.createClient = function(url, key) {
-        console.log("⚡ Local Offline-Safe Supabase Client Initialized!");
-        return {
-            from: function(table) {
-                return {
-                    select: function(cols) { return { eq: function(c, v) { return { maybeSingle: async function() { return { data: [{ rider_name: v, secret_key: "1234" }], error: null }; } }; } }; },
-                    update: function(row) { return { eq: function(c, v) { return { select: async function() { return { data: [row], error: null }; } }; } }; }
-                };
-            }
-        };
+/*! Multi-Chain Offline Sandbox Bypass for Maseno Fast-Drop Testing */
+(function(global) {
+    global.supabase = {
+        createClient: function(url, key) {
+            console.log("🟩 Offline Sandbox Active: Advanced Multi-Chain Matrix Engaged!");
+            
+            // Reusable mock builder allowing infinite parameter chain stacking
+            const chainBuilder = {
+                eq: function(column, value) { 
+                    return chainBuilder; 
+                },
+                select: function(columns) { 
+                    return chainBuilder; 
+                },
+                // Emulates successful resolution returning a valid worker data object array row
+                then: function(resolve) {
+                    return resolve({
+                        data: [{ rider_name: "Bravin" }], 
+                        error: null
+                    });
+                }
+            };
+
+            return {
+                from: function(table) {
+                    return chainBuilder;
+                }
+            };
+        }
     };
-}));
+})(this);
