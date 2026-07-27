@@ -221,26 +221,39 @@
         </button>
     </footer>
 
-    <!-- 1. Offline-Safe Local Supabase Client Library Framework Implementation -->
-    <!-- Purged the broken, unmapped jsdelivr domain script tag to prevent pipeline execution halts -->
-    <script src="supabase-js.js"></script>
+    
 
-    <!-- 2. Global Cloud Workspace Parameters Configuration & SDK Instantiation -->
-    <script>
-      // NOTE: Ensure Row Level Security (RLS) is active on your tables inside your Supabase project settings dashboard!
-      const SUPABASE_URL = 'https://zaowprlwooltppxmcccu.supabase.co';
-      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inphb3dwcmx3b29sdHBweG1jY2N1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2MzYyMDQsImV4cCI6MjA5MTIxMjIwNH0.9r1PbaP4HMUJmOaDFHbXJiBfHANq0rY9kpfV5uXOQcs'; 
-
-      if (typeof supabase !== 'undefined') {
-          window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-          console.log("✅ Supabase framework context successfully initialized in global window space!");
-      } else {
-          console.error("❌ Critical Error: Supabase client library connection engine failed to mount.");
-      }
-    </script>
+    
 
     <!-- 3. Primary Local Core Code Scripts File Connection (Streamlined Modularity Pattern) -->
     <script src="script.js"></script>
+
+    <!-- REPLACE YOUR TWO APPRENDED SCRIPT LINKS WITH THIS UNIFIED PRODUCTION-READY ATTACHMENT DEFINITION -->
+
+<!-- 1. DELETE OR COMMENT OUT THE LOCAL MOCK FILE:
+<script src="./supabase-js.js"></script> 
+-->
+
+<!-- 2. USE THE OFFICIAL LIVE CORE SUPABASE CLIENT CDN ENGINE LIBRARY INSTANCE LINK INSTEAD: -->
+<script src="https://jsdelivr.net"></script>
+
+<!-- The client configuration block underneath stays exactly the same -->
+<script>
+  const SUPABASE_URL = 'https://zaowprlwooltppxmcccu.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inphb3dwcmx3b29sdHBweG1jY2N1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2MzYyMDQsImV4cCI6MjA5MTIxMjIwNH0.9r1PbaP4HMUJmOaDFHbXJiBfHANq0rY9kpfV5uXOQcs'; // Ensure this matches your fresh Supabase Project credentials!
+
+  if (typeof supabase !== 'undefined') {
+      window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      console.log("✅ Supabase context successfully initialized live in global cloud window space!");
+  } else {
+      console.error("❌ Critical Error: Supabase client script engine CDN connection timed out.");
+  }
+</script>
+
+<!-- 3. Connect your main core application computing logic scripts file -->
+<script src="./script.js"></script>
+
+   
 
     <!-- 4. Native Mobile PWA Service Worker Registration Lifecycle Hook -->
     <script>
