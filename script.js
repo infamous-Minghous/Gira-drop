@@ -193,54 +193,49 @@ function showRiders(area, buildingName) {
         if (!riderRecord) return console.warn(`⚠️ Skipping missing worker database record for ID: ${riderId}`);
 
         const card = document.createElement('div');
-        card.className = 'card rider-card'; // Keeps presentation logic cleanly isolated inside your CSS modules
+        
+        // Link directly to your fresh style.css class rules architecture setup
+        card.className = 'card rider-card-view-only'; 
+        card.onclick = null;
 
-        // 1. WhatsApp Logic: Clean, bulletproof number sanitization engine
         const whatsAppTarget = riderRecord.whatsapp || riderRecord.phone;
         const cleanWaPhone = whatsAppTarget.replace(/[+\s]/g, '');
 
-        // 2. USSD Logic: Handles stripping any Kenyan notation variants into safe local forms (07... / 01...)
         let ussdPhone = riderRecord.phone.replace(/[+\s]/g, '');
         if (ussdPhone.startsWith('254')) {
             ussdPhone = '0' + ussdPhone.substring(3);
         }
 
-        // Formulate pre-filled localized text templates for campus delivery contexts
         const defaultText = `Hi ${riderRecord.name}, I am ordering from ${buildingName}. Are you nearby?`;
         const encodedText = encodeURIComponent(defaultText);
 
-        // PRODUCTION FIXED ANCHOR LAYOUT: Restored raw hash character parameters inside tel: tags
+        // PRODUCTION CLEANUP: Clean markup framework completely stripped of dirty inline strings
         card.innerHTML = `
-            <!-- Main Content Container: Toggles from Row to Column layout fluidly on small viewports -->
-            <div style="display:flex; flex-direction:row; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px; width:100%; box-sizing:border-box; padding:4px;">
+            <div class="rider-card-flex-wrapper">
                 
-                <!-- Left Profile Wrapper Element -->
-                <div style="display:flex; align-items:center; gap:12px; min-width:160px; flex:1;">
-                    <div style="width:48px; height:48px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; font-weight:700; color:#ffffff; border:2px solid #ffffff; flex-shrink:0;">
+                
+                <div class="rider-profile-section">
+                    <div class="rider-avatar-badge">
                         ${riderRecord.name.charAt(0).toUpperCase()}
                     </div>
-                    <div style="text-align:left;">
-                        <h3 style="margin:0; color:#ffffff; font-size:1.1rem; font-weight:700; line-height:1.2;">${riderRecord.name}</h3>
-                        <small style="color:#cbd5e1; font-weight:500; display:block; margin-top:4px;">
-                            ${buildingObj.currentStatus || 'Active Nearby'}
-                        </small>
+                    <div class="rider-text-details">
+                        <h3>${riderRecord.name}</h3>
+                        <small>${buildingObj.currentStatus || 'Active Nearby'}</small>
                     </div>
                 </div>
                 
-                <!-- Right Action Grid: Auto-expands to full width when dropped below profile stack -->
-                <div style="display:flex; flex-direction:column; gap:8px; min-width:100%; flex:1; width:100%; box-sizing:border-box;">
+                <!-- Right Quick-Action Shortcode Dialer Controls Group Stack -->
+                <div class="rider-actions-stack">
                     
-                    <!-- Call & WhatsApp Twin Column Splitter Rows -->
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%;">
-                        <a href="tel:${riderRecord.phone}" class="btn btn-call" style="margin:0; text-align:center; padding:10px 0;">Call</a>
-                        <a href="https://wa.me{cleanWaPhone}?text=${encodedText}" target="_blank" rel="noopener" class="btn btn-wa" style="margin:0; text-align:center; padding:10px 0;">WhatsApp</a>
+                    <div class="rider-twin-buttons-grid">
+                        <!-- event.stopPropagation() shields buttons from triggering parent background card taps -->
+                        <a href="tel:${riderRecord.phone}" onclick="event.stopPropagation();" class="btn btn-call">Call</a>
+                        <a href="https://wa.me{cleanWaPhone}?text=${encodedText}" onclick="event.stopPropagation();" target="_blank" rel="noopener" class="btn btn-wa">WhatsApp</a>
                     </div>
                     
-                    <!-- Free Carrier Please Call Me Shortcut Push Utility Button -->
-                    <a href="tel:*130*${ussdPhone}#" class="btn btn-pcm" style="margin:0; text-align:center; display:block; width:100%; box-sizing:border-box; padding:10px 0;">Please Call Me</a>
+                    <a href="tel:*130*${ussdPhone}#" onclick="event.stopPropagation();" class="btn btn-pcm">Please Call Me</a>
                     
-                    <!-- Direct Cloud-Connected Ledger Checkout Gateway Launcher Button -->
-                    <button type="button" onclick="window.simulateStudentPayment('${riderId}')" class="btn btn-mpesa" style="margin:0; display:block; width:100%; box-sizing:border-box; padding:12px 0; font-weight:700;">
+                    <button type="button" onclick="event.stopPropagation(); window.simulateStudentPayment('${riderId}')" class="btn btn-mpesa">
                         Pay Rider via M-Pesa
                     </button>
                 </div>
@@ -1007,7 +1002,7 @@ function formatPhoneNumber(phone) {
 
 
 // ==========================================================================
-// SECTION 10: TRANSACTION EXECUTION & DIRECT CLOUD LEDGER INSERTION
+// SECTION 10: TRANSACTION EXECUTION & LIVE SAFARICOM M-PESA GATEWAY
 // ==========================================================================
 window.cleanProductionSTKGateway = async function() {
     const phoneField = document.getElementById('customer-phone');
@@ -1035,8 +1030,7 @@ window.cleanProductionSTKGateway = async function() {
 
     try {
         if (actionBtn) {
-            // UI Performance Fix: Clean textContent tracking avoiding document layout repaint lag
-            originalText = actionBtn.textContent;
+            originalText = actionBtn.innerText;
             actionBtn.textContent = "Triggering SIM Prompt...";
             actionBtn.disabled = true;
             actionBtn.style.opacity = "0.6";
@@ -1045,64 +1039,65 @@ window.cleanProductionSTKGateway = async function() {
         if (overlay && loadingText) {
             overlay.classList.remove('hidden');
             loadingText.innerHTML = `
-                Connecting securely to database engine...<br>
+                Connecting securely to Safaricom Daraja...<br>
                 <small style="color:#cbd5e1; font-size:0.8rem; display:block; margin-top:4px;">
-                    Processing KSh ${parsedAmount.toLocaleString()} order for device ${formattedPhone}
+                    Requesting KSh ${parsedAmount.toLocaleString()} prompt on device ${formattedPhone}
                 </small>
             `;
         }
 
-        // Generate a high-utility unique tracking checkout string placeholder natively locally
-        const simulatedCheckoutId = "STK_MOCK_" + Math.random().toString(36).substring(2, 11).toUpperCase();
-        console.log(`📡 [SDK CONNECT] Initiating direct database transaction log. Request ID: ${simulatedCheckoutId}`);
+        console.log("📡 Contacting serverless bridge to broadcast secure STK transaction payload...");
 
-        // Tactile interface animation pacing configurations delay delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        // PRODUCTION CORRECTION: Point directly to your active project API edge function routing gateway
+        const secureEdgeRoute = "https://supabase.co";
 
-        // SECURITY ACCOUNTING TRIGGER: Log the transaction history directly into your fresh Postgres tables
-        if (window.supabase) {
-            const cleanDatabaseDate = new Date().toISOString();
+        const response = await fetch(secureEdgeRoute, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                amount: parsedAmount,
+                phone: formattedPhone,
+                riderName: currentLoggedInRider || "Unknown Rider"
+            })
+        });
 
-            // 1. Insert line history record
-            const { error: historyError } = await window.supabase
-                .from('daily_history')
-                .insert([{
+        if (!response.ok) {
+            throw new Error(`Daraja Server Network Gateway rejected status: ${response.status}`);
+        }
+
+        const resData = await response.json();
+
+        // Check if Safaricom successfully dispatched the prompt wrapper to the cell towers
+        if (resData && resData.ResponseCode === "0") {
+            
+            console.log(`📝 STK Dispatched successfully (CheckoutRequestID: ${resData.CheckoutRequestID})`);
+            
+            // SECURITY ACCOUNTING FIX: Only log the transaction history AFTER the network call succeeds
+            if (window.supabase) {
+                await window.supabase.from('daily_history').insert([{
                     rider_name: currentLoggedInRider || "Unknown Rider",
                     amount: parsedAmount,
                     payment_method: 'M-Pesa',
                     student_phone: formattedPhone,
-                    checkout_request_id: simulatedCheckoutId,
-                    created_at: cleanDatabaseDate
+                    checkout_request_id: resData.CheckoutRequestID, // Log this key to reconcile logs later
+                    created_at: new Date().toISOString()
                 }]);
+            }
 
-            if (historyError) throw historyError;
-
-            // 2. Increment active rider balances via your server-side RPC procedure function safely [Section 11]
-            if (typeof window.updateDailyEarnings === 'function') {
-                await window.updateDailyEarnings(
-                    parsedAmount, 
-                    'M-Pesa', 
-                    formattedPhone, 
-                    null, 
-                    currentLoggedInRider || "Unknown Rider"
-                );
+            alert(`🎉 STK Push sent successfully to ${formattedPhone}! Please enter your M-Pesa PIN on your phone to complete delivery payment.`);
+            
+            if (typeof window.closeRiderView === 'function') {
+                window.closeRiderView();
             }
         } else {
-            throw new Error("Supabase client instance uninitialized.");
-        }
-
-        alert(`🎉 Success! KSh ${parsedAmount.toLocaleString()} payment recorded from ${formattedPhone}. The live rider balance stats have been updated.`);
-        
-        // Clean out input fields after a successful run
-        if (phoneField) phoneField.value = "";
-
-        if (typeof window.closeRiderView === 'function') {
-            window.closeRiderView();
+            alert(`M-Pesa Gateway Refused: ${resData?.CustomerMessage || "Verify account balances."}`);
         }
 
     } catch (err) {
-        console.error("❌ M-Pesa direct execution transaction dropped:", err);
-        alert("Database transmission connection handshake failure. Please check your network and try again.");
+        console.error("❌ M-Pesa execution workflow interrupted:", err);
+        alert("Carrier transmission handshake failure. Please check your data connection and try again.");
     } finally {
         if (overlay) overlay.classList.add('hidden');
         if (actionBtn) {
@@ -1112,7 +1107,6 @@ window.cleanProductionSTKGateway = async function() {
         }
     }
 };
-
 
 
 
