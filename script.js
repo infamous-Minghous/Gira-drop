@@ -194,48 +194,60 @@ function showRiders(area, buildingName) {
 
         const card = document.createElement('div');
         
-        // Link directly to your fresh style.css class rules architecture setup
+        // FIX 1: Linked to a premium, isolated custom class name to drop background building image overrides
         card.className = 'card rider-card-view-only'; 
-        card.onclick = null;
 
+        // FIX 2: Explicitly wipe any inherited click triggers on the background card container base
+        card.onclick = null;
+        card.style.cursor = "default";
+
+        // 1. WhatsApp Logic: Clean, number sanitization engine
         const whatsAppTarget = riderRecord.whatsapp || riderRecord.phone;
         const cleanWaPhone = whatsAppTarget.replace(/[+\s]/g, '');
 
+        // 2. USSD Logic: Handles stripping any Kenyan notation variants into safe local forms (07... / 01...)
         let ussdPhone = riderRecord.phone.replace(/[+\s]/g, '');
         if (ussdPhone.startsWith('254')) {
             ussdPhone = '0' + ussdPhone.substring(3);
         }
 
+        // Formulate pre-filled localized text templates for campus delivery contexts
         const defaultText = `Hi ${riderRecord.name}, I am ordering from ${buildingName}. Are you nearby?`;
         const encodedText = encodeURIComponent(defaultText);
 
-        // PRODUCTION CLEANUP: Clean markup framework completely stripped of dirty inline strings
+        // FIX 3: Injected 'event.stopPropagation();' to lock click propagation precisely inside each button tag
         card.innerHTML = `
-            <div class="rider-card-flex-wrapper">
+            <!-- Main Grid Framework: Flawlessly wraps down from row layout to column stack on small screens -->
+            <div style="display:flex; flex-direction:row; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px; width:100%; box-sizing:border-box; padding:4px;">
                 
-                
-                <div class="rider-profile-section">
-                    <div class="rider-avatar-badge">
+                <!-- Left Profile Meta Elements Stack -->
+                <div style="display:flex; align-items:center; gap:12px; min-width:160px; flex:1;">
+                    <div style="width:48px; height:48px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; font-weight:700; color:#ffffff; border:2px solid #ffffff; flex-shrink:0;">
                         ${riderRecord.name.charAt(0).toUpperCase()}
                     </div>
-                    <div class="rider-text-details">
-                        <h3>${riderRecord.name}</h3>
-                        <small>${buildingObj.currentStatus || 'Active Nearby'}</small>
+                    <div style="text-align:left;">
+                        <h3 style="margin:0; color:#ffffff; font-size:1.15rem; font-weight:700; line-height:1.2;">${riderRecord.name}</h3>
+                        <small style="color:#cbd5e1; font-weight:500; display:block; margin-top:4px;">
+                            ${buildingObj.currentStatus || 'Active Nearby'}
+                        </small>
                     </div>
                 </div>
                 
-                <!-- Right Quick-Action Shortcode Dialer Controls Group Stack -->
-                <div class="rider-actions-stack">
+                <!-- Right Action Grid Stack: Auto-widens to full footprint when wrapped beneath avatar block -->
+                <div style="display:flex; flex-direction:column; gap:8px; min-width:100%; flex:1; width:100%; box-sizing:border-box;">
                     
-                    <div class="rider-twin-buttons-grid">
-                        <!-- event.stopPropagation() shields buttons from triggering parent background card taps -->
-                        <a href="tel:${riderRecord.phone}" onclick="event.stopPropagation();" class="btn btn-call">Call</a>
-                        <a href="https://wa.me{cleanWaPhone}?text=${encodedText}" onclick="event.stopPropagation();" target="_blank" rel="noopener" class="btn btn-wa">WhatsApp</a>
+                    <!-- Call & WhatsApp Twin Column Splitter Rows -->
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%;">
+                        <!-- event.stopPropagation() keeps the touch action fully insulated right inside your anchor link -->
+                        <a href="tel:${riderRecord.phone}" onclick="event.stopPropagation();" class="btn btn-call" style="margin:0; text-align:center; padding:10px 0; display:block;">Call</a>
+                        <a href="https://wa.me/${cleanWaPhone}?text=${encodedText}" onclick="event.stopPropagation();" target="_blank" rel="noopener" class="btn btn-wa" style="margin:0; text-align:center; padding:10px 0; display:block;">WhatsApp</a>
                     </div>
                     
-                    <a href="tel:*130*${ussdPhone}#" onclick="event.stopPropagation();" class="btn btn-pcm">Please Call Me</a>
+                    <!-- Free Carrier Please Call Me Callback Push Button Request Link -->
+                    <a href="tel:*130*${ussdPhone}#" onclick="event.stopPropagation();" class="btn btn-pcm" style="margin:0; text-align:center; display:block; width:100%; box-sizing:border-box; padding:10px 0;">Please Call Me</a>
                     
-                    <button type="button" onclick="event.stopPropagation(); window.simulateStudentPayment('${riderId}')" class="btn btn-mpesa">
+                    <!-- Direct Cloud-Connected Ledger Checkout Gateway Launcher Button -->
+                    <button type="button" onclick="event.stopPropagation(); window.simulateStudentPayment('${riderId}')" class="btn btn-mpesa" style="margin:0; display:block; width:100%; box-sizing:border-box; padding:12px 0; font-weight:700;">
                         Pay Rider via M-Pesa
                     </button>
                 </div>
