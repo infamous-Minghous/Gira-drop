@@ -10,6 +10,14 @@
     <link rel="manifest" href="manifest.json">
     <!-- Color palette synchronization mapping directly to style.css and manifest variables -->
     <meta name="theme-color" content="#f97316">
+    
+    <!-- ==========================================================================
+         PRODUCTION REFINEMENT: APPLE iOS NATIVE LAUNCHER INTERFACES FIXED
+         ========================================================================== -->
+    <!-- 1. Forces iOS to download and render your true icon binary layout instead of fallback text letters -->
+    <link rel="apple-touch-icon" href="images/icon-192.png">
+
+    <!-- 2. Forces iOS Safari to hide the URL top-bar and launch in full-screen standalone app mode -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
