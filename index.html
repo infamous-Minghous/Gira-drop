@@ -209,37 +209,35 @@
         </div>
     </section>
 
-
-
-
         <!-- ==========================================================================
-         APPLICATION FOOTER & SECURITY ROUTING NODES
-         ========================================================================== -->
+     APPLICATION FOOTER & SECURITY ROUTING NODES
+     ========================================================================== -->
     <footer style="text-align:center; padding:24px 0; opacity:0.4;">
         <button type="button" onclick="window.openAdminPortal()" style="background:none; border:none; color:inherit; font-family:inherit; font-size:0.75rem; font-weight:600; cursor:pointer; text-decoration:underline;">
             &copy; 2026 Maseno Fast-Drop Admin
         </button>
     </footer>
 
-    <!-- 1. LIVE PRODUCTION CORRECTION: Replaced local mock asset with the official online client library CDN -->
-    <script src="https://jsdelivr.net"></script>
+        <!-- 1. Unified Client Library CDN Engine Link -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- 2. Global Cloud Workspace Parameters Configuration & SDK Instantiation -->
+    <!-- 2. Cloud Workspace Instantiation Block -->
     <script>
-      // NOTE: Ensure you run our SQL Schema script once inside your Supabase Editor to create your tables!
       const SUPABASE_URL = 'https://zaowprlwooltppxmcccu.supabase.co';
       const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inphb3dwcmx3b29sdHBweG1jY2N1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2MzYyMDQsImV4cCI6MjA5MTIxMjIwNH0.9r1PbaP4HMUJmOaDFHbXJiBfHANq0rY9kpfV5uXOQcs'; 
 
       if (typeof supabase !== 'undefined') {
+          // Instructs the engine to create the secure client workspace container
           window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-          console.log("✅ Live Production Connection: Supabase SDK successfully mounted in global space!");
+          console.log("✅ Live Production Connection: Supabase Client initialized successfully!");
       } else {
-          console.error("❌ Critical Error: Supabase client library connection engine failed to download over network.");
+          console.error("❌ Critical Error: Supabase client library connection engine timed out.");
       }
     </script>
 
-    <!-- 3. Primary Local Core Code Scripts File Connection -->
+    <!-- 3. Local Business Logic & Calculations Script Controllers Link -->
     <script src="script.js"></script>
+
 
     <!-- 4. Native Mobile PWA Service Worker Registration Lifecycle Hook -->
     <script>
