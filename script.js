@@ -211,33 +211,40 @@ function showRiders(area, buildingName) {
 
         // PRODUCTION FIXED ANCHOR LAYOUT: Restored raw hash character parameters inside tel: tags
         card.innerHTML = `
-            <!-- Left Info Area: Flexible, non-breaking layout stack -->
-            <div style="display:flex; align-items:center; gap:12px; flex:1; min-width:180px;">
-                <div style="width:50px; height:50px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.3rem; font-weight:700; color:#ffffff; border:2px solid #ffffff; flex-shrink:0;">
-                    ${riderRecord.name.charAt(0).toUpperCase()}
-                </div>
-                <div style="text-align:left;">
-                    <h3 style="margin:0; color:#ffffff; font-size:1.15rem; font-weight:700;">${riderRecord.name}</h3>
-                    <small style="color:#e5e7eb; font-weight:500; display:block; margin-top:2px;">
-                        ${buildingObj.currentStatus || 'Active Nearby'}
-                    </small>
-                </div>
-            </div>
-            
-            <!-- Right Button Action Area: Flexibly wraps down cleanly on extra-narrow phones -->
-            <div class="btn-group-vertical" style="flex:1; min-width:180px; margin-top:12px;">
-                <div class="btn-top-row">
-                    <a href="tel:${riderRecord.phone}" class="btn btn-call">Call</a>
-                    <a href="https://wa.me/${cleanWaPhone}?text=${encodedText}" target="_blank" rel="noopener" class="btn btn-wa">WhatsApp</a>
+            <!-- Main Content Container: Toggles from Row to Column layout fluidly on small viewports -->
+            <div style="display:flex; flex-direction:row; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px; width:100%; box-sizing:border-box; padding:4px;">
+                
+                <!-- Left Profile Wrapper Element -->
+                <div style="display:flex; align-items:center; gap:12px; min-width:160px; flex:1;">
+                    <div style="width:48px; height:48px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; font-weight:700; color:#ffffff; border:2px solid #ffffff; flex-shrink:0;">
+                        ${riderRecord.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div style="text-align:left;">
+                        <h3 style="margin:0; color:#ffffff; font-size:1.1rem; font-weight:700; line-height:1.2;">${riderRecord.name}</h3>
+                        <small style="color:#cbd5e1; font-weight:500; display:block; margin-top:4px;">
+                            ${buildingObj.currentStatus || 'Active Nearby'}
+                        </small>
+                    </div>
                 </div>
                 
-                <!-- FIX: Raw unencoded hash symbol parameter deployed to pass mobile device dialer pads cleanly -->
-                <a href="tel:*130*${ussdPhone}#" class="btn btn-pcm">Please Call Me</a>
+                <!-- Right Action Grid: Auto-expands to full width when dropped below profile stack -->
+                <div style="display:flex; flex-direction:column; gap:8px; min-width:100%; flex:1; width:100%; box-sizing:border-box;">
+                    
+                    <!-- Call & WhatsApp Twin Column Splitter Rows -->
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%;">
+                        <a href="tel:${riderRecord.phone}" class="btn btn-call" style="margin:0; text-align:center; padding:10px 0;">Call</a>
+                        <a href="https://wa.me{cleanWaPhone}?text=${encodedText}" target="_blank" rel="noopener" class="btn btn-wa" style="margin:0; text-align:center; padding:10px 0;">WhatsApp</a>
+                    </div>
+                    
+                    <!-- Free Carrier Please Call Me Shortcut Push Utility Button -->
+                    <a href="tel:*130*${ussdPhone}#" class="btn btn-pcm" style="margin:0; text-align:center; display:block; width:100%; box-sizing:border-box; padding:10px 0;">Please Call Me</a>
+                    
+                    <!-- Direct Cloud-Connected Ledger Checkout Gateway Launcher Button -->
+                    <button type="button" onclick="window.simulateStudentPayment('${riderId}')" class="btn btn-mpesa" style="margin:0; display:block; width:100%; box-sizing:border-box; padding:12px 0; font-weight:700;">
+                        Pay Rider via M-Pesa
+                    </button>
+                </div>
                 
-                <!-- Safaricom M-Pesa Push Gateway Integration Hook -->
-                <button type="button" onclick="window.simulateStudentPayment('${riderId}')" class="btn btn-mpesa" style="margin-bottom:0;">
-                    Pay Rider via M-Pesa
-                </button>
             </div>
         `;
         container.appendChild(card);
