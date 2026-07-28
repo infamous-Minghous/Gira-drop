@@ -38,7 +38,7 @@ self.addEventListener('activate', (event) => {
 
 // 3. Intelligent Interception Engine: Accelerates loading while protecting communications channels
 self.addEventListener('fetch', (event) => {
-  // FIXED GATING PROTECTION: Bypass cache logic instantly if the event is a phone dialer or external messaging link
+  // FIXED COMMUNICATIONS SHIELD: Bypass cache logic instantly if the event is a phone dialer or external messaging link
   if (
     event.request.url.startsWith('tel:') || 
     event.request.url.startsWith('sms:') ||

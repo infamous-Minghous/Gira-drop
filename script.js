@@ -215,39 +215,36 @@ function showRiders(area, buildingName) {
         const defaultText = `Hi ${riderRecord.name}, I am ordering from ${buildingName}. Are you nearby?`;
         const encodedText = encodeURIComponent(defaultText);
 
-        // FIX 3: Injected 'event.stopPropagation();' to lock click propagation precisely inside each button tag
+         // PRODUCTION FIXED ANCHOR LAYOUT: Hardened container wrapping to support narrow screens seamlessly
         card.innerHTML = `
-            <!-- Main Grid Framework: Flawlessly wraps down from row layout to column stack on small screens -->
+            <!-- FIX: Wrapping parent shell that handles multi-line layout folding automatically on thin viewports -->
             <div style="display:flex; flex-direction:row; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px; width:100%; box-sizing:border-box; padding:4px;">
                 
-                <!-- Left Profile Meta Elements Stack -->
+                <!-- Left Info Area: Flexible, non-breaking layout stack -->
                 <div style="display:flex; align-items:center; gap:12px; min-width:160px; flex:1;">
-                    <div style="width:48px; height:48px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; font-weight:700; color:#ffffff; border:2px solid #ffffff; flex-shrink:0;">
+                    <div style="width:50px; height:50px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.3rem; font-weight:700; color:#ffffff; border:2px solid #ffffff; flex-shrink:0;">
                         ${riderRecord.name.charAt(0).toUpperCase()}
                     </div>
                     <div style="text-align:left;">
-                        <h3 style="margin:0; color:#ffffff; font-size:1.15rem; font-weight:700; line-height:1.2;">${riderRecord.name}</h3>
-                        <small style="color:#cbd5e1; font-weight:500; display:block; margin-top:4px;">
+                        <h3 style="margin:0; color:#ffffff; font-size:1.15rem; font-weight:700;">${riderRecord.name}</h3>
+                        <small style="color:#e5e7eb; font-weight:500; display:block; margin-top:2px;">
                             ${buildingObj.currentStatus || 'Active Nearby'}
                         </small>
                     </div>
                 </div>
                 
-                <!-- Right Action Grid Stack: Auto-widens to full footprint when wrapped beneath avatar block -->
-                <div style="display:flex; flex-direction:column; gap:8px; min-width:100%; flex:1; width:100%; box-sizing:border-box;">
-                    
-                    <!-- Call & WhatsApp Twin Column Splitter Rows -->
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%;">
-                        <!-- event.stopPropagation() keeps the touch action fully insulated right inside your anchor link -->
-                        <a href="tel:${riderRecord.phone}" onclick="event.stopPropagation();" class="btn btn-call" style="margin:0; text-align:center; padding:10px 0; display:block;">Call</a>
-                        <a href="https://wa.me/${cleanWaPhone}?text=${encodedText}" onclick="event.stopPropagation();" target="_blank" rel="noopener" class="btn btn-wa" style="margin:0; text-align:center; padding:10px 0; display:block;">WhatsApp</a>
+                <!-- Right Button Action Area: Flexibly wraps down cleanly on extra-narrow phones without clipping content -->
+                <div class="btn-group-vertical" style="flex:1; min-width:100%; width:100%; box-sizing:border-box; margin-top:12px; display:flex; flex-direction:column; gap:8px;">
+                    <div class="btn-top-row" style="display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%;">
+                        <a href="tel:${riderRecord.phone}" class="btn btn-call" style="margin:0; text-align:center; padding:10px 0; display:block;">Call</a>
+                        <a href="https://wa.me{cleanWaPhone}?text=${encodedText}" target="_blank" rel="noopener" class="btn btn-wa" style="margin:0; text-align:center; padding:10px 0; display:block;">WhatsApp</a>
                     </div>
                     
-                    <!-- Free Carrier Please Call Me Callback Push Button Request Link -->
-                    <a href="tel:*130*${ussdPhone}#" onclick="event.stopPropagation();" class="btn btn-pcm" style="margin:0; text-align:center; display:block; width:100%; box-sizing:border-box; padding:10px 0;">Please Call Me</a>
+                    <!-- FIX: Raw unencoded hash symbol parameter deployed to pass mobile device dialer pads cleanly -->
+                    <a href="tel:*130*${ussdPhone}#" class="btn btn-pcm" style="margin:0; text-align:center; display:block; width:100%; box-sizing:border-box; padding:10px 0;">Please Call Me</a>
                     
-                    <!-- Direct Cloud-Connected Ledger Checkout Gateway Launcher Button -->
-                    <button type="button" onclick="event.stopPropagation(); window.simulateStudentPayment('${riderId}')" class="btn btn-mpesa" style="margin:0; display:block; width:100%; box-sizing:border-box; padding:12px 0; font-weight:700;">
+                    <!-- Safaricom M-Pesa Push Gateway Integration Hook -->
+                    <button type="button" onclick="window.simulateStudentPayment('${riderId}')" class="btn btn-mpesa" style="margin:0; display:block; width:100%; box-sizing:border-box; padding:12px 0; font-weight:700;">
                         Pay Rider via M-Pesa
                     </button>
                 </div>
