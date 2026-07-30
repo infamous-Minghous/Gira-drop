@@ -1057,7 +1057,7 @@ window.cleanProductionSTKGateway = async function() {
 
         console.log("📡 Contacting serverless bridge to broadcast secure STK transaction payload...");
 
-        // PRODUCTION CORRECTION: Point directly to your active project API edge function routing gateway
+        // FIXED: Point directly to your active project API edge function routing gateway
         const secureEdgeRoute = "https://supabase.co";
 
         const response = await fetch(secureEdgeRoute, {
@@ -1083,16 +1083,16 @@ window.cleanProductionSTKGateway = async function() {
             
             console.log(`📝 STK Dispatched successfully (CheckoutRequestID: ${resData.CheckoutRequestID})`);
             
-            // SECURITY ACCOUNTING FIX: Only log the transaction history AFTER the network call succeeds
-            if (window.supabase) {
-                await window.supabase.from('daily_history').insert([{
-                    rider_name: currentLoggedInRider || "Unknown Rider",
-                    amount: parsedAmount,
-                    payment_method: 'M-Pesa',
-                    student_phone: formattedPhone,
-                    checkout_request_id: resData.CheckoutRequestID, // Log this key to reconcile logs later
-                    created_at: new Date().toISOString()
-                }]);
+            // CONNECT TO UNIFIED ACCOUNTING & LOYALTY LIFECYCLE
+            if (typeof window.updateDailyEarnings === 'function') {
+                // This routes the checkout details through Section 11, checking existing accounts or registering a new profile natively!
+                await window.updateDailyEarnings(
+                    parsedAmount, 
+                    'M-Pesa', 
+                    formattedPhone, 
+                    resData.CheckoutRequestID, // Passes the tracking handle cleanly
+                    currentLoggedInRider
+                );
             }
 
             alert(`🎉 STK Push sent successfully to ${formattedPhone}! Please enter your M-Pesa PIN on your phone to complete delivery payment.`);
@@ -1123,11 +1123,11 @@ window.cleanProductionSTKGateway = async function() {
 
 
 
+
 // ==========================================================================
 // SECTION 11: CORE BACKEND DATA MUTATION WORKER (SUPABASE DIRECT LEDGER)
 // ==========================================================================
 async function updateDailyEarnings(amount, method = 'M-Pesa', phone = null, riderId = null, explicitRiderName = null) {
-    // Isolate targeting properties safely, using global parameters as clear fail-safes
     const targetedRider = explicitRiderName || currentLoggedInRider;
     
     if (!targetedRider || !window.supabase) {
@@ -1141,21 +1141,7 @@ async function updateDailyEarnings(amount, method = 'M-Pesa', phone = null, ride
     try {
         console.log(`📡 Syncing transaction record: KSh ${parsedAmount} for ${targetedRider} via ${method}`);
 
-        // --- HARDENED ARCHITECTURE FIX: PREVENTION OF READ-MODIFY-WRITE RACE CONDITIONS ---
-        /* Instead of fetching, computing math locally, and overwriting rows, we utilize an RPC function 
-           to instruct the Postgres database engine to increment the balance directly on the server.
-           
-           👉 NOTE: You need to create this simple function inside your Supabase SQL Editor once:
-              
-              CREATE OR REPLACE FUNCTION increment_rider_earnings(rider_target TEXT, amount_to_add INT)
-              RETURNS void AS $$
-              BEGIN
-                UPDATE riders 
-                SET total_earnings = COALESCE(total_earnings, 0) + amount_to_add
-                WHERE name = rider_target;
-              END;
-              $$ LANGUAGE plpgsql;
-        */
+        // 1. ATOMIC BALANCE INCREMENT: Instruct Postgres to add earnings to the driver's profile
         const { error: rpcError } = await window.supabase
             .rpc('increment_rider_earnings', { 
                 rider_target: targetedRider, 
@@ -1164,42 +1150,73 @@ async function updateDailyEarnings(amount, method = 'M-Pesa', phone = null, ride
 
         if (rpcError) {
             console.error("❌ RPC Transaction increment dropped by cloud server:", rpcError.message);
-            // FALLBACK PATHWAY: If you haven't deployed the RPC function yet, this standard code safely keeps you online:
+            // FALLBACK SYSTEM: Keeps app operational if the RPC database function is rebuilding
             const { data: dbRow } = await window.supabase.from('riders').select('total_earnings').eq('name', targetedRider).maybeSingle();
             const fallbackTotal = (dbRow ? (dbRow.total_earnings || 0) : 0) + parsedAmount;
             const { error: fallbackError } = await window.supabase.from('riders').update({ total_earnings: fallbackTotal }).eq('name', targetedRider);
             if (fallbackError) throw fallbackError;
         }
 
-        // --- DATATYPE REPAIR: FIXES THE SPLIT('T') CRASH ---
-        // Slicing explicit sub-strings ensures clean 'YYYY-MM-DD' formatted date parameters are sent to Postgres
+        // Clean string date slice extraction matching standard Postgres 'YYYY-MM-DD' layout columns
         const cleanDatabaseDate = new Date().toISOString().split('T')[0];
 
-        // 3. Build a detailed separate log item entry inside your daily_history audits table
-        const { error: historyError } = await window.supabase
-            .from('daily_history')
-            .insert([{
-                rider_name: targetedRider,
-                amount: parsedAmount,
-                payment_method: method,
-                student_phone: phone,
-                created_at: cleanDatabaseDate // Safe string injection replacing dangerous raw split arrays
-            }]);
+        // 2. AUDIT LOGGING: Insert a tracking row into your daily history ledger tables
+        // Inside your updateDailyEarnings worker function:
+const { error: historyError } = await window.supabase
+    .from('daily_history')
+    .insert([{
+        rider_name: targetedRider,
+        amount: parsedAmount,
+        payment_method: method,
+        student_phone: phone,
+        checkout_request_id: riderId, // Safely maps your Safaricom ID string parameters
+        created_at: new Date().toISOString().split('T')[0]
+    }]);
+
 
         if (historyError) {
             console.warn("⚠️ Accountability history logging encounter alert:", historyError.message);
         } else {
-            console.log(`🎉 Ledger successfully locked down! Transactions recorded for worker session: ${targetedRider}`);
+            console.log(`🎉 Ledger successfully locked down for worker session: ${targetedRider}`);
         }
 
-        // Push fresh values onto the client UI instantly using our real-time synchronization utilities
+        // ==========================================================================
+        // PRODUCTION REFINEMENT: INTEGRATED STUDENT BACKGROUND LOYALTY SIGNUP & SMS LINK
+        // ==========================================================================
+        if (phone && phone !== "MANUAL_CASH_ENTRY" && phone !== "SYSTEM_ADJUST") {
+            try {
+                console.log(`📱 Evaluating background loyalty tracking triggers for device: ${phone}`);
+                
+                // Invoke the atomic PostgreSQL loyalty checker function we deployed in Step 1
+                const { data: loyaltyResult, error: loyaltyErr } = await window.supabase
+                    .rpc('process_student_loyalty_order', { 
+                        student_target: phone 
+                    });
+
+                if (loyaltyErr) throw loyaltyErr;
+
+                if (loyaltyResult) {
+                    console.log(`📊 Loyalty processing feedback trace: ${loyaltyResult.message}`);
+                    
+                    // Alert the checkout view layout immediately if a free milestone reward is active
+                    if (loyaltyResult.earned_free === 1) {
+                        alert(`🎁 LOYALTY REWARD UNLOCKED!\n\nThis student has reached ${loyaltyResult.current_count} total orders.\nThis round is 100% FREE! An automated SMS alert has been pushed to their device.`);
+                    }
+                }
+            } catch (loyaltyFail) {
+                // Non-blocking catch ensures that even if cellular SMS links timeout, the primary payment still succeeds
+                console.warn("⚠️ Non-fatal Loyalty Sync Exception caught: ", loyaltyFail.message);
+            }
+        }
+
+        // Refresh dynamic UI metrics displays instantly across active application tabs
         if (typeof loadRiderStats === 'function') {
             loadRiderStats(targetedRider);
         }
 
     } catch (err) {
         console.error("❌ Transaction ledger mutation framework encountered a critical failure:", err);
-        throw err; // Escalate error handling tasks safely to parenting caller functions
+        throw err; 
     }
 }
 
@@ -1594,24 +1611,33 @@ window.confirmCash = async function() {
     const parsedAmount = parseInt(currentAmount, 10) || 0;
     if (parsedAmount <= 0) return alert("⚠️ Amount Error: Please enter a valid payment total using the numpad first.");
     
-    const verificationPrompt = `Log KSh ${parsedAmount.toLocaleString()} as a manual CASH settlement transaction?`;
+    // FETCH THE INPUT: Pull the student number directly out of the numeric form cell input space
+    const phoneInputContainer = document.getElementById('customer-phone');
+    const inputPhone = phoneInputContainer ? phoneInputContainer.value.trim() : "";
+    
+    if (!inputPhone) return alert("⚠️ Input Error: Please enter the student's phone number first to track loyalty points.");
+    
+    // Standardise using your Section 9 international 12-digit formatter (2547...)
+    const formattedPhone = formatPhoneNumber(inputPhone);
+    if (formattedPhone.length !== 12) return alert("⚠️ Format Error: Enter a valid phone number (e.g. 07... or 01...).");
+
+    const verificationPrompt = `Log KSh ${parsedAmount.toLocaleString()} for student ${formattedPhone} as a manual CASH transaction?`;
     if (!confirm(verificationPrompt)) return;
 
     try {
-        console.log("🪙 Direct Cash settlement input recognized. Syncing structural database ledgers...");
+        console.log(`🪙 Direct Cash settlement input recognized for phone: ${formattedPhone}. Syncing ledgers...`);
         
-        /* FIX: Swapped the shorthand parameters with the complete 5-argument blueprint definition 
-           built in Section 11 to guarantee flawless data mapping transitions down to your columns */
         if (typeof window.updateDailyEarnings === 'function') {
+            // FIXED PARAMS: Replaced 'MANUAL_CASH_ENTRY' with the actual formatted student phone string variable
             await window.updateDailyEarnings(
                 parsedAmount, 
                 'Cash', 
-                'MANUAL_CASH_ENTRY', 
+                formattedPhone, // Correctly linked to the customer identifier 
                 null, 
                 currentLoggedInRider
             );
             
-            alert("🎉 Manual cash payment logged successfully in the cloud registry database!");
+            alert("🎉 Manual cash payment logged successfully and student loyalty points updated!");
             
             if (typeof window.closeRiderView === 'function') {
                 window.closeRiderView();
@@ -1624,6 +1650,7 @@ window.confirmCash = async function() {
         alert("Transaction could not be completed due to a database synchronization error.");
     }
 };
+
 
 // ==========================================================================
 // SECTION 16: PART 2 - HISTORICAL TRANSACTIONS RECONCILIATION ENGINE

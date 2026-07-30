@@ -38,6 +38,30 @@ self.addEventListener('activate', (event) => {
 
 // 3. Intelligent Interception Engine: Accelerates loading while protecting communications channels
 self.addEventListener('fetch', (event) => {
+
+
+  const requestUrl = new URL(event.request.url);
+
+  // If a POST/Database action drops due to connection loss, intercept and hold it safely
+  if (requestUrl.hostname.includes('supabase.co') && event.request.method === 'POST') {
+    event.respondWith(
+      fetch(event.request.clone()).catch(async () => {
+        console.warn("⚠️ Offline Mode Triggered: Queueing transaction locally on device.");
+        
+        // Cache the raw request payload natively inside your smartphone's background cache space
+        const cache = await caches.open('offline-mutations-queue');
+        const simulatedResponse = new Response(JSON.stringify({ offline: true, status: "queued" }), {
+          status: 202,
+          headers: { 'Content-Type': 'application/json' }
+        });
+        
+        // Save unique tracking handles
+        await cache.put(event.request.url + '?timestamp=' + Date.now(), event.request.clone());
+        return simulatedResponse;
+      })
+    );
+    return;
+  }
   // FIXED COMMUNICATIONS SHIELD: Bypass cache logic instantly if the event is a phone dialer or external messaging link
   if (
     event.request.url.startsWith('tel:') || 
@@ -72,3 +96,33 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+
+// 4. Automated Network Reconnect Synchroniser
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'sync-database-records') {
+    event.waitUntil(flushOfflineQueueToServer());
+  }
+});
+
+async function flushOfflineQueueToServer() {
+  const cache = await caches.open('offline-mutations-queue');
+  const requests = await cache.keys();
+  
+  for (const req of requests) {
+    try {
+      const clonedReq = await cache.match(req);
+      const networkResponse = await fetch(clonedReq.url, {
+        method: 'POST',
+        headers: clonedReq.headers,
+        body: await clonedReq.text()
+      });
+      
+      if (networkResponse.ok) {
+        await cache.delete(req); // Purge successfully synced queues
+        console.log("🟩 Background Sync Success: Cached offline transactions successfully synchronized with cloud ledger!");
+      }
+    } catch (syncErr) {
+      console.error("❌ Sync attempt failed, holding file in device disk layout:", syncErr);
+    }
+  }
+}
