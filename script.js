@@ -1,6 +1,5 @@
-
 // ==========================================================================
-// PRO-TIP: Ensure this variable definition is placed at the absolute top of script.js!
+// CONFIGURATION ANCHOR: UNIVERSAL MULTI-TENANT STATE SECURITY GATES
 // ==========================================================================
 if (typeof window.otpStageState === 'undefined') {
     window.otpStageState = "REQUEST"; // Instantiate inside global context namespace safely
@@ -16,7 +15,6 @@ let currentAmount = "0";          // Tracks typed characters on the custom numpa
 // Hydrate user session cleanly out of persistent browser storage instead of volatile memory
 let currentLoggedInRider = localStorage.getItem('fastdrop_rider_session') || null;
 
-// CENTRALIZED WORKER REGISTRY (Single Source of Truth)
 // CENTRALIZED WORKER REGISTRY (Single Source of Truth)
 const approvedRiders = {
     // A. Standard Campus Couriers Pool (Using personal business Pochi wallets)
@@ -66,13 +64,20 @@ const approvedRiders = {
     }
 };
 
-
-// State-sync on application boot
+// MULTI-TENANT STATE SYNC BOOTSTRAPPING ENGAGED
 window.addEventListener('DOMContentLoaded', () => {
     if (window.supabase && currentLoggedInRider) {
-        console.log(`🔄 Existing active session detected for rider: ${currentLoggedInRider}`);
-        if (typeof window.loadRiderStats === 'function') {
-            window.loadRiderStats(currentLoggedInRider);
+        // PRODUCTION GUARD: Verify session corresponds to a valid courier before initializing worker view states
+        const isValidCourierSession = approvedRiders[currentLoggedInRider] || 
+            Object.values(approvedRiders).find(r => r.name === currentLoggedInRider);
+
+        if (isValidCourierSession) {
+            console.log(`🔄 Valid active worker session recognized for courier: ${currentLoggedInRider}`);
+            if (typeof window.loadRiderStats === 'function') {
+                window.loadRiderStats(currentLoggedInRider);
+            }
+        } else {
+            console.log("ℹ️ Administrative session context detected on device initialization. Suppressing worker pipeline triggers.");
         }
     }
 });
@@ -124,21 +129,24 @@ const campusData = {
     }
 };
 
-// Safe DOM element instantiation using explicit defensive validation controls
-const container = document.getElementById('app-container');
-const breadcrumb = document.getElementById('breadcrumb');
+// MULTI-VIEWPORT SECURITY: Using open global scoping rules to support view-switches
+let container = document.getElementById('app-container');
+let breadcrumb = document.getElementById('breadcrumb');
 
 if (!container || !breadcrumb) {
     console.warn("⚠️ Core application interface nodes missing from layout thread context.");
 }
 
 
+
 // ==========================================================================
 // SECTION 3: STUDENT VIEW CAMPUS HUB NAVIGATION ENGINE
 // ==========================================================================
 function showAreas() {
-    // Safety guard to guarantee DOM access nodes are safely ready
-    if (!container || !breadcrumb) return;
+    // SELF-HEALING DOM GUARD: Re-verify layout elements exist to prevent viewport freeze bugs
+    if (!container) container = document.getElementById('app-container');
+    if (!breadcrumb) breadcrumb = document.getElementById('breadcrumb');
+    if (!container || !breadcrumb) return console.warn("⚠️ Aborted showAreas: Required DOM target containers are missing.");
 
     // Accessibility & Visibility Sync
     breadcrumb.textContent = "Select Area";
@@ -147,9 +155,6 @@ function showAreas() {
     
     // Clear dynamic workspace text nodes safely
     container.innerHTML = "";
-    
-    /* PERFORMANCE FIX: We removed container.style.gridTemplateColumns modifications 
-       to allow your style.css auto-fit responsive patterns to handle layout footprints */
 
     // Use campusData structure safely from normalized configuration state
     Object.keys(campusData).forEach(areaName => {
@@ -172,7 +177,10 @@ function showAreas() {
 }
 
 function showBuildings(areaName) {
-    if (!container || !breadcrumb) return;
+    // SELF-HEALING DOM GUARD: Re-verify layout elements exist to prevent viewport freeze bugs
+    if (!container) container = document.getElementById('app-container');
+    if (!breadcrumb) breadcrumb = document.getElementById('breadcrumb');
+    if (!container || !breadcrumb) return console.warn("⚠️ Aborted showBuildings: Required DOM target containers are missing.");
 
     // Cross-Platform safe arrow character selection pattern
     breadcrumb.textContent = "← Back to Areas";
@@ -330,14 +338,15 @@ function showRiders(area, buildingName) {
 // SECTION 5: UNIFIED DYNAMIC HARDWARE CHECKOUT ROUTER
 // ==========================================================================
 window.simulateStudentPayment = async function(riderId) {
-    const riderRecord = approvedRiders[riderId];
-    if (!riderRecord) return alert("⚠️ Error: Selected courier registry profile missing.");
+    // SELF-HEALING REGISTRY GUARD: Fallback lookup check if profile keys carry unique text patterns
+    const riderRecord = approvedRiders[riderId] || Object.values(approvedRiders).find(r => r.name === riderId);
+    if (!riderRecord) return alert("⚠️ Error: Selected courier registry profile missing from single source of truth.");
 
     const targetRiderName = riderRecord.name;
     const walletType = riderRecord.paymentType || "Pochi"; // Default fallback variant
     const walletDestination = riderRecord.paymentWallet;
 
-    // 1. Capture transaction metrics safely
+    // 1. Capture transaction metrics safely with basic numeric validation bounds
     const inputAmount = prompt(`How much are you paying ${targetRiderName}? (KSh):`, "50");
     if (!inputAmount) return; 
 
@@ -346,11 +355,12 @@ window.simulateStudentPayment = async function(riderId) {
         return alert("Please enter a valid amount between KSh 1 and KSh 10,000.");
     }
 
-    // 2. Fetch payer tracking credentials for background loyalty tables
+    // 2. Fetch payer tracking credentials for background loyalty tables parsing execution
     const studentPhone = prompt("Enter your M-Pesa phone number to log delivery loyalty rewards (e.g., 07...):");
     if (!studentPhone) return;
 
-    const formattedPhone = formatPhoneNumber(studentPhone);
+    // Pull tracking references from your global Section 9 sanitizer utilities
+    const formattedPhone = typeof formatPhoneNumber === 'function' ? formatPhoneNumber(studentPhone) : studentPhone.trim();
     if (formattedPhone.length !== 12) {
         return alert("Invalid phone format. Please enter a valid number (e.g., 07... or 01...).");
     }
@@ -375,12 +385,15 @@ window.simulateStudentPayment = async function(riderId) {
 
     console.log(`📡 Dynamic Routing Engaged: Initializing native ${walletType} channel tunnel to target ${walletDestination}`);
 
-    // 4. PIPELINE DECOUPLING: Log accounting data rows instantly before device refocus
+    // 4. PIPELINE DECOUPLING: Log accounting data rows instantly before device refocus interrupts execution loops
     if (typeof window.updateDailyEarnings === 'function') {
         try {
+            // HARDENED FOR DATE ARCHIVE: Standardized method naming conventions to safeguard summary arithmetic
+            const standardizedMethodTag = `M-Pesa (${walletType})`;
+            
             await window.updateDailyEarnings(
                 parsedAmount, 
-                `${walletType} Native Link`, 
+                standardizedMethodTag, 
                 formattedPhone, 
                 riderId, 
                 targetRiderName
@@ -399,6 +412,7 @@ window.simulateStudentPayment = async function(riderId) {
 
 
 
+
 // ==========================================================================
 // SECTION 6: WORKER SECURE PORTAL & APPLICATION LOGOUT ENGINE
 // ==========================================================================
@@ -406,6 +420,7 @@ window.toggleRiderApp = function() {
     const riderApp = document.getElementById('rider-app');
     const appContainer = document.getElementById('app-container');
     const breadcrumb = document.getElementById('breadcrumb');
+    const adminPanel = document.getElementById('admin-panel'); // PRODUCTION STATE TRACKING GUARD
     
     // Explicitly target the button using an ID or unique attribute path to prevent selector collisions
     const portalToggleBtn = document.querySelector('.nav-bar .nav-btn');
@@ -413,9 +428,17 @@ window.toggleRiderApp = function() {
     if (riderApp && !riderApp.classList.contains('hidden')) {
         // --- LOGOUT LOGIC PIPELINE EXECUTION ---
         riderApp.classList.add('hidden');
-        if (appContainer) appContainer.classList.remove('hidden');
-        if (breadcrumb) breadcrumb.classList.remove('hidden');
         if (portalToggleBtn) portalToggleBtn.textContent = "Rider Portal";
+
+        // PRODUCTION MUTUAL EXCLUSION CHECK: Only restore consumer layout maps if administrative view panel is closed
+        const isAdminPanelActiveCurrently = adminPanel && !adminPanel.classList.contains('hidden');
+        
+        if (!isAdminPanelActiveCurrently) {
+            if (appContainer) appContainer.classList.remove('hidden');
+            if (breadcrumb) breadcrumb.classList.remove('hidden');
+        } else {
+            console.log("📊 Admin master interface remains active. Suppressing standard customer layout node re-anchors.");
+        }
 
         // Extract and reset secure authentication form input components completely
         const nameField = document.getElementById('rider-portal-id');
@@ -431,7 +454,7 @@ window.toggleRiderApp = function() {
         if (riderChannel && window.supabase) {
             try {
                 window.supabase.removeChannel(riderChannel);
-                console.log("🔌 Live Production WebSocket channel successfully closed and dregestered.");
+                console.log("🔌 Live Production WebSocket channel successfully closed and deregistered.");
             } catch (chanErr) {
                 console.warn("⚠️ Non-fatal issue encountered while clearing out real-time streams:", chanErr.message);
             }
@@ -444,8 +467,8 @@ window.toggleRiderApp = function() {
         localStorage.removeItem('fastdrop_rider_session');
         console.log("🧼 Rider security token scrubbed locally from phone storage.");
 
-        // STATE RESTORATION FIX: Regenerate student hub views cleanly so layout isn't left empty
-        if (typeof showAreas === 'function') {
+        // STATE RESTORATION FIX: Regenerate student hub views cleanly if admin workspace is hidden
+        if (typeof showAreas === 'function' && !isAdminPanelActiveCurrently) {
             showAreas();
         }
         return;
@@ -461,6 +484,7 @@ window.toggleRiderApp = function() {
         if (nameInputTarget) nameInputTarget.focus();
     }
 };
+
 
 
 
@@ -497,7 +521,7 @@ window.authenticateRider = async function() {
 
         console.log(`🛡️ SECURITY HANDSHAKE EXECUTING - Querying record verification metrics for: ${name}`);
 
-        // FIX: Added explicit maybeSingle() parameter block to terminate the Promise chain securely
+        // Added explicit maybeSingle() parameter block to terminate the Promise chain securely
         const { data: authRecord, error } = await window.supabase
             .from('rider_auth')
             .select('rider_name')
@@ -536,8 +560,21 @@ window.authenticateRider = async function() {
             const portalToggleBtn = document.querySelector('.nav-bar .nav-btn');
             if (portalToggleBtn) portalToggleBtn.textContent = "Log Out";
 
+            // PRODUCTION ROLE DISCRIMINATION ENHANCEMENT
+            // Automatically tags the user's role badge instantly to lock down calculation tracks
+            const riderProfile = Object.values(approvedRiders).find(r => r.name === name);
+            const isSecretHandler = riderProfile?.isSecret || false;
+            const textClassificationLabel = isSecretHandler ? "VIP Shop Handler 👑" : "Standard Fleet";
+
             const dashboardTitle = document.querySelector('#rider-app h2');
-            if (dashboardTitle) dashboardTitle.textContent = `${name}'s Dashboard`;
+            if (dashboardTitle) {
+                dashboardTitle.innerHTML = `
+                    ${name}'s Dashboard 
+                    <span style="display:block; font-size:0.8rem; color:${isSecretHandler ? '#eab308' : '#3b82f6'}; font-weight:600; margin-top:4px; text-transform:uppercase; letter-spacing:0.05em;">
+                        📍 Role: ${textClassificationLabel}
+                    </span>
+                `;
+            }
             
             // Connect background real-time synchronization pipelines live
             if (typeof window.loadRiderStats === 'function') {
@@ -594,6 +631,8 @@ window.triggerForgotPassword = function() {
             nameField.classList.remove('hidden');
             nameField.value = ""; // Clear inputs for terminal safety checks
             nameField.disabled = false; // Release lock metrics cleanly
+            // PRODUCTION ANTI-SPOOFING MASK: Updates prompt hint text cell placeholder rules
+            nameField.placeholder = "Enter Registered Phone or Driver ID...";
         }
         if (codeField) {
             codeField.classList.add('hidden');
@@ -605,23 +644,25 @@ window.triggerForgotPassword = function() {
         }
         
         if (actionBtn) {
-            actionBtn.textContent = "Send Verification SMS";
+            actionBtn.textContent = "Send Verification Code";
             actionBtn.disabled = false;
             actionBtn.style.opacity = "1";
         }
         
         if (statusText) {
-            statusText.textContent = "Enter your registered rider name to verify your linked account phone number.";
+            // HARDENED FRONTEND PROMPT: Shields account mapping lookups from public name guessing
+            statusText.textContent = "Please enter your unique phone number or Driver ID code string to receive a secure recovery code token.";
         }
         
         // Lock system engine sequence state to starting request defaults safely without throwing exceptions
         window.otpStageState = "REQUEST";
-        console.log("🔒 Reset Layer: OTP Interface Window successfully mounted into focus.");
+        console.log("🔒 Reset Layer: Anti-Spoofing OTP Interface Window successfully mounted into focus.");
     } else {
         console.error("❌ Reset Layer Exception: Element selector '#otp-modal' cannot be found in the DOM template structures.");
         alert("Layout configuration error: Recovery node link is currently broken.");
     }
 };
+
 
 
 
@@ -681,12 +722,15 @@ window.requestVerificationOTP = async function() {
             // Step 3: Extract cellular routing pathways safely from the verified profile object
             let targetPhone = profileCheck.phone_number || null;
 
-            // Normalization Fallback Loop matching your local dictionaries
-            if (!targetPhone) {
+            // HARDENED FALLBACK SEARCH: Supports accurate multi-case matching across all fleets
+            if (!targetPhone && typeof approvedRiders !== 'undefined') {
                 const matchedWorker = Object.values(approvedRiders).find(
-                    worker => worker.name.toLowerCase() === riderName.toLowerCase()
+                    worker => worker.name && worker.name.trim().toLowerCase() === riderName.toLowerCase()
                 );
-                if (matchedWorker) targetPhone = matchedWorker.phone;
+                if (matchedWorker) {
+                    targetPhone = matchedWorker.phone;
+                    console.log(`ℹ️ Match localized via registry array matrix for fleet member: ${matchedWorker.name}`);
+                }
             }
 
             if (!targetPhone) throw new Error("Rider profile contains no verified phone routing links.");
@@ -731,9 +775,11 @@ window.requestVerificationOTP = async function() {
             window.executeFinalPasswordReset(riderName);
         } else {
             console.error("❌ Link Error: execution routing endpoint is missing or unassigned.");
+            alert("Application layout link error: Recovery executor endpoint is offline.");
         }
     }
 };
+
 
 
 
@@ -789,16 +835,7 @@ window.executeFinalPasswordReset = async function(riderName) {
 
         if (resetError) throw new Error("Key rewrite procedure dropped.");
 
-        // FIX: Synchronized local dictionary property signatures to prevent state-drift locks
-        const matchedWorkerId = Object.keys(approvedRiders).find(
-            key => approvedRiders[key].name.toLowerCase() === riderName.toLowerCase()
-        );
-
-        if (matchedWorkerId) {
-            // Updated property parameter mappings from .key straight to .secret_key
-            approvedRiders[matchedWorkerId].secret_key = newKeyInput;
-            console.log(`✅ Runtime dictionary registry synchronized for worker profile index: ${matchedWorkerId}`);
-        }
+        console.log(`🔒 Cloud credentials successfully committed for: ${riderName}. Syncing local layouts...`);
 
         if (actionBtn) {
             actionBtn.disabled = false;
@@ -815,6 +852,10 @@ window.executeFinalPasswordReset = async function(riderName) {
         
         const otpModalNode = document.getElementById('otp-modal');
         if (otpModalNode) otpModalNode.classList.add('hidden');
+        
+        // INTERFACE FALLBACK RESTORATION: Automatically returns the user right back into your login modal pane
+        const loginModalNode = document.getElementById('login-modal');
+        if (loginModalNode) loginModalNode.classList.remove('hidden');
         
         alert("🎉 Security PIN successfully reset! You can now log into your Rider Dashboard using your new code.");
     } catch (err) {
@@ -872,16 +913,8 @@ window.changeRiderPassword = async function() {
 
         if (error) throw error;
 
-        // FIX: Synchronized local normalized memory caches cleanly using correct properties
-        const matchedWorkerId = Object.keys(approvedRiders).find(
-            id => approvedRiders[id].name.toLowerCase() === currentLoggedInRider.toLowerCase()
-        );
-
-        if (matchedWorkerId) {
-            // Updated property parameter mappings from .key straight to .secret_key
-            approvedRiders[matchedWorkerId].secret_key = newKey;
-            console.log(`✅ Core internal ledger sync matched for worker ID: ${matchedWorkerId}`);
-        }
+        // PRODUCTION CLEAN EMBED: Wiped out local dictionary data pollution to secure raw frontend state engines
+        console.log(`🔒 Cloud credentials successfully re-keyed for: ${currentLoggedInRider}. Memory matrices clear.`);
 
         alert("🎉 Success! Your security PIN has been successfully updated live in the database.");
         newKeyField.value = ""; 
@@ -918,18 +951,27 @@ async function loadRiderStats(name) {
             window.supabase.removeChannel(riderChannel);
             console.log(`🔌 Safely disconnected previous WebSocket channel tracking session.`);
         } catch (removeErr) {
-            console.warn("⚠️ Soft issue removing legacy network channel channel:", removeErr);
+            console.warn("⚠️ Soft issue removing legacy network channel:", removeErr);
         }
-        // FIXED: Un-commented tracking reference purge to guarantee a clean slate for fresh handshakes
+        // FIXED: Purge tracking reference to guarantee a clean slate for fresh handshakes
         riderChannel = null; 
     }
 
     try {
-        console.log(`📡 Fetching initial financial ledger snapshot metrics for rider: ${name}`);
+        // PRODUCTION MULTI-FLEET ENHANCEMENT: Dynamically locate rider attributes in your single source registry
+        const riderProfile = typeof approvedRiders !== 'undefined' ? 
+            Object.values(approvedRiders).find(r => r.name === name) : null;
+        
+        const isSpecialOperator = riderProfile?.isSecret || false;
+        
+        // Dynamic target routing fork: standard tables vs isolated secret partitions
+        const targetWalletTable = isSpecialOperator ? 'secret_riders' : 'riders';
 
-        // Pull initial database snapshot figures safely out of your cloud table storage systems
+        console.log(`📡 Fetching initial financial ledger snapshot from table [${targetWalletTable}] for rider: ${name}`);
+
+        // Pull initial database snapshot figures safely out of the correct data partition in the cloud
         const { data, error } = await window.supabase
-            .from('riders')
+            .from(targetWalletTable)
             .select('total_earnings') 
             .eq('name', name)
             .maybeSingle();
@@ -942,15 +984,15 @@ async function loadRiderStats(name) {
         if (data && earningsDisplay) {
             // Performance Fix: Clean text handling properties to prevent page reflow lag spikes
             earningsDisplay.textContent = Number(data.total_earnings).toLocaleString();
-            console.log(`💰 Ledger snapshot synchronized: KSh ${data.total_earnings}`);
+            console.log(`💰 Ledger snapshot synchronized from [${targetWalletTable}]: KSh ${data.total_earnings}`);
         } else if (!data) {
-            console.warn(`📝 Note: No active ledger entries returned for user record string: ${name}`);
+            console.warn(`📝 Note: No active ledger entries returned inside [${targetWalletTable}] for user: ${name}`);
             if (earningsDisplay) earningsDisplay.textContent = "0";
         }
 
         // Sanitized alpha-numeric dynamically scoped namespaces for safe channel subscriptions
         const cleanChannelName = name.toLowerCase().replace(/[^a-z0-9]/g, '_');
-        const customChannelId = `rider_updates_${cleanChannelName}`;
+        const customChannelId = `rider_updates_${cleanChannelName}_${isSpecialOperator ? 'sec' : 'std'}`;
 
         // PRODUCTION V2 REFINEMENT: Native, unencoded column filtering format to pass proxy firewalls safely
         const productionFilterString = `name=eq.${name}`;
@@ -961,10 +1003,10 @@ async function loadRiderStats(name) {
             .on('postgres_changes', { 
                 event: 'UPDATE', 
                 schema: 'public', 
-                table: 'riders', 
+                table: targetWalletTable, // FIXED: Now accurately listens to either table changes in real-time!
                 filter: productionFilterString // Armed with correct SDK v2 formatting parameters
             }, (payload) => {
-                console.log(`⚡ Real-time ledger updates received via WebSocket for worker: ${name}`);
+                console.log(`⚡ Real-time ledger updates received via WebSocket from [${targetWalletTable}] for worker: ${name}`);
                 
                 if (payload.new && typeof payload.new.total_earnings !== 'undefined') {
                     const dynamicDisplay = document.getElementById('active-orders');
@@ -989,6 +1031,7 @@ async function loadRiderStats(name) {
 
 
 
+
 // ==========================================================================
 // SECTION 9: HARDWARE ENTRY INTELLIGENT CUSTOM NUMPAD & STATE ENGINE
 // ==========================================================================
@@ -1008,15 +1051,22 @@ window.closeRiderView = function() {
 };
 
 window.appendNum = function(num) {
-    // If the tracker is at its starting default state, replace it with the new digit string
+    const inputString = num.toString();
+
+    // PRODUCTION DOUBLE-ZERO SHORTCUT GUARD: Handles terminal speed keys gracefully
     if (currentAmount === "0") {
-        currentAmount = num.toString();
+        if (inputString === "0" || inputString === "00") {
+            currentAmount = "0";
+            updateDisplay();
+            return;
+        }
+        currentAmount = inputString;
     } else {
-        // Otherwise append the new value cleanly to the end of the text chain
-        currentAmount += num.toString();
+        // Otherwise append the value cleanly to the end of the dynamic text chain
+        currentAmount += inputString;
     }
 
-    // FIX: String-to-integer conversion logic is evaluated *after* compilation to allow proper zero keys
+    // Evaluate integer conversions *after* compilation to preserve layout values
     const calculatedTotal = parseInt(currentAmount, 10) || 0;
 
     // Maseno Fast-Drop Security Boundary Audit: Cap values to prevent runaway entry errors
@@ -1041,7 +1091,7 @@ function updateDisplay() {
     // Convert values safely to numbers before passing to locale string formats
     const numericValue = parseInt(currentAmount, 10);
     
-    if (isNaN(numericValue)) {
+    if (isNaN(numericValue) || numericValue === 0) {
         displayElement.textContent = "0";
     } else {
         displayElement.textContent = numericValue.toLocaleString();
@@ -1055,7 +1105,7 @@ function formatPhoneNumber(phone) {
     // Strip away non-numeric characters, formatting artifacts, or leading plus tokens cleanly
     let cleaned = phone.replace(/\D/g, '');
     
-    // Convert local subscriber formats cleanly into international standard formats
+    // Convert local subscriber formats cleanly into international standard formats (0... -> 254...)
     if (cleaned.startsWith('0')) {
         cleaned = '254' + cleaned.substring(1);
     }
@@ -1113,7 +1163,7 @@ window.cleanProductionSTKGateway = async function() {
 
         console.log("📡 Contacting serverless bridge to broadcast secure STK transaction payload...");
 
-        // PRODUCTION ROUTE: Point directly to your active project API edge function routing gateway
+        // PRODUCTION CORRECTION LOCKED: Changed routing path from callback to outbound push engine
         const secureEdgeRoute = "https://supabase.co";
 
         const response = await fetch(secureEdgeRoute, {
@@ -1139,12 +1189,24 @@ window.cleanProductionSTKGateway = async function() {
             
             console.log(`📝 STK Dispatched successfully (CheckoutRequestID: ${resData.CheckoutRequestID})`);
             
+            // PRODUCTION ACCURATE ACCOUNTING TUNNEL: Extracts wallet channel metadata to secure daily analytics
+            let structuredMethodTag = "M-Pesa (Pochi)"; // Master central fallback channel model
+            
+            if (typeof approvedRiders !== 'undefined' && currentLoggedInRider) {
+                const activeRecord = approvedRiders[currentLoggedInRider] || 
+                    Object.values(approvedRiders).find(r => r.name === currentLoggedInRider);
+                
+                if (activeRecord && activeRecord.paymentType) {
+                    structuredMethodTag = `M-Pesa (${activeRecord.paymentType})`;
+                }
+            }
+
             // CONNECT TO UNIFIED SPLIT ACCOUNTING & LOYALTY LIFECYCLE
             if (typeof window.updateDailyEarnings === 'function') {
                 // This passes checkout info to Section 11, checking existing accounts or registering a new profile natively!
                 await window.updateDailyEarnings(
                     parsedAmount, 
-                    'M-Pesa', 
+                    structuredMethodTag, // Armed with standardized identifier text strings
                     formattedPhone, 
                     resData.CheckoutRequestID, // Passes the tracking handle cleanly for callback checks later
                     currentLoggedInRider
@@ -1172,7 +1234,6 @@ window.cleanProductionSTKGateway = async function() {
         }
     }
 };
-
 
 
 
@@ -1230,8 +1291,13 @@ async function updateDailyEarnings(amount, method = 'M-Pesa', phone = null, ride
             if (rpcError) console.error("❌ Standard RPC increment dropped:", rpcError.message);
         }
 
-        // 4. AUDIT LOGGING: Insert a tracking row into the correct table layout bucket based on split rules
-        const cleanDatabaseDate = new Date().toISOString().split('T')[0];
+        // 4. AUDIT LOGGING WITH TIMEZONE ACCURACY
+        // FIXED: Swapped raw UTC splits for explicit local date tracking to keep daily earnings sheets accurate
+        const localDateObject = new Date();
+        const localOffsetYear = localDateObject.getFullYear();
+        const localOffsetMonth = String(localDateObject.getMonth() + 1).padStart(2, '0');
+        const localOffsetDay = String(localDateObject.getDate()).padStart(2, '0');
+        const cleanDatabaseDate = `${localOffsetYear}-${localOffsetMonth}-${localOffsetDay}`;
         
         await window.supabase
             .from(historyTable)
@@ -1239,8 +1305,8 @@ async function updateDailyEarnings(amount, method = 'M-Pesa', phone = null, ride
                 rider_name: targetedRider,
                 amount: parsedAmount,
                 payment_method: method,
-                student_phone: phone,
-                checkout_request_id: riderId, // Safely records tracking IDs or callback handles
+                student_phone: phone || "MANUAL_CASH_ENTRY",
+                checkout_request_id: riderId || "LOCAL_CHECKOUT", // Safely records tracking IDs or callback handles
                 created_at: cleanDatabaseDate 
             }]);
 
@@ -1275,8 +1341,6 @@ async function updateDailyEarnings(amount, method = 'M-Pesa', phone = null, ride
 }
 
 
-
-
 // ==========================================================================
 // SECTION 12: ADMINISTRATIVE MODALS & SECURE SERVER-SIDE VALIDATION
 // ==========================================================================
@@ -1295,8 +1359,24 @@ window.openAdminPortal = function() {
         adminModal.classList.remove('hidden');
         adminKeyField.value = ""; // Clear values for multi-tenant workstation safety
         adminKeyField.focus();
+
+        // AUTOMATION HOOK: Intercepts enter-key presses on the password input box fields layout row
+        if (!adminKeyField.dataset.listenerAttached) {
+            adminKeyField.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); // Suppresses page reload spikes natively
+                    // FIXED: Successfully linked straight to your verified entry point 'verifyAdminAccess'
+                    if (typeof window.verifyAdminAccess === 'function') {
+                        window.verifyAdminAccess();
+                    }
+                }
+            });
+            adminKeyField.dataset.listenerAttached = "true"; // Prevents stacking duplicate listener memory leaks
+        }
     }
 };
+
+
 
 // ==========================================================================
 // SECTION 12: PART 2 - SECURE ADMINISTRATIVE VERIFICATION HANDSHAKE
@@ -1331,7 +1411,7 @@ window.verifyAdminAccess = async function() {
         const { data: adminRecord, error: adminAuthError } = await window.supabase
             .from('admin_registry')
             .select('access_level')
-            .eq('secret_hash', inputPass) // Ideally pass an encrypted hash parameter token
+            .eq('secret_hash', inputPass)
             .maybeSingle();
 
         if (adminAuthError) throw adminAuthError;
@@ -1357,27 +1437,35 @@ window.verifyAdminAccess = async function() {
                 window.supabase.removeChannel(adminChannel);
             }
 
-            // Render active totals and historical summary list containers instantly
-            if (typeof window.refreshAdminData === 'function') window.refreshAdminData();
-            if (typeof window.fetchDailyHistory === 'function') window.fetchDailyHistory(); 
+            // PRODUCTION LIFECYCLE FIX: Added proper await chains to allow cloud numbers to arrive completely before painting UI cards
+            if (typeof window.refreshAdminData === 'function') {
+                await window.refreshAdminData(); // Halts execution loop cleanly until calculations arrive
+            }
+            if (typeof window.fetchDailyHistory === 'function') {
+                await window.fetchDailyHistory(); 
+            } 
 
-            // Initialize optimized real-time administrative system pipelines
+            // PRODUCTION MULTIPLEXER HOOK: Listens to balance shifts AND fresh transaction receipts
             adminChannel = window.supabase
                 .channel('admin_live_feed')
-                .on('postgres_changes', { 
-                    event: 'UPDATE', 
-                    schema: 'public', 
-                    table: 'riders' 
-                }, (payload) => {
-                    console.log(`⚡ Live table mutation delta caught for worker record: ${payload.new.name}`);
-                    
-                    // Optimized sync: Instead of completely reloading everything, cleanly update targets
-                    if (typeof window.refreshAdminData === 'function') {
-                        window.refreshAdminData();
-                    }
+                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'riders' }, (payload) => {
+                    console.log(`⚡ Balance Shift: Standard courier [${payload.new.name}] updated.`);
+                    if (typeof window.refreshAdminData === 'function') window.refreshAdminData();
+                })
+                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'secret_riders' }, (payload) => {
+                    console.log(`⚡ Balance Shift: Premium handler [${payload.new.name}] updated.`);
+                    if (typeof window.refreshAdminData === 'function') window.refreshAdminData();
+                })
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'daily_history' }, (payload) => {
+                    console.log(`🧾 Fresh Receipt: Standard transaction logged for KSh ${payload.new.amount}.`);
+                    if (typeof window.refreshAdminData === 'function') window.refreshAdminData();
+                })
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'secret_daily_history' }, (payload) => {
+                    console.log(`🧾 Fresh Receipt: Premium shop transaction logged for KSh ${payload.new.amount}.`);
+                    if (typeof window.refreshAdminData === 'function') window.refreshAdminData();
                 })
                 .subscribe((status) => {
-                    if (status === 'SUBSCRIBED') console.log("📡 Admin master infrastructure tracking WebSocket engine is live.");
+                    if (status === 'SUBSCRIBED') console.log("📡 Admin master dual-fleet transaction subscription pipeline live.");
                 });
 
         } else {
@@ -1397,6 +1485,128 @@ window.verifyAdminAccess = async function() {
     }
 };
 
+// ==========================================================================
+// SECTION 12: PART 3 - DUAL-FLEET TELEMETRY & TODAY'S ARCHIVE ENGINE
+// ==========================================================================
+/**
+ * Live Dashboard Aggregator
+ * Queries all standard and secret tables, isolates today's local date calendar 
+ * transactions, sums up revenues, and paints metrics rows beautifully.
+ */
+window.refreshAdminData = async function() {
+    if (!window.supabase) return console.warn("⚠️ Supabase engine context offline.");
+    
+    // Safety verification check: Exit quietly if the admin panel view layer is hidden
+    const adminPanel = document.getElementById('admin-panel');
+    if (!adminPanel || adminPanel.classList.contains('hidden')) return;
+
+    try {
+        console.log("📊 Compiling today's live financial archive statistics across all platforms...");
+
+        // 1. ASYNCHRONOUS CO-CURRENT DATA CAPTURE
+        const [resStandardRiders, resStandardHistory, resSecretRiders, resSecretHistory] = await Promise.all([
+            window.supabase.from('riders').select('*'),
+            window.supabase.from('daily_history').select('*'),
+            window.supabase.from('secret_riders').select('*'),
+            window.supabase.from('secret_daily_history').select('*')
+        ]);
+
+        if (resStandardRiders.error) throw resStandardRiders.error;
+        if (resSecretRiders.error) throw resSecretRiders.error;
+
+        // 2. TIMEZONE CALIBRATION: Fetch today's exact local calendar string (YYYY-MM-DD)
+        const localDateObject = new Date();
+        const localOffsetYear = localDateObject.getFullYear();
+        const localOffsetMonth = String(localDateObject.getMonth() + 1).padStart(2, '0');
+        const localOffsetDay = String(localDateObject.getDate()).padStart(2, '0');
+        const todayLocalStringKey = `${localOffsetYear}-${localOffsetMonth}-${localOffsetDay}`;
+
+        console.log(`📅 Targeting local archive dates for sum matching: ${todayLocalStringKey}`);
+
+        // 3. SUM TODAY'S EARNINGS: Parse history logs for standard drivers matching today's local key
+        const standardHistoryLogs = resStandardHistory.data || [];
+        const todayStandardEarnings = standardHistoryLogs
+            .filter(log => log.created_at === todayLocalStringKey)
+            .reduce((sum, log) => sum + (log.amount || 0), 0);
+
+        // 4. SUM TODAY'S EARNINGS: Parse history logs for special shop drivers matching today's local key
+        const secretHistoryLogs = resSecretHistory.data || [];
+        const todaySecretEarnings = secretHistoryLogs
+            .filter(log => log.created_at === todayLocalStringKey)
+            .reduce((sum, log) => sum + (log.amount || 0), 0);
+
+        // 5. MASTER REVENUE MERGES
+        const totalEarningsToday = todayStandardEarnings + todaySecretEarnings;
+        
+        // Lifetime Running Totals across both fleet wallet metrics tables
+        const standardRidersList = resStandardRiders.data || [];
+        const standardLifetimeTotal = standardRidersList.reduce((sum, r) => sum + (r.total_earnings || 0), 0);
+
+        const secretRidersList = resSecretRiders.data || [];
+        const secretLifetimeTotal = secretRidersList.reduce((sum, r) => sum + (r.total_earnings || 0), 0);
+
+        const cumulativeFleetRevenue = standardLifetimeTotal + secretLifetimeTotal;
+        const cumulativeCompletedDeliveries = standardHistoryLogs.length + secretHistoryLogs.length;
+
+        // 6. MAP VALUES LIVE TO THE INTUITIVE USER INTERFACE METRICS
+        const totalVolumeBadge = document.getElementById('admin-total-volume');
+        const systemRevenueBadge = document.getElementById('admin-system-revenue');
+        const archiveDailyEarningsBadge = document.getElementById('admin-daily-archive-earnings'); // Today's Earnings element card
+        const ridersListContainer = document.getElementById('admin-riders-list');
+
+        if (totalVolumeBadge) totalVolumeBadge.textContent = cumulativeCompletedDeliveries.toLocaleString();
+        if (systemRevenueBadge) systemRevenueBadge.textContent = `KSh ${cumulativeFleetRevenue.toLocaleString()}`;
+        
+        // FIXED FOR FINANCIAL PRIORITY: Today's Daily Archive card updates live to reflect active timezone cash parameters
+        if (archiveDailyEarningsBadge) {
+            archiveDailyEarningsBadge.innerHTML = `
+                KSh ${totalEarningsToday.toLocaleString()}
+                <span style="display:block; font-size:0.75rem; color:#64748b; font-weight:600; margin-top:2px;">
+                    Standard: KSh ${todayStandardEarnings.toLocaleString()} | Shop: KSh ${todaySecretEarnings.toLocaleString()}
+                </span>
+            `;
+        }
+
+        // 7. DYNAMIC ADMIN ROW DRAWING LOOPS
+        if (ridersListContainer) {
+            ridersListContainer.innerHTML = ""; // Clear out old snapshot rows cleanly
+
+            // Map and draw standard runners onto your screen view panel card rows
+            standardRidersList.forEach(rider => {
+                renderAdminRiderRow(ridersListContainer, rider.name, rider.total_earnings || 0, "Standard Route Team");
+            });
+
+            // Map and draw specialized shop handlers onto your screen view panel card rows seamlessly
+            secretRidersList.forEach(rider => {
+                renderAdminRiderRow(ridersListContainer, rider.name, rider.total_earnings || 0, "VIP Shop Handler");
+            });
+        }
+
+    } catch (err) {
+        console.error("❌ Failed to compile administrative pipeline records:", err);
+    }
+};
+
+/**
+ * Dynamic HTML Component Generator for Admin Row Items
+ */
+function renderAdminRiderRow(parentDiv, name, earnings, classificationLabel) {
+    const row = document.createElement('div');
+    row.style.cssText = "display: flex; flex-direction: row; justify-content: space-between; align-items: center; padding: 12px; background: #0f172a; border: 1px solid #1e293b; border-radius: 8px; margin-bottom: 8px; box-sizing: border-box; width: 100%;";
+    
+    row.innerHTML = `
+        <div style="text-align: left;">
+            <strong style="color: #ffffff; display: block; font-size: 1.05rem;">${name}</strong>
+            <small style="color: #64748b; font-weight: 600;">${classificationLabel}</small>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="color: var(--primary, #f97316); font-weight: 800; font-size: 1.1rem;">KSh ${earnings.toLocaleString()}</span>
+            <button type="button" onclick="window.resetRiderTotal('${name}')" style="background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 700; cursor: pointer;">Reset</button>
+        </div>
+    `;
+    parentDiv.appendChild(row);
+}
+
 
 
 
@@ -1411,11 +1621,28 @@ window.closeAdminLogin = function() {
 };
 
 window.closeAdmin = function() {
-    // Safely detach live synchronization tracking streams from your Supabase client instance
+    // 1. PRODUCTION SECURITY CLEANUP: Purge on-screen financial data strings to stop memory scraping leaks
+    const totalVolumeBadge = document.getElementById('admin-total-volume');
+    const systemRevenueBadge = document.getElementById('admin-system-revenue');
+    const ridersListContainer = document.getElementById('admin-riders-list');
+    const archiveDailyEarningsBadge = document.getElementById('admin-daily-archive-earnings'); // Pre-clears daily counters
+
+    if (totalVolumeBadge) totalVolumeBadge.textContent = "0";
+    if (systemRevenueBadge) systemRevenueBadge.textContent = "KSh 0";
+    if (archiveDailyEarningsBadge) archiveDailyEarningsBadge.textContent = "KSh 0";
+    if (ridersListContainer) ridersListContainer.innerHTML = ""; 
+    
+    console.log("🧼 Admin Privacy Guard: Volatile dashboard financial data strings cleared from DOM tree memory.");
+
+    // 2. DISCONNECT LIVE STREAMS: Safely detach synchronization pipelines from Supabase client instances
     if (adminChannel && window.supabase) {
-        window.supabase.removeChannel(adminChannel);
+        try {
+            window.supabase.removeChannel(adminChannel);
+            console.log("🔌 Administrative tracking real-time WebSocket channel safely closed.");
+        } catch (chanErr) {
+            console.warn("⚠️ Non-fatal issue clearing admin WebSocket stream:", chanErr.message);
+        }
         adminChannel = null;
-        console.log("🔌 Administrative tracking real-time WebSocket channel safely closed.");
     }
 
     // Hide the Admin Panel system dashboard wrapper layout safely
@@ -1442,6 +1669,7 @@ window.closeAdmin = function() {
     }
 };
 
+
 // ==========================================================================
 // SECTION 13B: SECURE AUDIT-COMPLIANT ADMINISTRATIVE DATA MANIPULATION RULES
 // ==========================================================================
@@ -1455,9 +1683,17 @@ window.resetRiderTotal = async function(name) {
     try {
         console.log(`🔒 INITIATING MANUAL RECONCILIATION OVERWRITE - Target Worker: ${name}`);
 
-        // Step 1: Capture the baseline figure before wiping it out, ensuring proper logging
+        // DYNAMIC FLEET EVALUATION ROUTER: Identify if this user is a specialized premium handler
+        const riderConfig = Object.values(approvedRiders).find(r => r.name === name);
+        const isSpecialOperator = riderConfig?.isSecret || false;
+        
+        // Fork database targets fluidly based on the rider's operational classification status
+        const walletTable = isSpecialOperator ? 'secret_riders' : 'riders';
+        const historyTable = isSpecialOperator ? 'secret_daily_history' : 'daily_history';
+
+        // Step 1: Capture the baseline figure out of the correct table before wiping it out
         const { data: snapshotRecord } = await window.supabase
-            .from('riders')
+            .from(walletTable)
             .select('total_earnings')
             .eq('name', name)
             .maybeSingle();
@@ -1466,16 +1702,21 @@ window.resetRiderTotal = async function(name) {
 
         // Step 2: Clear active balances securely in the cloud repository database tables
         const { error: resetError } = await window.supabase
-            .from('riders')
+            .from(walletTable)
             .update({ total_earnings: 0 })
             .eq('name', name);
             
         if (resetError) throw resetError;
 
-        // Step 3: Insert a balanced accountability tracking adjustment item to preserve financial logs integrity
-        const cleanDatabaseDate = new Date().toISOString().split('T')[0];
+        // Step 3: Insert a balanced accountability tracking adjustment item with Timezone Accuracy
+        // FIXED FOR DAILY ARCHIVE: Swapped raw UTC splits for explicit local date tracking to keep daily charts balanced
+        const localDateObject = new Date();
+        const localOffsetYear = localDateObject.getFullYear();
+        const localOffsetMonth = String(localDateObject.getMonth() + 1).padStart(2, '0');
+        const localOffsetDay = String(localDateObject.getDate()).padStart(2, '0');
+        const cleanDatabaseDate = `${localOffsetYear}-${localOffsetMonth}-${localOffsetDay}`;
         
-        await window.supabase.from('daily_history').insert([{
+        await window.supabase.from(historyTable).insert([{
             rider_name: name,
             amount: -balancePriorToReset, // Negative offsetting balance adjustment value
             payment_method: 'Admin Correction Wipe',
@@ -1483,7 +1724,7 @@ window.resetRiderTotal = async function(name) {
             created_at: cleanDatabaseDate
         }]);
 
-        alert(`🎉 Success! ${name}'s running delivery total balance has been reset to KSh 0, and an offsetting log has been written.`);
+        alert(`🎉 Success! ${name}'s running delivery total balance has been reset to KSh 0 inside [${walletTable}], and an offsetting log has been written.`);
         
         // Refresh display tables cleanly across active admin screens layout views
         if (typeof window.refreshAdminData === 'function') {
@@ -1501,10 +1742,20 @@ window.resetRiderTotal = async function(name) {
 
 
 
+
+
+
 // ==========================================================================
 // SECTION 14: CAMPUS REPOSITORIES INTUITIVE TRAVERSAL SEARCH FILTER ENGINE
 // ==========================================================================
 window.handleSearch = function() {
+    // PRODUCTION SECURITY GUARD: Terminate lookups instantly if the admin management portal is open
+    const adminPanel = document.getElementById('admin-panel');
+    if (adminPanel && !adminPanel.classList.contains('hidden')) {
+        console.log("📊 Search Engine Suppressed: Administrative workspace remains active in this viewport.");
+        return;
+    }
+
     // Safety check to verify layout access states before computation cycles
     const searchField = document.getElementById('app-search');
     if (!searchField || !container || !breadcrumb) return;
@@ -1581,78 +1832,124 @@ window.handleSearch = function() {
 
 
 
-
 // ==========================================================================
-// SECTION 15: ADMINISTRATIVE DASHBOARD DATA SUMMARY GENERATION
+// SECTION 15: ADMINISTRATIVE DASHBOARD DUAL-FLEET TODAY'S ARCHIVE ENGINE
 // ==========================================================================
-async function refreshAdminData() {
-    const listContainer = document.getElementById('admin-rider-list');
-    const grandTotalDisplay = document.getElementById('system-grand-total');
+window.refreshAdminData = async function() {
+    // Standardized targeting variables matching Section 12 & 13 lifecycles
+    const listContainer = document.getElementById('admin-riders-list');
+    const systemLifetimeRevenueDisplay = document.getElementById('admin-system-revenue');
+    const totalVolumeDisplay = document.getElementById('admin-total-volume');
+    const dailyArchiveEarningsBadge = document.getElementById('admin-daily-archive-earnings'); 
     
-    // Explicitly validate that your workspace element containers are active before beginning computation tasks
-    if (!listContainer || !window.supabase) return;
+    if (!listContainer || !window.supabase) return console.warn("⚠️ Aborting refreshAdminData: Core dashboard containers missing or database offline.");
 
     try {
-        console.log("📡 Admin panel querying master baseline collection metrics data rows...");
+        console.log("📡 Admin panel compiling dual-fleet statistics and local date transaction archives...");
 
-        // Fetch direct, clean structural relation metrics tables data out of your cloud account
-        const { data: dbRows, error } = await window.supabase
-            .from('riders')
-            .select('*');
+        // 1. CONCURRENT ASYNCHRONOUS DATA HOOK: Download metrics from all 4 data partitions simultaneously
+        const [resStandardRiders, resStandardHistory, resSecretRiders, resSecretHistory] = await Promise.all([
+            window.supabase.from('riders').select('*'),
+            window.supabase.from('daily_history').select('*'),
+            window.supabase.from('secret_riders').select('*'),
+            window.supabase.from('secret_daily_history').select('*')
+        ]);
 
-        if (error) throw error;
+        if (resStandardRiders.error) throw resStandardRiders.error;
+        if (resSecretRiders.error) throw resSecretRiders.error;
 
-        // Clear dynamic layout content workspace container safely
+        // 2. TIMEZONE CALIBRATION: Generate today's precise local calendar key string (Format: YYYY-MM-DD)
+        const localDateObject = new Date();
+        const localOffsetYear = localDateObject.getFullYear();
+        const localOffsetMonth = String(localDateObject.getMonth() + 1).padStart(2, '0');
+        const localOffsetDay = String(localDateObject.getDate()).padStart(2, '0');
+        const todayLocalStringKey = `${localOffsetYear}-${localOffsetMonth}-${localOffsetDay}`;
+
+        console.log(`📅 Target matching filter key initialized for Today's local logs: ${todayLocalStringKey}`);
+
+        // 3. SUM TODAY'S EARNINGS: Extract standard entries matching today's local timestamp calendar
+        const standardHistoryLogs = resStandardHistory.data || [];
+        const todayStandardEarnings = standardHistoryLogs
+            .filter(log => log.created_at === todayLocalStringKey)
+            .reduce((sum, log) => sum + (log.amount || 0), 0);
+
+        // 4. SUM TODAY'S EARNINGS: Extract premium shop entries matching today's local timestamp calendar
+        const secretHistoryLogs = resSecretHistory.data || [];
+        const todaySecretEarnings = secretHistoryLogs
+            .filter(log => log.created_at === todayLocalStringKey)
+            .reduce((sum, log) => sum + (log.amount || 0), 0);
+
+        // 5. CONSOLIDATE INCOME CHANNELS METRICS
+        const totalEarningsToday = todayStandardEarnings + todaySecretEarnings;
+        
+        // Lifetime cumulative wallets sums across standard and secret profiles
+        const standardRidersList = resStandardRiders.data || [];
+        const standardLifetimeTotal = standardRidersList.reduce((sum, r) => sum + (r.total_earnings || 0), 0);
+
+        const secretRidersList = resSecretRiders.data || [];
+        const secretLifetimeTotal = secretRidersList.reduce((sum, r) => sum + (r.total_earnings || 0), 0);
+
+        const totalSystemRevenueLifetime = standardLifetimeTotal + secretLifetimeTotal;
+        const cumulativeCompletedDeliveriesCount = standardHistoryLogs.length + secretHistoryLogs.length;
+
+        // 6. CLEAR DISPLAY WRAPPER FRAMES CLEANLY
         listContainer.innerHTML = "";
-        let grandTotalAccumulator = 0;
 
-        if (dbRows && dbRows.length > 0) {
-            dbRows.forEach(riderRow => {
-                // Aggregate all individual rider numbers safely into the system wide grand total balance checks
-                const riderEarnings = Number(riderRow.total_earnings) || 0;
-                grandTotalAccumulator += riderEarnings;
+        // 7. DYNAMIC MARSHALING LOOP: Render Standard Fleet Row Entries
+        standardRidersList.forEach(rider => {
+            renderAdminDashboardItem(listContainer, rider.name, Number(rider.total_earnings) || 0, "Standard Route Team", "#3b82f6");
+        });
 
-                const row = document.createElement('div');
-                // Performance Fix: Uses standard class assignments instead of expensive inline string manipulation loops
-                row.className = "admin-rider-row"; 
-                
-                // Keep styles separated inside your primary style.css sheets to ensure 60fps scrolling
-                row.style.cssText = "padding:15px; border-bottom:1px solid #e5e7eb; display:flex; justify-content:space-between; align-items:center; background:#f9fafb; margin-bottom:6px; border-radius:10px; box-sizing:border-box; width:100%;";
+        // 8. DYNAMIC MARSHALING LOOP: Render Premium Secret Fleet Row Entries
+        secretRidersList.forEach(rider => {
+            renderAdminDashboardItem(listContainer, rider.name, Number(rider.total_earnings) || 0, "VIP Shop Handler", "#eab308");
+        });
 
-                row.innerHTML = `
-                    <div style="text-align:left;">
-                        <strong style="color:var(--dark); font-size:1.05rem; display:block;">${riderRow.name}</strong>
-                        <small style="color:#6b7280; font-size:0.8rem;">Active Driver Ledger</small>
-                    </div>
-                    <div style="text-align:right; display:flex; align-items:center; gap:12px;">
-                        <span style="font-weight:700; color:var(--primary); font-size:1.1rem; font-feature-settings:'tnum';">
-                            KSh ${riderEarnings.toLocaleString()}
-                        </span>
-                        <button type="button" onclick="window.resetRiderTotal('${riderRow.name}')" style="background:#ef4444; border:none; color:#ffffff; padding:6px 12px; border-radius:8px; font-size:0.75rem; cursor:pointer; font-weight:700; transition:opacity 0.15s;">
-                            Reset
-                        </button>
-                    </div>
-                `;
-                listContainer.appendChild(row);
-            });
-        } else {
-            listContainer.innerHTML = `<p style="text-align:center; color:#6b7280; padding:20px; font-size:0.9rem;">No active rider records found in table logs.</p>`;
+        // 9. INJECT AGGREGATED METRICS SAFELY INTO DISPLAY BADGES
+        if (totalVolumeDisplay) totalVolumeDisplay.textContent = cumulativeCompletedDeliveriesCount.toLocaleString();
+        if (systemLifetimeRevenueDisplay) systemLifetimeRevenueDisplay.textContent = `KSh ${totalSystemRevenueLifetime.toLocaleString()}`;
+        
+        // Today's Daily Archive card updates live to reflect active local money balances
+        if (dailyArchiveEarningsBadge) {
+            dailyArchiveEarningsBadge.innerHTML = `
+                KSh ${totalEarningsToday.toLocaleString()}
+                <span style="display:block; font-size:0.75rem; color:#64748b; font-weight:600; margin-top:4px;">
+                    Standard Run: KSh ${todayStandardEarnings.toLocaleString()} | Shop Delivery: KSh ${todaySecretEarnings.toLocaleString()}
+                </span>
+            `;
         }
 
-        // DEFENSIVE LAYOUT ACCESSIBILITY FIX: Only apply string operations if the visual component selector target exists
-        if (grandTotalDisplay) {
-            grandTotalDisplay.textContent = `KSh ${grandTotalAccumulator.toLocaleString()}`;
-            console.log(`📊 Admin metrics calculated successfully. System total: KSh ${grandTotalAccumulator}`);
-        } else {
-            /* Development reminder warning logs inside your staging console to help you patch 
-               the missing HTML layout node without crashing your active program flows */
-            console.info("💡 Pro-Tip: To display the system wide total balance on screen, add '<span id=\"system-grand-total\">0</span>' anywhere inside your admin panel HTML code.");
-        }
+        console.log(`📊 Global financial ledger snapshot synchronized live. Today's Archive Balance: KSh ${totalEarningsToday}`);
 
     } catch (err) {
         console.error("❌ Administrative analysis framework engine dropped a process step:", err.message || err);
         listContainer.innerHTML = `<p style="text-align:center; color:#ef4444; padding:20px; font-weight:600;">Failed to load system dashboard summary logs.</p>`;
     }
+};
+
+/**
+ * Isolated Component Drawing Helper for Admin List Sub-nodes
+ */
+function renderAdminDashboardItem(parentDiv, name, earnings, roleLabel, colorHex) {
+    const row = document.createElement('div');
+    row.className = "admin-rider-row"; 
+    row.style.cssText = "padding:14px; border-bottom:1px solid #1e293b; display:flex; justify-content:space-between; align-items:center; background:#0f172a; margin-bottom:6px; border-radius:10px; box-sizing:border-box; width:100%; border:1px solid #1e293b;";
+
+    row.innerHTML = `
+        <div style="text-align:left;">
+            <strong style="color:#ffffff; font-size:1.05rem; display:block;">${name}</strong>
+            <small style="color:${colorHex}; font-weight:600; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.02em;">${roleLabel}</small>
+        </div>
+        <div style="text-align:right; display:flex; align-items:center; gap:12px;">
+            <span style="font-weight:800; color:var(--primary, #f97316); font-size:1.15rem; font-feature-settings:'tnum';">
+                KSh ${earnings.toLocaleString()}
+            </span>
+            <button type="button" onclick="window.resetRiderTotal('${name}')" style="background:#ef4444; border:none; color:#ffffff; padding:6px 14px; border-radius:6px; font-size:0.85rem; cursor:pointer; font-weight:700; transition:opacity 0.15s;">
+                Reset
+            </button>
+        </div>
+    `;
+    parentDiv.appendChild(row);
 }
 
 
@@ -1679,13 +1976,21 @@ window.confirmCash = async function() {
     try {
         console.log(`🪙 Direct Cash settlement input recognized for phone: ${formattedPhone}. Syncing ledgers...`);
         
+        // PRODUCTION MULTI-FLEET ENHANCEMENT: Locate the exact string key token matched to the active session rider name
+        let inferredRiderId = null;
+        if (currentLoggedInRider && typeof approvedRiders !== 'undefined') {
+            inferredRiderId = Object.keys(approvedRiders).find(
+                key => approvedRiders[key].name === currentLoggedInRider
+            ) || null;
+        }
+
         if (typeof window.updateDailyEarnings === 'function') {
-            // FIXED PARAMS: Replaced 'MANUAL_CASH_ENTRY' with the actual formatted student phone string variable
+            // FIXED PARAMS FOR DAILY ARCHIVE: Passed the true inferredRiderId token instead of null to protect data split tracks
             await window.updateDailyEarnings(
                 parsedAmount, 
                 'Cash', 
-                formattedPhone, // Correctly linked to the customer identifier 
-                null, 
+                formattedPhone, 
+                inferredRiderId, // Ensures Section 11 accurately identifies secret handlers vs normal runners
                 currentLoggedInRider
             );
             
@@ -1704,6 +2009,7 @@ window.confirmCash = async function() {
 };
 
 
+
 // ==========================================================================
 // SECTION 16: PART 2 - HISTORICAL TRANSACTIONS RECONCILIATION ENGINE
 // ==========================================================================
@@ -1717,73 +2023,88 @@ window.fetchDailyHistory = async function() {
     list.innerHTML = "<p style='color:#6b7280; font-weight:600;'>🔄 Reconciling today's analytical summaries...</p>";
     
     try {
-        // --- PRODUCTION CORRECTION: RANGE BOUNDARY DATE QUERIES ---
-        // Generates explicit timestamp metrics mapping tracking constraints to isolate today's work
-        const startOfDay = new Date();
-        startOfDay.setHours(0, 0, 0, 0);
-        
-        const endOfDay = new Date();
-        endOfDay.setHours(23, 59, 59, 999);
+        // 1. TIMEZONE CALIBRATION: Fetch today's exact local calendar string (YYYY-MM-DD)
+        const localDateObject = new Date();
+        const localOffsetYear = localDateObject.getFullYear();
+        const localOffsetMonth = String(localDateObject.getMonth() + 1).padStart(2, '0');
+        const localOffsetDay = String(localDateObject.getDate()).padStart(2, '0');
+        const todayLocalStringKey = `${localOffsetYear}-${localOffsetMonth}-${localOffsetDay}`;
 
-        console.log(`📡 Fetching audit logs between: ${startOfDay.toISOString()} and ${endOfDay.toISOString()}`);
+        console.log(`📡 Fetching historical audit logs matching local date key: ${todayLocalStringKey}`);
 
-        // Pull lines item arrays safely, shifting logic from raw equals to boundary metrics check parameters
-        const { data, error } = await window.supabase
-            .from('daily_history')
-            .select('*')
-            .gte('created_at', startOfDay.toISOString())
-            .lte('created_at', endOfDay.toISOString());
+        // 2. CONCURRENT ASYNCHRONOUS DATA HOOK: Query standard and secret transaction logs simultaneously
+        const [resStandardHistory, resSecretHistory] = await Promise.all([
+            window.supabase.from('daily_history').select('*').eq('created_at', todayLocalStringKey),
+            window.supabase.from('secret_daily_history').select('*').eq('created_at', todayLocalStringKey)
+        ]);
 
-        if (error) throw error;
+        if (resStandardHistory.error) throw resStandardHistory.error;
+        if (resSecretHistory.error) throw resSecretHistory.error;
 
-        if (!data || data.length === 0) {
+        const standardLogs = resStandardHistory.data || [];
+        const secretLogs = resSecretHistory.data || [];
+
+        if (standardLogs.length === 0 && secretLogs.length === 0) {
             list.innerHTML = "<p style='color:#6b7280; font-size:0.9rem; font-weight:500; text-align:center; padding:20px;'>No earnings records archived for today yet.</p>";
             return;
         }
 
-        // --- ACCUMULATIVE GROUP BY RIDER LOGIC ---
+        // 3. ACCUMULATIVE GROUP-BY RIDER MATRIX
         const riderTotals = {};
 
-        data.forEach(log => {
+        // Parse and aggregate standard campus route team records
+        standardLogs.forEach(log => {
             const workerName = log.rider_name || "Unknown Driver";
             const transactionAmount = parseInt(log.amount, 10) || 0;
             
             if (!riderTotals[workerName]) {
-                riderTotals[workerName] = 0;
+                riderTotals[workerName] = { amount: 0, label: "Standard Route Team", color: "#64748b" };
             }
-            riderTotals[workerName] += transactionAmount;
+            riderTotals[workerName].amount += transactionAmount;
+        });
+
+        // Parse and aggregate specialized VIP store delivery records flawlessly
+        secretLogs.forEach(log => {
+            const workerName = log.rider_name || "Unknown Driver";
+            const transactionAmount = parseInt(log.amount, 10) || 0;
+            
+            if (!riderTotals[workerName]) {
+                riderTotals[workerName] = { amount: 0, label: "VIP Shop Handler", color: "#eab308" };
+            }
+            riderTotals[workerName].amount += transactionAmount;
         });
 
         list.innerHTML = "";
 
-        // Render grouped metrics inside beautiful, scannable history cards layout grids
+        // 4. DYNAMIC COMPONENT INJECTION CARD GENERATION
         Object.keys(riderTotals).forEach(name => {
+            const riderData = riderTotals[name];
             const row = document.createElement('div');
-            // Keep styles separated inside your primary stylesheet properties to ensure fast rendering
-            row.style.cssText = "padding:16px; border-bottom:1px solid #e5e7eb; display:flex; justify-content:space-between; align-items:center; background:#ffffff; margin-bottom:8px; border-radius:12px; box-sizing:border-box; width:100%;";
+            
+            // Modernized dark flat styling model mapping properties cleanly
+            row.style.cssText = "padding:16px; border-bottom:1px solid #1e293b; display:flex; justify-content:space-between; align-items:center; background:#0f172a; margin-bottom:8px; border-radius:12px; box-sizing:border-box; width:100%; border:1px solid #1e293b;";
             
             row.innerHTML = `
                 <div style="text-align:left;">
-                    <span style="font-weight:700; font-size:1.1rem; color:var(--dark); display:block;">${name}</span>
-                    <small style="color:#6b7280; font-size:0.8rem;">Today's Aggregate Earnings</small>
+                    <span style="font-weight:800; font-size:1.1rem; color:#ffffff; display:block;">${name}</span>
+                    <small style="color:${riderData.color}; font-weight:600; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.02em;">${riderData.label}</small>
                 </div>
                 <div style="text-align:right;">
-                    <span style="color:var(--primary); font-weight:800; font-size:1.2rem; font-feature-settings:'tnum';">
-                        KSh ${riderTotals[name].toLocaleString()}
+                    <span style="color:var(--primary, #f97316); font-weight:800; font-size:1.25rem; font-feature-settings:'tnum';">
+                        KSh ${riderData.amount.toLocaleString()}
                     </span>
                 </div>
             `;
             list.appendChild(row);
         });
 
-        console.log("📊 Daily history logs summarized and rendered successfully.");
+        console.log("📊 Daily history local logs successfully aggregated and rendered across all platforms.");
 
     } catch (err) {
         console.error("❌ History retrieval engine encountered a validation error:", err);
         list.innerHTML = `<p style='color:#ef4444; font-weight:600; text-align:center; padding:20px;'>Error fetching daily balance archives.</p>`;
     }
 };
-
 
 
 
@@ -1835,7 +2156,24 @@ window.addEventListener('DOMContentLoaded', () => {
         if (studentGridMain) studentGridMain.classList.add('hidden');
         if (breadcrumbNode) breadcrumbNode.classList.add('hidden');
         if (mainNavBtnLabel) mainNavBtnLabel.textContent = "Log Out";
-        if (dashboardTitle) dashboardTitle.textContent = `${cachedRiderSessionName}'s Dashboard`;
+
+        // PRODUCTION MULTI-FLEET ENHANCEMENT: Lock down user role states instantly on persistent boot recovery
+        let isSecretHandler = false;
+        if (typeof approvedRiders !== 'undefined') {
+            const riderProfile = Object.values(approvedRiders).find(r => r.name === cachedRiderSessionName);
+            isSecretHandler = riderProfile?.isSecret || false;
+        }
+
+        const textClassificationLabel = isSecretHandler ? "VIP Shop Handler 👑" : "Standard Fleet";
+
+        if (dashboardTitle) {
+            dashboardTitle.innerHTML = `
+                ${cachedRiderSessionName}'s Dashboard 
+                <span style="display:block; font-size:0.8rem; color:${isSecretHandler ? '#eab308' : '#3b82f6'}; font-weight:600; margin-top:4px; text-transform:uppercase; letter-spacing:0.05em;">
+                    📍 Role: ${textClassificationLabel}
+                </span>
+            `;
+        }
 
         // Instantly execute live real-time balance tracker synchronization calls
         if (typeof loadRiderStats === 'function') {

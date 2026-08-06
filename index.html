@@ -185,12 +185,12 @@
 
     
 
-    <!-- ==========================================================================
+       <!-- ==========================================================================
          ADMINISTRATIVE CONTROL PANELS & MASTER METRICS HUB
          ========================================================================== -->
     <section id="admin-panel" class="hidden" style="padding: 20px; background: #ffffff; min-height: 100vh;">
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #e5e7eb; padding-bottom:12px; flex-wrap:wrap; gap:10px;">
-            <h2>Admin Master View</h2>
+            <h2 style="color:#0f172a; font-weight:800; font-size:1.5rem; margin:0;">Admin Master View</h2>
             <div style="display:flex; gap:10px;">
                 <!-- Added explicit type definitions to remove all touch interaction delays -->
                 <button type="button" onclick="window.fetchDailyHistory()" class="nav-btn" style="background:#3b82f6;">
@@ -200,25 +200,53 @@
             </div>
         </div>
 
-        <!-- FIXED: Added explicit metrics summary card layout container protecting scripts calculation pipelines -->
-        <div style="background:var(--light); padding:16px; border-radius:12px; margin-top:20px; display:flex; justify-content:space-between; align-items:center; box-sizing:border-box;">
-            <div>
-                <h3 style="margin:0; font-size:0.9rem; color:#6b7280; text-transform:uppercase; letter-spacing:0.05em;">Total Platform Income</h3>
-                <small style="color:gray;">All Active Worker Collections Aggregated</small>
+        <!-- RESPONSIVE GRID ROW: Hosts your lifetime totals, today's local date archives, and completion volumes side-by-side -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 20px; width: 100%; box-sizing: border-box;">
+            
+            <!-- CARD 1: PLATFORM INCOME LIFETIME SNAPSHOT -->
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box;">
+                <div style="text-align: left;">
+                    <h3 style="margin:0; font-size:0.8rem; color:#6b7280; text-transform:uppercase; letter-spacing:0.05em; font-weight:700;">Total Platform Income</h3>
+                    <small style="color:gray; font-size:0.75rem;">All Active Worker Lifetime Collections Aggregated</small>
+                </div>
+                <!-- FIXED ID: Realigned perfectly from 'system-grand-total' to match Section 15 scripts -->
+                <span id="admin-system-revenue" style="font-size:1.4rem; font-weight:800; color:#0f172a; font-feature-settings:'tnum';">KSh 0</span>
             </div>
-            <!-- Structural script reference target placeholder safely implemented -->
-            <span id="system-grand-total" style="font-size:1.5rem; font-weight:800; color:var(--dark); font-feature-settings:'tnum';">KSh 0</span>
+
+            <!-- CARD 2: PRODUCTION RECORD MOUNT FIXED - TODAY'S ARCHIVE SNAPSHOT CARD -->
+            <!-- FIXED LINK: This new structural container explicitly catches your Section 15 local timezone daily totals -->
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; border-left: 4px solid var(--primary, #f97316);">
+                <div style="text-align: left;">
+                    <h3 style="margin:0; font-size:0.8rem; color:#f97316; text-transform:uppercase; letter-spacing:0.05em; font-weight:700;">Today's Archive Earnings</h3>
+                    <small style="color:gray; font-size:0.75rem;">Timezone-Accurate Local Running Revenue</small>
+                </div>
+                <div id="admin-daily-archive-earnings" style="font-size:1.25rem; font-weight:800; color:#0f172a; text-align: right; font-feature-settings:'tnum';">
+                    KSh 0
+                </div>
+            </div>
+
+            <!-- CARD 3: PLATFORM LOGISTICS COMPLETED VOLUMES BADGE -->
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box;">
+                <div style="text-align: left;">
+                    <h3 style="margin:0; font-size:0.8rem; color:#6b7280; text-transform:uppercase; letter-spacing:0.05em; font-weight:700;">Completed Trips Volume</h3>
+                    <small style="color:gray; font-size:0.75rem;">Total Lifecycle Delivery Receipt Logs</small>
+                </div>
+                <span id="admin-total-volume" style="font-size:1.4rem; font-weight:800; color:#0f172a; font-feature-settings:'tnum';">0</span>
+            </div>
+
         </div>
 
-        <!-- Active Rider Totals dynamic wrapper container -->
-        <div id="admin-rider-list" class="stats-grid" style="margin-top:20px;"></div>
+        <!-- FIXED ID: Realigned perfectly from 'admin-rider-list' to 'admin-riders-list' to match Section 15 row painting -->
+        <h3 style="text-align: left; margin: 30px 0 10px 0; color: #0f172a; font-weight: 800; font-size: 1.2rem;">Active Courier Ledgers</h3>
+        <div id="admin-riders-list" class="stats-grid" style="width:100%; box-sizing:border-box;"></div>
 
         <!-- History Display Section (Group-By analytics render layout) -->
         <div id="history-section" class="hidden" style="margin-top:40px;">
-            <h3 style="border-bottom: 2px solid var(--primary); padding-bottom:10px;">Daily Earnings History</h3>
-            <div id="history-list" style="margin-top:15px;"></div>
+            <h3 style="border-bottom: 2px solid var(--primary, #f97316); padding-bottom:10px; color:#0f172a; font-weight:800; font-size:1.2rem; text-align:left;">Daily Earnings History</h3>
+            <div id="history-list" style="margin-top:15px; width:100%; box-sizing:border-box;"></div>
         </div>
     </section>
+
 
         <!-- ==========================================================================
      APPLICATION FOOTER & SECURITY ROUTING NODES
