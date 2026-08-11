@@ -1,42 +1,73 @@
-import { serve } from "https://deno.land";
+// ==========================================================================
+// SUPABASE EDGE FUNCTION: AUTOMATED CAMPUS DELIVERY NOTIFICATION ENGINE
+// ==========================================================================
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+Deno.serve(async (req) => {
+  // Handle cross-platform browser security preflight check loops natively
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
+
   try {
-    const { to, message } = await req.json();
-    const atUsername = Deno.env.get("AT_USERNAME") || "sandbox"; 
+    // 1. EXTRACT DATA PARAMETERS FROM FRONTEND TRIGGER DISPATCHES
+    const { studentPhone, textMessage, riderName, buildingTarget } = await req.json();
+
+    if (!studentPhone) throw new Error("Missing required subscriber phone parameter routing link.");
+
+    // Pull secure environment credentials out of your encrypted cloud vault
+    const atUsername = Deno.env.get("AT_USERNAME") || "sandbox";
     const atApiKey = Deno.env.get("AT_API_KEY")!;
+    const atSenderId = Deno.env.get("AT_SENDER_ID"); 
+
+    // 2. FORMULATE DYNAMIC CAMPUS NOTIFICATION TEXT COPY
+    const finalSMSMessage = textMessage || `🚀 FastDrop Dispatch! Your delivery rider ${riderName || 'is active'} has logged your checkout and is heading to ${buildingTarget || 'your location'} right now. Get ready!`;
+
+    // 3. COMPILE AFRICA'S TALKING URL-ENCODED PARAMETERS FORM DATA PAYLOAD
+    const payloadFields = new URLSearchParams();
+    payloadFields.append("username", atUsername);
+    payloadFields.append("to", studentPhone.trim());
+    payloadFields.append("message", finalSMSMessage);
     
-    let cleanPhone = to.replace(/[+\s]/g, '');
-    if (!cleanPhone.startsWith('254')) {
-      if (cleanPhone.startsWith('0')) cleanPhone = '254' + cleanPhone.substring(1);
-      else if (cleanPhone.startsWith('1')) cleanPhone = '254' + cleanPhone;
+    if (atSenderId) {
+        payloadFields.append("from", atSenderId.trim());
     }
-    const formattedRecipient = `+${cleanPhone}`;
 
-    const smsPayload = new URLSearchParams();
-    smsPayload.append("username", atUsername);
-    smsPayload.append("to", formattedRecipient);
-    smsPayload.append("message", message);
-
-    const targetEndpoint = atUsername === "sandbox" 
+    // 4. DEFINE AIRTIGHT INFRASTRUCTURE TARGET ENDPOINTS FLUIDLY
+    const isSandboxEnvironment = atUsername.toLowerCase() === "sandbox";
+    const atGatewayEndpointUrl = isSandboxEnvironment
       ? "https://africastalking.com"
-      : "https://africastalking.com"; 
+      : "https://africastalking.com";
 
-    const response = await fetch(targetEndpoint, {
+    console.log(`📡 Relaying dispatch alert via Africa's Talking [${atUsername}] up to target phone: ${studentPhone}`);
+
+    // 5. BROADCAST TELECOM TRANSMISSION PACKETS VIA FETCH API
+    const response = await fetch(atGatewayEndpointUrl, {
       method: "POST",
-      headers: { "Accept": "application/json", "Content-Type": "application/x-www-form-urlencoded", "apiKey": atApiKey },
-      body: smsPayload.toString()
+      headers: {
+        "ApiKey": atApiKey,
+        "Accept": "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: payloadFields.toString(),
     });
 
-    const responseData = await response.json();
-    return new Response(JSON.stringify(responseData), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    const atTelecomResultData = await response.json();
+
+    return new Response(JSON.stringify(atTelecomResultData), {
+      status: 200,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+
   } catch (error: any) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    console.error("❌ Africa's Talking Loyalty System Core Exception Caught:", error.message);
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 400,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 });

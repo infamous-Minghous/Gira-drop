@@ -1,31 +1,33 @@
-// FIXED LINE 1: Restored complete file path mapping parameters for official standard Deno HTTP libraries
-import { serve } from "https://deno.land";
+// ==========================================================================
+// NATIVE SUPABASE WEB COMPILER CORES - ZERO OUTWARD SERVER MODULE DEPENDENCIES
+// ==========================================================================
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-serve(async (req) => {
-  // Handle CORS preflight handshakes natively to keep frontend web browsers happy
+// Uses Deno's native server runtime directly to bypass broken third-party URL module imports completely
+Deno.serve(async (req) => {
+  // Handle cross-platform browser security preflight check loops natively
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
   try {
+    // 1. EXTRACT DATA LAYOUT VALUES FROM THE CLIENT-SIDE APP
     const { amount, phone, riderName } = await req.json();
 
-    // Load protected environment secret keys securely out of your cloud vault
+    // Pull secure environment variables out of your encrypted cloud vault
     const consumerKey = Deno.env.get("MPESA_CONSUMER_KEY")!;
     const consumerSecret = Deno.env.get("MPESA_CONSUMER_SECRET")!;
     const shortcode = Deno.env.get("MPESA_SHORTCODE")!;
     const passkey = Deno.env.get("MPESA_PASSKEY")!;
     
-    // PRODUCTION HARDENING FIXED: Swapped root placeholders for Safaricom's authentic live production gateways
-    // (If testing pure sandbox shortcodes tonight, replace this link with: https://safaricom.co.ke)
-    const mpesaBaseUrl = "https://safaricom.co.ke";
+    // COMMERCIAL PRODUCTION ENGINE ENDPOINT GATEWAY
+    const mpesaBaseUrl = "https://safaricom.co.ke"; 
 
-    // GENERATE OAUTH ACCESS TOKEN: Authenticate with Safaricom cell towers
+    // 2. REQUEST LIVE SAFARICOM OAUTH ACCESS TOKEN
     const authCredentials = btoa(`${consumerKey}:${consumerSecret}`);
     const tokenResponse = await fetch(`${mpesaBaseUrl}/oauth/v1/generate?grant_type=client_credentials`, {
       method: "GET",
@@ -33,33 +35,33 @@ serve(async (req) => {
     });
     
     if (!tokenResponse.ok) {
-      throw new Error(`Safaricom Access Token Denied. Check credentials variables inside your vault.`);
+      throw new Error(`Safaricom Auth Rejected. Verify Consumer Keys inside your vault.`);
     }
     const { access_token } = await tokenResponse.json();
 
-    // COMPILE SECURITY TIMESTAMP & PASSWORD STRINGS (East Africa Local Time Zone Calibration)
+    // 3. COMPILE PRODUCTION SECURITY TIMESTAMP & PASSWORD STRINGS (East Africa Zone Time)
     const timestamp = new Date().toLocaleString("en-US", { timeZone: "Africa/Nairobi" })
       .replace(/[^0-9]/g, "").slice(0, 14); // Format: YYYYMMDDHHMMSS
     const password = btoa(`${shortcode}${passkey}${timestamp}`);
 
-    // BROADCAST THE ATOMIC LIPA NA M-PESA STK PUSH PAYLOAD
+    // 4. PREPARE THE RAW LIPA NA M-PESA STK PUSH DATA PAYLOAD MATRIX
     const stkPayload = {
       BusinessShortCode: shortcode,
       Password: password,
       Timestamp: timestamp,
-      TransactionType: "CustomerBuyGoodsOnline", // FIXED: Calibrated specifically to pass Till & Pochi networks flawlessly
+      TransactionType: "CustomerBuyGoodsOnline", // Targets Till / Pochi commercial lines
       Amount: Math.round(amount),
       PartyA: phone, 
-      PartyB: shortcode,
+      PartyB: shortcode, 
       PhoneNumber: phone,
-      // FIXED: Safely hooks back into your live active project callback listening panel
-      CallBackURL: `https://zaowprlwooltppxmcccu.supabase.co/functions/v1/mpesa-callback`, 
+      CallBackURL: `https://supabase.co`, 
       AccountReference: `FastDrop`,
-      TransactionDesc: `Campus delivery payment handled by rider: ${riderName}`,
+      TransactionDesc: `Campus delivery payment via rider: ${riderName}`,
     };
 
-    console.log(`📡 Relaying payload up to Safaricom channels for wallet ${shortcode}, amount: KSh ${amount}`);
+    console.log(`📡 Relaying payload up to Safaricom channels for shortcode ${shortcode}, amount: KSh ${amount}`);
 
+    // 5. BROADCAST TRANSMISSION PACKET TO SAFARICOM TOWERS
     const darajaStkResponse = await fetch(`${mpesaBaseUrl}/mpesa/stkpush/v1/processrequest`, {
       method: "POST",
       headers: {
@@ -71,13 +73,14 @@ serve(async (req) => {
 
     const stkResultData = await darajaStkResponse.json();
 
+    // Echo Safaricom's live receipt package right back down to your frontend client script
     return new Response(JSON.stringify(stkResultData), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
 
   } catch (error: any) {
-    console.error("❌ M-Pesa Edge Function Crash Exception Caught:", error.message);
+    console.error("❌ M-Pesa Edge Function Crash Exception:", error.message);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

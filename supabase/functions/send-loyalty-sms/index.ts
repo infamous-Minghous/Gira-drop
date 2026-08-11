@@ -1,59 +1,76 @@
-import { serve } from "https://deno.land";
+// ==========================================================================
+// AUTOMATED STUDENT LOYALTY MILESTONE TEXT MESSAGE ENGINE
+// ==========================================================================
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-serve(async (req) => {
+Deno.serve(async (req) => {
+  // Handle cross-platform browser security preflight check loops natively
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    const { to, message } = await req.json();
-    const atUsername = Deno.env.get("AT_USERNAME") || "sandbox"; 
+    // 1. EXTRACT DATA PARAMETERS SENT BY YOUR LOYALTY LIFECYCLE
+    const { studentPhone, textMessage, orderCount } = await req.json();
+
+    if (!studentPhone) throw new Error("Missing required subscriber phone parameter routing link.");
+
+    // Pull secure environment credentials directly out of your encrypted cloud vault
+    const atUsername = Deno.env.get("AT_USERNAME") || "sandbox"; // Defaults to Africa's Talking sandbox framework
     const atApiKey = Deno.env.get("AT_API_KEY")!;
+    const atSenderId = Deno.env.get("AT_SENDER_ID"); // Optional custom alpha-numeric shortcode string
+
+    // 2. FORMULATE THE DYNAMIC TEXT COPY TEMPLATE
+    // Fallback composition framework if the calling script doesn't supply explicit notification strings
+    const finalSMSMessage = textMessage || `🎉 Maseno Fast-Drop loyalty update!\n\nYou have completed delivery round #${orderCount || 1}.\n\nKeep ordering to unlock your next 100% FREE campus delivery run reward!`;
+
+    // 3. COMPILE AFRICA'S TALKING URL-ENCODED DATA PARAMETERS BLOCK
+    // Africa's Talking requires a strict form-urlencoded payload structure rather than JSON text cells
+    const payloadFields = new URLSearchParams();
+    payloadFields.append("username", atUsername);
+    payloadFields.append("to", studentPhone.trim());
+    payloadFields.append("message", finalSMSMessage);
     
-    let cleanPhone = to.replace(/[+\s]/g, '');
-    if (!cleanPhone.startsWith('254')) {
-      if (cleanPhone.startsWith('0')) cleanPhone = '254' + cleanPhone.substring(1);
-      else if (cleanPhone.startsWith('1')) cleanPhone = '254' + cleanPhone;
+    if (atSenderId) {
+        payloadFields.append("from", atSenderId.trim());
     }
-    const formattedRecipient = `+${cleanPhone}`;
 
-    console.log(`?? BROADCASTING SMS METRICS: Sending target message via Africa's Talking to: ${formattedRecipient}`);
-
-    const smsPayload = new URLSearchParams();
-    smsPayload.append("username", atUsername);
-    smsPayload.append("to", formattedRecipient);
-    smsPayload.append("message", message);
-
-    const targetEndpoint = atUsername === "sandbox" 
+    // 4. DEFINE AIRTIGHT INFRASTRUCTURE TARGET ENDPOINTS FLUIDLY
+    const isSandboxEnvironment = atUsername.toLowerCase() === "sandbox";
+    const atGatewayEndpointUrl = isSandboxEnvironment
       ? "https://africastalking.com"
-      : "https://africastalking.com"; 
+      : "https://africastalking.com";
 
-    const response = await fetch(targetEndpoint, {
+    console.log(`📡 Relaying automated alert via Africa's Talking [${atUsername}] up to recipient device: ${studentPhone}`);
+
+    // 5. BROADCAST RAW TELECOM PACKETS TO CELLULAR CARRIERS VIA FETCH API
+    const response = await fetch(atGatewayEndpointUrl, {
       method: "POST",
       headers: {
+        "ApiKey": atApiKey,
         "Accept": "application/json",
         "Content-Type": "application/x-www-form-urlencoded",
-        "apiKey": atApiKey
       },
-      body: smsPayload.toString()
+      body: payloadFields.toString(),
     });
 
-    const responseData = await response.json();
-    return new Response(JSON.stringify(responseData), {
+    const atTelecomResultData = await response.json();
+
+    // Echo telecom receipt package parameters back to your calling triggers
+    return new Response(JSON.stringify(atTelecomResultData), {
       status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" }
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
 
   } catch (error: any) {
-    console.error("? SMS Transmission Error:", error.message);
+    console.error("❌ Africa's Talking SMS Core Function Crash Exception Caught:", error.message);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 400,
-      headers: { ...corsHeaders, "Content-Type": "application/json" }
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 });

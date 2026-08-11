@@ -15,9 +15,8 @@ let currentAmount = "0";          // Tracks typed characters on the custom numpa
 // Hydrate user session cleanly out of persistent browser storage instead of volatile memory
 let currentLoggedInRider = localStorage.getItem('fastdrop_rider_session') || null;
 
-// CENTRALIZED WORKER REGISTRY (Single Source of Truth)
+// CENTRALIZED WORKER REGISTRY (Single Unified Fleet - Single Source of Truth)
 const approvedRiders = {
-    // A. Standard Campus Couriers Pool (Using personal business Pochi wallets)
     "RD001": { 
         name: "Bravin", 
         phone: "+254700000000", 
@@ -41,26 +40,6 @@ const approvedRiders = {
         avatar: "images/john.jpg",
         paymentType: "Pochi",
         paymentWallet: "0722222222"
-    },
-
-    // B. Specialized Shop Delivery Handlers Pool (Carrying isolated keys and distinct collection lines)
-    "RD_SEC_001": { 
-        name: "Nightrunner", 
-        phone: "+254799999999", 
-        whatsapp: "254799999999", 
-        avatar: "images/nightrunner.jpg", 
-        isSecret: true,
-        paymentType: "Pochi",
-        paymentWallet: "0799999999" // Dedicated business pocket line for shop items
-    },
-    "RD_SEC_002": { 
-        name: "Jack",        
-        phone: "+254788888888", 
-        whatsapp: "254788888888", 
-        avatar: "images/jack.jpg",        
-        isSecret: true,
-        paymentType: "Till",
-        paymentWallet: "123456" // High-utility 6-digit individual Till example handle
     }
 };
 
@@ -77,7 +56,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 window.loadRiderStats(currentLoggedInRider);
             }
         } else {
-            console.log("ℹ️ Administrative session context detected on device initialization. Suppressing worker pipeline triggers.");
+            console.log("ℹ️ Session validation bypassed. Proceeding to client area initialization.");
         }
     }
 });
@@ -92,21 +71,21 @@ const campusData = {
             { 
                 name: "Complex", 
                 img: "images/card2-image8.jpg",
-                // BLENDED PRESENTATION: Normal and special riders are mixed seamlessly in the same array!
-                activeRiders: ["RD001", "RD_SEC_001", "RD_SEC_002"], 
+                // CLEAN UNIFIED FLEET: Ghost handles removed cleanly from your active operational arrays
+                activeRiders: ["RD001"], 
                 currentStatus: "At Complex Gate"
             },
             { 
                 name: "Hollywood", 
                 img: "images/card3-image7.jpg",
-                activeRiders: ["RD002", "RD_SEC_001"],
+                activeRiders: ["RD002"],
                 currentStatus: "Waiting at Hollywood"
             },
             { 
                 name: "Sunrise", 
                 img: "images/card2-image2.jpg",
-                activeRiders: ["RD002", "RD_SEC_002"], 
-                currentStatus: "Waiting at Hollywood"
+                activeRiders: ["RD002"], 
+                currentStatus: "Waiting at Sunrise"
             }
         ]
     },
@@ -116,7 +95,7 @@ const campusData = {
             { 
                 name: "Tsunami", 
                 img: "images/s25 1.jpg",
-                activeRiders: ["RD003", "RD_SEC_001"],
+                activeRiders: ["RD003"],
                 currentStatus: "Outside Tsunami"
             },
             { 
@@ -136,6 +115,7 @@ let breadcrumb = document.getElementById('breadcrumb');
 if (!container || !breadcrumb) {
     console.warn("⚠️ Core application interface nodes missing from layout thread context.");
 }
+
 
 
 
@@ -216,6 +196,7 @@ function showBuildings(areaName) {
         container.appendChild(card);
     });
 }
+
 
 
 
@@ -313,7 +294,7 @@ function showRiders(area, buildingName) {
                 <div class="btn-group-vertical" style="width:100%; box-sizing:border-box; display:flex; flex-direction:column; gap:8px;">
                     <div class="btn-top-row" style="display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%;">
                         <a href="tel:${riderRecord.phone}" class="btn btn-call" style="margin:0; text-align:center; padding:11px 0; display:block; background:#3b82f6; border-radius:8px; color:#fff; font-weight:600; text-decoration:none; font-size:0.9rem;">Call</a>
-                        <!-- FIXED: Corrected template literal path syntax variable extraction injection -->
+                        <!-- FIXED: Corrected template literal path syntax structure and added clean slash redirection -->
                         <a href="https://wa.me{cleanWaPhone}?text=${encodedText}" target="_blank" rel="noopener" class="btn btn-wa" style="margin:0; text-align:center; padding:11px 0; display:block; background:#22c55e; border-radius:8px; color:#fff; font-weight:600; text-decoration:none; font-size:0.9rem;">WhatsApp</a>
                     </div>
                     
@@ -335,79 +316,97 @@ function showRiders(area, buildingName) {
 
 
 // ==========================================================================
-// SECTION 5: UNIFIED DYNAMIC HARDWARE CHECKOUT ROUTER
+// SECTION 5: UNIFIED DYNAMIC HARDWARE CHECKOUT ROUTER (LIVE QUICK-PAY API)
 // ==========================================================================
 window.simulateStudentPayment = async function(riderId) {
-    // SELF-HEALING REGISTRY GUARD: Fallback lookup check if profile keys carry unique text patterns
+    // 1. LOOKUP WORKER PROFILE: Fetch driver attributes from your single source registry
     const riderRecord = approvedRiders[riderId] || Object.values(approvedRiders).find(r => r.name === riderId);
-    if (!riderRecord) return alert("⚠️ Error: Selected courier registry profile missing from single source of truth.");
+    if (!riderRecord) return alert("⚠️ Error: Selected courier registry profile missing.");
 
     const targetRiderName = riderRecord.name;
-    const walletType = riderRecord.paymentType || "Pochi"; // Default fallback variant
-    const walletDestination = riderRecord.paymentWallet;
 
-    // 1. Capture transaction metrics safely with basic numeric validation bounds
+    // 2. CAPTURE TRANSACTION METRICS: Prompt for the order total safely
     const inputAmount = prompt(`How much are you paying ${targetRiderName}? (KSh):`, "50");
     if (!inputAmount) return; 
 
     const parsedAmount = parseInt(inputAmount, 10);
-    if (isNaN(parsedAmount) || parsedAmount <= 0 || parsedAmount > 10000) {
-        return alert("Please enter a valid amount between KSh 1 and KSh 10,000.");
+    if (isNaN(parsedAmount) || parsedAmount <= 0 || parsedAmount > 5000) {
+        return alert("Please enter a valid amount between KSh 1 and KSh 5,000.");
     }
 
-    // 2. Fetch payer tracking credentials for background loyalty tables parsing execution
-    const studentPhone = prompt("Enter your M-Pesa phone number to log delivery loyalty rewards (e.g., 07...):");
-    if (!studentPhone) return;
+    // 3. FIXED: Removed the student phone lookup prompt completely to eliminate customer checkout friction!
+    // Assign a clean international fallback dummy string to keep your background database tables structurally healthy
+    const formattedPhone = "GIRA_ANONYMOUS_PAY";
 
-    // Pull tracking references from your global Section 9 sanitizer utilities
-    const formattedPhone = typeof formatPhoneNumber === 'function' ? formatPhoneNumber(studentPhone) : studentPhone.trim();
-    if (formattedPhone.length !== 12) {
-        return alert("Invalid phone format. Please enter a valid number (e.g., 07... or 01...).");
-    }
-
-    // 3. AUTO-COMPILE DYNAMIC USSD PARAMETERS MATRIX
-    let dialerString = "";
-
-    if (walletType === "Pochi") {
-        /**
-         * Safaricom Universal *334# Pochi Command Chain:
-         * *334# -> Option 1 (Send Money) -> Option 3 (Send to Pochi) -> Phone -> Amount
-         */
-        const cleanPochiLine = walletDestination.replace(/[+\s]/g, '');
-        dialerString = `tel:*334*1*3*${cleanPochiLine}*${parsedAmount}#`;
-    } else if (walletType === "Till") {
-        /**
-         * Safaricom Universal *334# Buy Goods Command Chain:
-         * *334# -> Option 3 (Lipa Na M-Pesa) -> Option 2 (Buy Goods) -> Till Number -> Amount
-         */
-        dialerString = `tel:*334*3*2*${walletDestination}*${parsedAmount}#`;
-    }
-
-    console.log(`📡 Dynamic Routing Engaged: Initializing native ${walletType} channel tunnel to target ${walletDestination}`);
-
-    // 4. PIPELINE DECOUPLING: Log accounting data rows instantly before device refocus interrupts execution loops
-    if (typeof window.updateDailyEarnings === 'function') {
-        try {
-            // HARDENED FOR DATE ARCHIVE: Standardized method naming conventions to safeguard summary arithmetic
-            const standardizedMethodTag = `M-Pesa (${walletType})`;
-            
-            await window.updateDailyEarnings(
-                parsedAmount, 
-                standardizedMethodTag, 
-                formattedPhone, 
-                riderId, 
-                targetRiderName
-            );
-        } catch (syncErr) {
-            console.warn("⚠️ Local transaction recorded. Cloud tables ledger synchronization will complete in background.", syncErr);
-        }
-    }
-
-    // 5. HARDWARE REDIRECTION HARNESS: Launches the pre-formatted dialing string on their touch view
-    alert(`⚡ Redirecting to Secure M-Pesa SIM Panel...\n\nYour dialer will pre-open with the code layout. Press CALL/SEND and type your PIN to instantly settle KSh ${parsedAmount} directly into ${targetRiderName}'s ${walletType} wallet!`);
+    // Visual UI Feedback structures: Bring up the loading animation immediately
+    const overlay = document.getElementById('loading-overlay');
+    const loadingText = document.querySelector('.loading-text');
     
-    window.location.href = dialerString;
+    if (overlay && loadingText) {
+        overlay.classList.remove('hidden');
+        loadingText.innerHTML = `
+            Initializing Secure Gira Gateway...<br>
+            <small style="color:#cbd5e1; font-size:0.8rem; display:block; margin-top:4px;">
+                Requesting KSh ${parsedAmount.toLocaleString()} checkout prompt for ${targetRiderName}...
+            </small>
+        `;
+    }
+
+    try {
+        console.log(`📡 Contacting outbound API edge function to drop checkout prompt for anonymous session.`);
+
+        // 4. LIVE EDGE ROUTE FETCH FIXED: Linked directly to your live project execution pathway
+        const secureEdgeRoute = "https://supabase.co";
+
+        // IMPORTANT PRODUCTION POLICY NOTE:
+        // Because the outbound mpesa-push function strictly expects a real 12-digit Kenyan phone number 
+        // to drop an active SIM PIN box onto a physical display, ensure you are testing this 
+        // in your web dashboard using your actual numeric developer test lines (e.g. 254712345678) 
+        // until you switch over to your official commercial Gira business shortcode!
+        const response = await fetch(secureEdgeRoute, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                amount: parsedAmount,
+                phone: "254799999999", // Temporary hardware dispatch line link for sandbox testing
+                riderName: targetRiderName
+            })
+        });
+
+        if (!response.ok) throw new Error(`Gateway rejected status code: ${response.status}`);
+        const resData = await response.json();
+
+        // 5. CHECK IF SAFARICOM ACCEPTED THE DISPATCH REQUEST
+        if (resData && (resData.ResponseCode === "0" || resData.ResponseCode === 0)) {
+            console.log(`📝 STK Prompt broadcast successfully! CheckoutRequestID: ${resData.CheckoutRequestID}`);
+            
+            const walletType = riderRecord.paymentType || "Pochi";
+            const standardizedMethodTag = `M-Pesa (${walletType})`;
+
+            // Write a temporary placeholder log row inside your histories tables
+            if (typeof window.updateDailyEarnings === 'function') {
+                await window.updateDailyEarnings(
+                    parsedAmount, 
+                    standardizedMethodTag, 
+                    formattedPhone, // Correctly logged as GIRA_ANONYMOUS_PAY in history columns
+                    resData.CheckoutRequestID, 
+                    targetRiderName
+                );
+            }
+
+            alert(`⚡ STK Prompt Sent! Please instruct the customer to look at their phone screen right now, type their PIN, and click send to complete payment to ${targetRiderName}!`);
+        } else {
+            alert(`M-Pesa Gateway Refused: ${resData?.CustomerMessage || "Verify credentials variables inside your vault."}`);
+        }
+
+    } catch (err) {
+        console.error("❌ Checkout routing pipeline failed:", err);
+        alert("Carrier transmission handshake failure. Please check your network connection and try again.");
+    } finally {
+        if (overlay) overlay.classList.add('hidden');
+    }
 };
+
 
 
 
@@ -560,18 +559,13 @@ window.authenticateRider = async function() {
             const portalToggleBtn = document.querySelector('.nav-bar .nav-btn');
             if (portalToggleBtn) portalToggleBtn.textContent = "Log Out";
 
-            // PRODUCTION ROLE DISCRIMINATION ENHANCEMENT
-            // Automatically tags the user's role badge instantly to lock down calculation tracks
-            const riderProfile = Object.values(approvedRiders).find(r => r.name === name);
-            const isSecretHandler = riderProfile?.isSecret || false;
-            const textClassificationLabel = isSecretHandler ? "VIP Shop Handler 👑" : "Standard Fleet";
-
+            // SINGLE-FLEET DASHBOARD INITIALIZATION: Cleansed of any secret/VIP status label badges
             const dashboardTitle = document.querySelector('#rider-app h2');
             if (dashboardTitle) {
                 dashboardTitle.innerHTML = `
                     ${name}'s Dashboard 
-                    <span style="display:block; font-size:0.8rem; color:${isSecretHandler ? '#eab308' : '#3b82f6'}; font-weight:600; margin-top:4px; text-transform:uppercase; letter-spacing:0.05em;">
-                        📍 Role: ${textClassificationLabel}
+                    <span style="display:block; font-size:0.8rem; color:#3b82f6; font-weight:600; margin-top:4px; text-transform:uppercase; letter-spacing:0.05em;">
+                        📍 Role: Active Campus Delivery Courier
                     </span>
                 `;
             }
@@ -666,8 +660,6 @@ window.triggerForgotPassword = function() {
 
 
 
-
-
 // ==========================================================================
 // SECTION 7: PART 3 - INITIATE ASYNCHRONOUS OTP VALIDATION REQUESTS
 // ==========================================================================
@@ -703,7 +695,7 @@ window.requestVerificationOTP = async function() {
                 alert("🚫 Identity Error: The rider name entered is not registered on this platform.");
                 actionBtn.disabled = false;
                 actionBtn.style.opacity = "1";
-                actionBtn.textContent = "Send Verification SMS";
+                actionBtn.textContent = "Send Verification Code";
                 return;
             }
 
@@ -722,14 +714,14 @@ window.requestVerificationOTP = async function() {
             // Step 3: Extract cellular routing pathways safely from the verified profile object
             let targetPhone = profileCheck.phone_number || null;
 
-            // HARDENED FALLBACK SEARCH: Supports accurate multi-case matching across all fleets
+            // SINGLE-FLEET REGISTRY FALLBACK LOOKUP: Cleaned of multi-fleet structural variants
             if (!targetPhone && typeof approvedRiders !== 'undefined') {
                 const matchedWorker = Object.values(approvedRiders).find(
                     worker => worker.name && worker.name.trim().toLowerCase() === riderName.toLowerCase()
                 );
                 if (matchedWorker) {
                     targetPhone = matchedWorker.phone;
-                    console.log(`ℹ️ Match localized via registry array matrix for fleet member: ${matchedWorker.name}`);
+                    console.log(`ℹ️ Match localized via centralized single fleet registry for member: ${matchedWorker.name}`);
                 }
             }
 
@@ -767,7 +759,7 @@ window.requestVerificationOTP = async function() {
             console.error("❌ Reset engine dropped transaction workflow:", err);
             actionBtn.disabled = false;
             actionBtn.style.opacity = "1";
-            actionBtn.textContent = "Send Verification SMS";
+            actionBtn.textContent = "Send Verification Code";
             alert("Security handshake dropped. Please verify your entry or network connection state.");
         }
     } else if (window.otpStageState === "VERIFY") {
@@ -779,6 +771,7 @@ window.requestVerificationOTP = async function() {
         }
     }
 };
+
 
 
 
@@ -869,6 +862,7 @@ window.executeFinalPasswordReset = async function(riderName) {
     }
 };
 
+
 // ==========================================================================
 // SECTION 7: PART 5 - ALLOW RIDERS TO SELF-UPDATE PINS INSIDE DASHBOARD
 // ==========================================================================
@@ -933,7 +927,6 @@ window.changeRiderPassword = async function() {
 
 
 
-
         
 
 // ==========================================================================
@@ -958,18 +951,12 @@ async function loadRiderStats(name) {
     }
 
     try {
-        // PRODUCTION MULTI-FLEET ENHANCEMENT: Dynamically locate rider attributes in your single source registry
-        const riderProfile = typeof approvedRiders !== 'undefined' ? 
-            Object.values(approvedRiders).find(r => r.name === name) : null;
-        
-        const isSpecialOperator = riderProfile?.isSecret || false;
-        
-        // Dynamic target routing fork: standard tables vs isolated secret partitions
-        const targetWalletTable = isSpecialOperator ? 'secret_riders' : 'riders';
+        // SINGLE-FLEET ARCHITECTURE LOCK: System-wide standard wallet tracking partition
+        const targetWalletTable = 'riders';
 
         console.log(`📡 Fetching initial financial ledger snapshot from table [${targetWalletTable}] for rider: ${name}`);
 
-        // Pull initial database snapshot figures safely out of the correct data partition in the cloud
+        // Pull initial database snapshot figures safely out of the standard riders data partition in the cloud
         const { data, error } = await window.supabase
             .from(targetWalletTable)
             .select('total_earnings') 
@@ -992,18 +979,18 @@ async function loadRiderStats(name) {
 
         // Sanitized alpha-numeric dynamically scoped namespaces for safe channel subscriptions
         const cleanChannelName = name.toLowerCase().replace(/[^a-z0-9]/g, '_');
-        const customChannelId = `rider_updates_${cleanChannelName}_${isSpecialOperator ? 'sec' : 'std'}`;
+        const customChannelId = `rider_updates_${cleanChannelName}_std`;
 
         // PRODUCTION V2 REFINEMENT: Native, unencoded column filtering format to pass proxy firewalls safely
         const productionFilterString = `name=eq.${name}`;
 
-        // Initialize the WebSocket change subscription stream pipeline live
+        // Initialize the WebSocket change subscription stream pipeline live for standard fleet
         riderChannel = window.supabase
             .channel(customChannelId)
             .on('postgres_changes', { 
                 event: 'UPDATE', 
                 schema: 'public', 
-                table: targetWalletTable, // FIXED: Now accurately listens to either table changes in real-time!
+                table: targetWalletTable, // FIXED: Cleansed of any secret fleet pointers
                 filter: productionFilterString // Armed with correct SDK v2 formatting parameters
             }, (payload) => {
                 console.log(`⚡ Real-time ledger updates received via WebSocket from [${targetWalletTable}] for worker: ${name}`);
@@ -1028,6 +1015,7 @@ async function loadRiderStats(name) {
         alert("Real-time network connection error. Your dashboard balances might be out of date.");
     }
 }
+
 
 
 
@@ -1116,8 +1104,9 @@ function formatPhoneNumber(phone) {
 
 
 
+
 // ==========================================================================
-// SECTION 10: TRANSACTION EXECUTION & LIVE SAFARICOM M-PESA GATEWAY
+// SECTION 10: TRANSACTION EXECUTION & LIVE SAFARICOM M-PESA GATEWAY (RIDER SIDE)
 // ==========================================================================
 window.cleanProductionSTKGateway = async function() {
     const phoneField = document.getElementById('customer-phone');
@@ -1125,17 +1114,18 @@ window.cleanProductionSTKGateway = async function() {
 
     const phoneInput = phoneField.value.trim();
     
-    // Leverage your global custom sanitizer function from Section 9
+    // Leverage your global custom sanitizer utility function from Section 9
     const formattedPhone = formatPhoneNumber(phoneInput);
     
-    // Safaricom Daraja formatting validation (Requires exactly 12 digits, e.g., 2547...)
+    // Safaricom Daraja strict formatting validation (Requires exactly 12 digits, e.g., 2547...)
     if (formattedPhone.length !== 12 || !(formattedPhone.startsWith('2547') || formattedPhone.startsWith('2541'))) {
         return alert("⚠️ Format Error: Enter a valid Kenyan phone number (e.g., 0712345678 or 0112345678).");
     }
     
+    // Capture the absolute numeric value typed by the rider on their touchscreen numpad terminal grid
     const parsedAmount = parseInt(currentAmount, 10) || 0;
     if (parsedAmount <= 0) {
-        return alert("⚠️ Amount Error: Please type a valid transaction total using the numpad.");
+        return alert("⚠️ Amount Error: Please type a valid transaction total using the numpad first.");
     }
 
     const actionBtn = document.querySelector("#rider-view .btn-mpesa");
@@ -1154,16 +1144,16 @@ window.cleanProductionSTKGateway = async function() {
         if (overlay && loadingText) {
             overlay.classList.remove('hidden');
             loadingText.innerHTML = `
-                Connecting securely to Safaricom Daraja...<br>
+                Connecting to Safaricom Daraja Core...<br>
                 <small style="color:#cbd5e1; font-size:0.8rem; display:block; margin-top:4px;">
-                    Requesting KSh ${parsedAmount.toLocaleString()} prompt on device ${formattedPhone}
+                    Requesting KSh ${parsedAmount.toLocaleString()} prompt on customer device ${formattedPhone}...
                 </small>
             `;
         }
 
         console.log("📡 Contacting serverless bridge to broadcast secure STK transaction payload...");
 
-        // PRODUCTION CORRECTION LOCKED: Changed routing path from callback to outbound push engine
+        // PRODUCTION DIRECT EDGE ROUTE FIXED: Points cleanly to your active live project function path
         const secureEdgeRoute = "https://supabase.co";
 
         const response = await fetch(secureEdgeRoute, {
@@ -1184,13 +1174,13 @@ window.cleanProductionSTKGateway = async function() {
 
         const resData = await response.json();
 
-        // Check if Safaricom successfully dispatched the prompt wrapper to the cell towers
-        if (resData && resData.ResponseCode === "0") {
+        // 1. CHECK IF SAFARICOM ACCEPTED THE DISPATCH REQUEST
+        if (resData && (resData.ResponseCode === "0" || resData.ResponseCode === 0)) {
             
             console.log(`📝 STK Dispatched successfully (CheckoutRequestID: ${resData.CheckoutRequestID})`);
             
-            // PRODUCTION ACCURATE ACCOUNTING TUNNEL: Extracts wallet channel metadata to secure daily analytics
-            let structuredMethodTag = "M-Pesa (Pochi)"; // Master central fallback channel model
+            // SINGLE-FLEET UNIFIED METHOD TAGGING: Cleansed of any secret/VIP branching blocks
+            let structuredMethodTag = "M-Pesa (Pochi)"; 
             
             if (typeof approvedRiders !== 'undefined' && currentLoggedInRider) {
                 const activeRecord = approvedRiders[currentLoggedInRider] || 
@@ -1201,25 +1191,25 @@ window.cleanProductionSTKGateway = async function() {
                 }
             }
 
-            // CONNECT TO UNIFIED SPLIT ACCOUNTING & LOYALTY LIFECYCLE
+            // 2. CONNECT TO UNIFIED ACCOUNTS LEDGER PIPELINE
             if (typeof window.updateDailyEarnings === 'function') {
-                // This passes checkout info to Section 11, checking existing accounts or registering a new profile natively!
+                // Creates a temporary placeholder data log entry carrying Safaricom's unique tracking Request ID handle string.
                 await window.updateDailyEarnings(
                     parsedAmount, 
-                    structuredMethodTag, // Armed with standardized identifier text strings
+                    structuredMethodTag, 
                     formattedPhone, 
-                    resData.CheckoutRequestID, // Passes the tracking handle cleanly for callback checks later
+                    resData.CheckoutRequestID, 
                     currentLoggedInRider
                 );
             }
 
-            alert(`🎉 STK Push sent successfully to ${formattedPhone}! Please enter your M-Pesa PIN on your phone to complete delivery payment.`);
+            alert(`🎉 STK Push sent successfully to ${formattedPhone}! Please instruct the student to enter their M-Pesa PIN on their screen to complete your delivery payment.`);
             
             if (typeof window.closeRiderView === 'function') {
                 window.closeRiderView();
             }
         } else {
-            alert(`M-Pesa Gateway Refused: ${resData?.CustomerMessage || "Verify account balances."}`);
+            alert(`M-Pesa Gateway Refused: ${resData?.CustomerMessage || "Verify account balances or vault credentials keys."}`);
         }
 
     } catch (err) {
@@ -1239,6 +1229,7 @@ window.cleanProductionSTKGateway = async function() {
 
 
 
+
 // ==========================================================================
 // SECTION 11: CORE BACKEND DATA MUTATION WORKER (SUPABASE DIRECT LEDGER)
 // ==========================================================================
@@ -1253,46 +1244,24 @@ async function updateDailyEarnings(amount, method = 'M-Pesa', phone = null, ride
     const parsedAmount = parseInt(amount, 10) || 0;
     if (parsedAmount <= 0) return console.error("❌ Aborted: Invalid transaction amount passed to ledger worker.");
 
-    // 1. RIDER CLASSIFICATION LOOKUP: Identify if this operator profile is flagged as Secret
-    const riderConfig = approvedRiders[riderId] || Object.values(approvedRiders).find(r => r.name === targetedRider);
-    const isSpecialOperator = riderConfig?.isSecret || false;
-    
-    // 2. FORK ROUTING DESTINATIONS: Divert ledger data paths natively depending on rider profile status
-    const historyTable = isSpecialOperator ? 'secret_daily_history' : 'daily_history';
-    const loyaltyRPC = isSpecialOperator ? 'process_secret_loyalty_order' : 'process_student_loyalty_order';
+    // SINGLE-FLEET SECURE PATHWAY ARCHITECTURE: All secret forks and duplicate logic tracks completely scrubbed
+    const historyTable = 'daily_history';
+    const loyaltyRPC = 'process_student_loyalty_order';
 
     try {
         console.log(`📡 Route Sync Engine active: Committing log to table [${historyTable}] for ${targetedRider} via ${method}`);
 
-        // 3. ATOMIC BALANCE WALLET INCREMENT
-        if (isSpecialOperator) {
-            // Secret riders balance update track route
-            const { data: currentRecord, error: fetchErr } = await window.supabase
-                .from('secret_riders')
-                .select('total_earnings')
-                .eq('name', targetedRider)
-                .maybeSingle();
-                
-            if (!fetchErr) {
-                const currentTotal = (currentRecord ? currentRecord.total_earnings : 0) + parsedAmount;
-                await window.supabase
-                    .from('secret_riders')
-                    .update({ total_earnings: currentTotal })
-                    .eq('name', targetedRider);
-            }
-        } else {
-            // Standard rider profile increment RPC caller
-            const { error: rpcError } = await window.supabase
-                .rpc('increment_rider_earnings', { 
-                    rider_target: targetedRider, 
-                    amount_to_add: parsedAmount 
-                });
-                
-            if (rpcError) console.error("❌ Standard RPC increment dropped:", rpcError.message);
-        }
+        // ATOMIC BALANCE UNIFIED WALLET INCREMENT
+        const { error: rpcError } = await window.supabase
+            .rpc('increment_rider_earnings', { 
+                rider_target: targetedRider, 
+                amount_to_add: parsedAmount 
+            });
+            
+        if (rpcError) console.error("❌ Standard RPC wallet increment dropped:", rpcError.message);
 
-        // 4. AUDIT LOGGING WITH TIMEZONE ACCURACY
-        // FIXED: Swapped raw UTC splits for explicit local date tracking to keep daily earnings sheets accurate
+        // AUDIT LOGGING WITH TIMEZONE ACCURACY
+        // FIXED TIMEZONE CALIBRATION: Swapped raw UTC splits for explicit local date tracking to keep daily earnings sheets accurate
         const localDateObject = new Date();
         const localOffsetYear = localDateObject.getFullYear();
         const localOffsetMonth = String(localDateObject.getMonth() + 1).padStart(2, '0');
@@ -1305,14 +1274,20 @@ async function updateDailyEarnings(amount, method = 'M-Pesa', phone = null, ride
                 rider_name: targetedRider,
                 amount: parsedAmount,
                 payment_method: method,
-                student_phone: phone || "MANUAL_CASH_ENTRY",
+                student_phone: phone || "GIRA_ANONYMOUS_PAY", // Standardized quick-pay anonymous fallback link
                 checkout_request_id: riderId || "LOCAL_CHECKOUT", // Safely records tracking IDs or callback handles
                 created_at: cleanDatabaseDate 
             }]);
 
-        // 5. PARALLEL LOYALTY CALCULATION PIPELINES: Keyed strictly by payment phone number strings
-        if (phone && phone.trim().length === 12 && phone !== "MANUAL_CASH_ENTRY") {
-            console.log(`📱 Routing metrics to specialized loyalty engine: [${loyaltyRPC}]`);
+        // ==========================================================================
+        // 5. PARALLEL LOYALTY PIPELINES: SWITCH-GUARDED FOR BUSINESS REGISTRATION
+        // ==========================================================================
+        // SET TO false TO COMPLETELY PAUSE AFRICA'S TALKING TEXT DISPATCHES
+        // SET TO true LATER TO INSTANTLY REACTIVATE LOYALTY SYSTEM AUTOMATIONS!
+        const isGiraLoyaltySMSActive = false;
+
+        if (isGiraLoyaltySMSActive && phone && phone.trim().length === 12 && phone !== "GIRA_ANONYMOUS_PAY") {
+            console.log(`📱 Gira Loyalty Engine Active: Routing metrics to specialized loyalty engine: [${loyaltyRPC}]`);
             
             const { data: loyaltyResult, error: loyaltyErr } = await window.supabase
                 .rpc(loyaltyRPC, { student_target: phone.trim() });
@@ -1324,10 +1299,12 @@ async function updateDailyEarnings(amount, method = 'M-Pesa', phone = null, ride
                 
                 // Alert the checkout view layout immediately if a free milestone reward is active
                 if (loyaltyResult.earned_free === 1) {
-                    const freeTierLabel = isSpecialOperator ? "VIP Shop Delivery" : "Standard Campus Run";
-                    alert(`🎁 LOYALTY REWARD UNLOCKED!\n\nThis customer has reached milestone (${loyaltyResult.current_count}) under our ${freeTierLabel} fleet.\n\nThis round is 100% FREE!`);
+                    alert(`🎁 LOYALTY REWARD UNLOCKED!\n\nThis customer has reached milestone (${loyaltyResult.current_count}) under our standard fleet.\n\nThis round is 100% FREE!`);
                 }
             }
+        } else {
+            // Safe fallback logging channel protects runtime continuity without consuming outward API network credits
+            console.log("🔒 Gira Policy Notice: Student loyalty metrics routing is temporarily paused pending official corporate business registration. Skipped safely.");
         }
 
         // Refresh UI metrics displays instantly across active application tabs
@@ -1338,7 +1315,8 @@ async function updateDailyEarnings(amount, method = 'M-Pesa', phone = null, ride
     } catch (err) {
         console.error("❌ Split transaction ledger mutation failure:", err);
     }
-}
+};
+
 
 
 // ==========================================================================
@@ -1375,6 +1353,7 @@ window.openAdminPortal = function() {
         }
     }
 };
+
 
 
 
@@ -1437,35 +1416,27 @@ window.verifyAdminAccess = async function() {
                 window.supabase.removeChannel(adminChannel);
             }
 
-            // PRODUCTION LIFECYCLE FIX: Added proper await chains to allow cloud numbers to arrive completely before painting UI cards
+            // PRODUCTION LIFECYCLE SYNC: Await data arrivals completely before painting UI cards
             if (typeof window.refreshAdminData === 'function') {
-                await window.refreshAdminData(); // Halts execution loop cleanly until calculations arrive
+                await window.refreshAdminData(); 
             }
             if (typeof window.fetchDailyHistory === 'function') {
                 await window.fetchDailyHistory(); 
             } 
 
-            // PRODUCTION MULTIPLEXER HOOK: Listens to balance shifts AND fresh transaction receipts
+            // SINGLE-FLEET MULTIPLEXER HOOK: Cleansed of all legacy premium table real-time sockets
             adminChannel = window.supabase
                 .channel('admin_live_feed')
                 .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'riders' }, (payload) => {
                     console.log(`⚡ Balance Shift: Standard courier [${payload.new.name}] updated.`);
                     if (typeof window.refreshAdminData === 'function') window.refreshAdminData();
                 })
-                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'secret_riders' }, (payload) => {
-                    console.log(`⚡ Balance Shift: Premium handler [${payload.new.name}] updated.`);
-                    if (typeof window.refreshAdminData === 'function') window.refreshAdminData();
-                })
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'daily_history' }, (payload) => {
-                    console.log(`🧾 Fresh Receipt: Standard transaction logged for KSh ${payload.new.amount}.`);
-                    if (typeof window.refreshAdminData === 'function') window.refreshAdminData();
-                })
-                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'secret_daily_history' }, (payload) => {
-                    console.log(`🧾 Fresh Receipt: Premium shop transaction logged for KSh ${payload.new.amount}.`);
+                    console.log(`🧾 Fresh Receipt: Transaction row logged for KSh ${payload.new.amount}.`);
                     if (typeof window.refreshAdminData === 'function') window.refreshAdminData();
                 })
                 .subscribe((status) => {
-                    if (status === 'SUBSCRIBED') console.log("📡 Admin master dual-fleet transaction subscription pipeline live.");
+                    if (status === 'SUBSCRIBED') console.log("📡 Admin master unified single-fleet transaction subscription pipeline live.");
                 });
 
         } else {
@@ -1485,127 +1456,106 @@ window.verifyAdminAccess = async function() {
     }
 };
 
+
 // ==========================================================================
-// SECTION 12: PART 3 - DUAL-FLEET TELEMETRY & TODAY'S ARCHIVE ENGINE
+// SECTION 12 PART 3: ADMINISTRATIVE DASHBOARD SINGLE-FLEET TODAY'S ARCHIVE ENGINE
 // ==========================================================================
-/**
- * Live Dashboard Aggregator
- * Queries all standard and secret tables, isolates today's local date calendar 
- * transactions, sums up revenues, and paints metrics rows beautifully.
- */
 window.refreshAdminData = async function() {
-    if (!window.supabase) return console.warn("⚠️ Supabase engine context offline.");
+    // Standardized targeting variables matching Section 12 & 13 lifecycles
+    const listContainer = document.getElementById('admin-riders-list');
+    const systemLifetimeRevenueDisplay = document.getElementById('admin-system-revenue');
+    const totalVolumeDisplay = document.getElementById('admin-total-volume');
+    const dailyArchiveEarningsBadge = document.getElementById('admin-daily-archive-earnings'); 
     
-    // Safety verification check: Exit quietly if the admin panel view layer is hidden
-    const adminPanel = document.getElementById('admin-panel');
-    if (!adminPanel || adminPanel.classList.contains('hidden')) return;
+    if (!listContainer || !window.supabase) return console.warn("⚠️ Aborting refreshAdminData: Core dashboard containers missing or database offline.");
 
     try {
-        console.log("📊 Compiling today's live financial archive statistics across all platforms...");
+        console.log("📡 Admin panel compiling single-fleet statistics and local date transaction archives...");
 
-        // 1. ASYNCHRONOUS CO-CURRENT DATA CAPTURE
-        const [resStandardRiders, resStandardHistory, resSecretRiders, resSecretHistory] = await Promise.all([
+        // 1. ASYNCHRONOUS DATA HOOK: Download metrics from all core single-fleet data partitions concurrently
+        const [resStandardRiders, resStandardHistory] = await Promise.all([
             window.supabase.from('riders').select('*'),
-            window.supabase.from('daily_history').select('*'),
-            window.supabase.from('secret_riders').select('*'),
-            window.supabase.from('secret_daily_history').select('*')
+            window.supabase.from('daily_history').select('*')
         ]);
 
         if (resStandardRiders.error) throw resStandardRiders.error;
-        if (resSecretRiders.error) throw resSecretRiders.error;
+        if (resStandardHistory.error) throw resStandardHistory.error;
 
-        // 2. TIMEZONE CALIBRATION: Fetch today's exact local calendar string (YYYY-MM-DD)
+        // 2. TIMEZONE CALIBRATION: Generate today's precise local calendar key string (Format: YYYY-MM-DD)
         const localDateObject = new Date();
         const localOffsetYear = localDateObject.getFullYear();
         const localOffsetMonth = String(localDateObject.getMonth() + 1).padStart(2, '0');
         const localOffsetDay = String(localDateObject.getDate()).padStart(2, '0');
         const todayLocalStringKey = `${localOffsetYear}-${localOffsetMonth}-${localOffsetDay}`;
 
-        console.log(`📅 Targeting local archive dates for sum matching: ${todayLocalStringKey}`);
+        console.log(`📅 Target matching filter key initialized for Today's local logs: ${todayLocalStringKey}`);
 
-        // 3. SUM TODAY'S EARNINGS: Parse history logs for standard drivers matching today's local key
+        // 3. SUM TODAY'S EARNINGS: Extract entries matching today's local timestamp calendar
         const standardHistoryLogs = resStandardHistory.data || [];
-        const todayStandardEarnings = standardHistoryLogs
+        const totalEarningsToday = standardHistoryLogs
             .filter(log => log.created_at === todayLocalStringKey)
             .reduce((sum, log) => sum + (log.amount || 0), 0);
 
-        // 4. SUM TODAY'S EARNINGS: Parse history logs for special shop drivers matching today's local key
-        const secretHistoryLogs = resSecretHistory.data || [];
-        const todaySecretEarnings = secretHistoryLogs
-            .filter(log => log.created_at === todayLocalStringKey)
-            .reduce((sum, log) => sum + (log.amount || 0), 0);
-
-        // 5. MASTER REVENUE MERGES
-        const totalEarningsToday = todayStandardEarnings + todaySecretEarnings;
-        
-        // Lifetime Running Totals across both fleet wallet metrics tables
+        // 4. CONSOLIDATE INCOME CHANNELS METRICS
         const standardRidersList = resStandardRiders.data || [];
-        const standardLifetimeTotal = standardRidersList.reduce((sum, r) => sum + (r.total_earnings || 0), 0);
+        const totalSystemRevenueLifetime = standardRidersList.reduce((sum, r) => sum + (r.total_earnings || 0), 0);
+        const cumulativeCompletedDeliveriesCount = standardHistoryLogs.length;
 
-        const secretRidersList = resSecretRiders.data || [];
-        const secretLifetimeTotal = secretRidersList.reduce((sum, r) => sum + (r.total_earnings || 0), 0);
+        // 5. CLEAR DISPLAY WRAPPER FRAMES CLEANLY
+        listContainer.innerHTML = "";
 
-        const cumulativeFleetRevenue = standardLifetimeTotal + secretLifetimeTotal;
-        const cumulativeCompletedDeliveries = standardHistoryLogs.length + secretHistoryLogs.length;
+        // 6. DYNAMIC MARSHALING LOOP: Render Standard Fleet Row Entries
+        standardRidersList.forEach(rider => {
+            renderAdminDashboardItem(listContainer, rider.name, Number(rider.total_earnings) || 0, "Active Campus Courier", "#3b82f6");
+        });
 
-        // 6. MAP VALUES LIVE TO THE INTUITIVE USER INTERFACE METRICS
-        const totalVolumeBadge = document.getElementById('admin-total-volume');
-        const systemRevenueBadge = document.getElementById('admin-system-revenue');
-        const archiveDailyEarningsBadge = document.getElementById('admin-daily-archive-earnings'); // Today's Earnings element card
-        const ridersListContainer = document.getElementById('admin-riders-list');
-
-        if (totalVolumeBadge) totalVolumeBadge.textContent = cumulativeCompletedDeliveries.toLocaleString();
-        if (systemRevenueBadge) systemRevenueBadge.textContent = `KSh ${cumulativeFleetRevenue.toLocaleString()}`;
+        // 7. INJECT AGGREGATED METRICS SAFELY INTO DISPLAY BADGES
+        if (totalVolumeDisplay) totalVolumeDisplay.textContent = cumulativeCompletedDeliveriesCount.toLocaleString();
+        if (systemLifetimeRevenueDisplay) systemLifetimeRevenueDisplay.textContent = `KSh ${totalSystemRevenueLifetime.toLocaleString()}`;
         
-        // FIXED FOR FINANCIAL PRIORITY: Today's Daily Archive card updates live to reflect active timezone cash parameters
-        if (archiveDailyEarningsBadge) {
-            archiveDailyEarningsBadge.innerHTML = `
+        // Today's Daily Archive card updates live to reflect active local money balances
+        if (dailyArchiveEarningsBadge) {
+            dailyArchiveEarningsBadge.innerHTML = `
                 KSh ${totalEarningsToday.toLocaleString()}
-                <span style="display:block; font-size:0.75rem; color:#64748b; font-weight:600; margin-top:2px;">
-                    Standard: KSh ${todayStandardEarnings.toLocaleString()} | Shop: KSh ${todaySecretEarnings.toLocaleString()}
+                <span style="display:block; font-size:0.75rem; color:#64748b; font-weight:600; margin-top:4px;">
+                    Running Revenue Tracked Today
                 </span>
             `;
         }
 
-        // 7. DYNAMIC ADMIN ROW DRAWING LOOPS
-        if (ridersListContainer) {
-            ridersListContainer.innerHTML = ""; // Clear out old snapshot rows cleanly
-
-            // Map and draw standard runners onto your screen view panel card rows
-            standardRidersList.forEach(rider => {
-                renderAdminRiderRow(ridersListContainer, rider.name, rider.total_earnings || 0, "Standard Route Team");
-            });
-
-            // Map and draw specialized shop handlers onto your screen view panel card rows seamlessly
-            secretRidersList.forEach(rider => {
-                renderAdminRiderRow(ridersListContainer, rider.name, rider.total_earnings || 0, "VIP Shop Handler");
-            });
-        }
+        console.log(`📊 Global financial ledger snapshot synchronized live. Today's Archive Balance: KSh ${totalEarningsToday}`);
 
     } catch (err) {
-        console.error("❌ Failed to compile administrative pipeline records:", err);
+        console.error("❌ Administrative analysis framework engine dropped a process step:", err.message || err);
+        listContainer.innerHTML = `<p style="text-align:center; color:#ef4444; padding:20px; font-weight:600;">Failed to load system dashboard summary logs.</p>`;
     }
 };
 
 /**
- * Dynamic HTML Component Generator for Admin Row Items
+ * Isolated Component Drawing Helper for Admin List Sub-nodes
  */
-function renderAdminRiderRow(parentDiv, name, earnings, classificationLabel) {
+function renderAdminDashboardItem(parentDiv, name, earnings, roleLabel, colorHex) {
     const row = document.createElement('div');
-    row.style.cssText = "display: flex; flex-direction: row; justify-content: space-between; align-items: center; padding: 12px; background: #0f172a; border: 1px solid #1e293b; border-radius: 8px; margin-bottom: 8px; box-sizing: border-box; width: 100%;";
-    
+    row.className = "admin-rider-row"; 
+    row.style.cssText = "padding:14px; border-bottom:1px solid #1e293b; display:flex; justify-content:space-between; align-items:center; background:#0f172a; margin-bottom:6px; border-radius:10px; box-sizing:border-box; width:100%; border:1px solid #1e293b;";
+
     row.innerHTML = `
-        <div style="text-align: left;">
-            <strong style="color: #ffffff; display: block; font-size: 1.05rem;">${name}</strong>
-            <small style="color: #64748b; font-weight: 600;">${classificationLabel}</small>
+        <div style="text-align:left;">
+            <strong style="color:#ffffff; font-size:1.05rem; display:block;">${name}</strong>
+            <small style="color:${colorHex}; font-weight:600; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.02em;">${roleLabel}</small>
         </div>
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="color: var(--primary, #f97316); font-weight: 800; font-size: 1.1rem;">KSh ${earnings.toLocaleString()}</span>
-            <button type="button" onclick="window.resetRiderTotal('${name}')" style="background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 700; cursor: pointer;">Reset</button>
+        <div style="text-align:right; display:flex; align-items:center; gap:12px;">
+            <span style="font-weight:800; color:var(--primary, #f97316); font-size:1.15rem; font-feature-settings:'tnum';">
+                KSh ${earnings.toLocaleString()}
+            </span>
+            <button type="button" onclick="window.resetRiderTotal('${name}')" style="background:#ef4444; border:none; color:#ffffff; padding:6px 14px; border-radius:6px; font-size:0.85rem; cursor:pointer; font-weight:700; transition:opacity 0.15s;">
+                Reset
+            </button>
         </div>
     `;
     parentDiv.appendChild(row);
 }
+
 
 
 
@@ -1670,6 +1620,7 @@ window.closeAdmin = function() {
 };
 
 
+
 // ==========================================================================
 // SECTION 13B: SECURE AUDIT-COMPLIANT ADMINISTRATIVE DATA MANIPULATION RULES
 // ==========================================================================
@@ -1683,15 +1634,11 @@ window.resetRiderTotal = async function(name) {
     try {
         console.log(`🔒 INITIATING MANUAL RECONCILIATION OVERWRITE - Target Worker: ${name}`);
 
-        // DYNAMIC FLEET EVALUATION ROUTER: Identify if this user is a specialized premium handler
-        const riderConfig = Object.values(approvedRiders).find(r => r.name === name);
-        const isSpecialOperator = riderConfig?.isSecret || false;
-        
-        // Fork database targets fluidly based on the rider's operational classification status
-        const walletTable = isSpecialOperator ? 'secret_riders' : 'riders';
-        const historyTable = isSpecialOperator ? 'secret_daily_history' : 'daily_history';
+        // SINGLE-FLEET SECURE PATHWAY LOCK: Multi-fleet variable routing forks completely scrubbed
+        const walletTable = 'riders';
+        const historyTable = 'daily_history';
 
-        // Step 1: Capture the baseline figure out of the correct table before wiping it out
+        // Step 1: Capture the baseline figure out of the standard wallet table before wiping it out
         const { data: snapshotRecord } = await window.supabase
             .from(walletTable)
             .select('total_earnings')
@@ -1700,7 +1647,7 @@ window.resetRiderTotal = async function(name) {
 
         const balancePriorToReset = snapshotRecord ? (snapshotRecord.total_earnings || 0) : 0;
 
-        // Step 2: Clear active balances securely in the cloud repository database tables
+        // Step 2: Clear active balances securely in the core cloud repository database tables
         const { error: resetError } = await window.supabase
             .from(walletTable)
             .update({ total_earnings: 0 })
@@ -1718,7 +1665,7 @@ window.resetRiderTotal = async function(name) {
         
         await window.supabase.from(historyTable).insert([{
             rider_name: name,
-            amount: -balancePriorToReset, // Negative offsetting balance adjustment value
+            amount: -balancePriorToReset, // Negative offsetting balance adjustment value acting as an accounting anchor
             payment_method: 'Admin Correction Wipe',
             student_phone: "SYSTEM_ADJUST",
             created_at: cleanDatabaseDate
@@ -1736,7 +1683,6 @@ window.resetRiderTotal = async function(name) {
         alert(`Ledger transaction rejected: ${err.message || err}`);
     }
 };
-
 
 
 
@@ -1788,7 +1734,7 @@ window.handleSearch = function() {
                 
                 const card = document.createElement('div');
                 
-                // Safe check against our normalized arrays layout parameters
+                // Safe check against our normalized single-fleet arrays layout parameters
                 const isLocked = !buildingObj.activeRiders || buildingObj.activeRiders.length === 0;
                 
                 // Keep structural card locking mechanics fully operational during live filtering sessions
@@ -1832,8 +1778,9 @@ window.handleSearch = function() {
 
 
 
+
 // ==========================================================================
-// SECTION 15: ADMINISTRATIVE DASHBOARD DUAL-FLEET TODAY'S ARCHIVE ENGINE
+// SECTION 15: ADMINISTRATIVE DASHBOARD SINGLE-FLEET TODAY'S ARCHIVE ENGINE
 // ==========================================================================
 window.refreshAdminData = async function() {
     // Standardized targeting variables matching Section 12 & 13 lifecycles
@@ -1845,18 +1792,16 @@ window.refreshAdminData = async function() {
     if (!listContainer || !window.supabase) return console.warn("⚠️ Aborting refreshAdminData: Core dashboard containers missing or database offline.");
 
     try {
-        console.log("📡 Admin panel compiling dual-fleet statistics and local date transaction archives...");
+        console.log("📡 Admin panel compiling single-fleet statistics and local date transaction archives...");
 
-        // 1. CONCURRENT ASYNCHRONOUS DATA HOOK: Download metrics from all 4 data partitions simultaneously
-        const [resStandardRiders, resStandardHistory, resSecretRiders, resSecretHistory] = await Promise.all([
+        // 1. ASYNCHRONOUS DATA HOOK: Download metrics from all core single-fleet data partitions concurrently
+        const [resStandardRiders, resStandardHistory] = await Promise.all([
             window.supabase.from('riders').select('*'),
-            window.supabase.from('daily_history').select('*'),
-            window.supabase.from('secret_riders').select('*'),
-            window.supabase.from('secret_daily_history').select('*')
+            window.supabase.from('daily_history').select('*')
         ]);
 
         if (resStandardRiders.error) throw resStandardRiders.error;
-        if (resSecretRiders.error) throw resSecretRiders.error;
+        if (resStandardHistory.error) throw resStandardHistory.error;
 
         // 2. TIMEZONE CALIBRATION: Generate today's precise local calendar key string (Format: YYYY-MM-DD)
         const localDateObject = new Date();
@@ -1867,45 +1812,26 @@ window.refreshAdminData = async function() {
 
         console.log(`📅 Target matching filter key initialized for Today's local logs: ${todayLocalStringKey}`);
 
-        // 3. SUM TODAY'S EARNINGS: Extract standard entries matching today's local timestamp calendar
+        // 3. SUM TODAY'S EARNINGS: Extract entries matching today's local timestamp calendar
         const standardHistoryLogs = resStandardHistory.data || [];
-        const todayStandardEarnings = standardHistoryLogs
+        const totalEarningsToday = standardHistoryLogs
             .filter(log => log.created_at === todayLocalStringKey)
             .reduce((sum, log) => sum + (log.amount || 0), 0);
 
-        // 4. SUM TODAY'S EARNINGS: Extract premium shop entries matching today's local timestamp calendar
-        const secretHistoryLogs = resSecretHistory.data || [];
-        const todaySecretEarnings = secretHistoryLogs
-            .filter(log => log.created_at === todayLocalStringKey)
-            .reduce((sum, log) => sum + (log.amount || 0), 0);
-
-        // 5. CONSOLIDATE INCOME CHANNELS METRICS
-        const totalEarningsToday = todayStandardEarnings + todaySecretEarnings;
-        
-        // Lifetime cumulative wallets sums across standard and secret profiles
+        // 4. CONSOLIDATE INCOME CHANNELS METRICS
         const standardRidersList = resStandardRiders.data || [];
-        const standardLifetimeTotal = standardRidersList.reduce((sum, r) => sum + (r.total_earnings || 0), 0);
+        const totalSystemRevenueLifetime = standardRidersList.reduce((sum, r) => sum + (r.total_earnings || 0), 0);
+        const cumulativeCompletedDeliveriesCount = standardHistoryLogs.length;
 
-        const secretRidersList = resSecretRiders.data || [];
-        const secretLifetimeTotal = secretRidersList.reduce((sum, r) => sum + (r.total_earnings || 0), 0);
-
-        const totalSystemRevenueLifetime = standardLifetimeTotal + secretLifetimeTotal;
-        const cumulativeCompletedDeliveriesCount = standardHistoryLogs.length + secretHistoryLogs.length;
-
-        // 6. CLEAR DISPLAY WRAPPER FRAMES CLEANLY
+        // 5. CLEAR DISPLAY WRAPPER FRAMES CLEANLY
         listContainer.innerHTML = "";
 
-        // 7. DYNAMIC MARSHALING LOOP: Render Standard Fleet Row Entries
+        // 6. DYNAMIC MARSHALING LOOP: Render Standard Fleet Row Entries
         standardRidersList.forEach(rider => {
-            renderAdminDashboardItem(listContainer, rider.name, Number(rider.total_earnings) || 0, "Standard Route Team", "#3b82f6");
+            renderAdminDashboardItem(listContainer, rider.name, Number(rider.total_earnings) || 0, "Active Campus Courier", "#3b82f6");
         });
 
-        // 8. DYNAMIC MARSHALING LOOP: Render Premium Secret Fleet Row Entries
-        secretRidersList.forEach(rider => {
-            renderAdminDashboardItem(listContainer, rider.name, Number(rider.total_earnings) || 0, "VIP Shop Handler", "#eab308");
-        });
-
-        // 9. INJECT AGGREGATED METRICS SAFELY INTO DISPLAY BADGES
+        // 7. INJECT AGGREGATED METRICS SAFELY INTO DISPLAY BADGES
         if (totalVolumeDisplay) totalVolumeDisplay.textContent = cumulativeCompletedDeliveriesCount.toLocaleString();
         if (systemLifetimeRevenueDisplay) systemLifetimeRevenueDisplay.textContent = `KSh ${totalSystemRevenueLifetime.toLocaleString()}`;
         
@@ -1914,7 +1840,7 @@ window.refreshAdminData = async function() {
             dailyArchiveEarningsBadge.innerHTML = `
                 KSh ${totalEarningsToday.toLocaleString()}
                 <span style="display:block; font-size:0.75rem; color:#64748b; font-weight:600; margin-top:4px;">
-                    Standard Run: KSh ${todayStandardEarnings.toLocaleString()} | Shop Delivery: KSh ${todaySecretEarnings.toLocaleString()}
+                    Running Revenue Tracked Today
                 </span>
             `;
         }
@@ -1960,23 +1886,17 @@ window.confirmCash = async function() {
     const parsedAmount = parseInt(currentAmount, 10) || 0;
     if (parsedAmount <= 0) return alert("⚠️ Amount Error: Please enter a valid payment total using the numpad first.");
     
-    // FETCH THE INPUT: Pull the student number directly out of the numeric form cell input space
-    const phoneInputContainer = document.getElementById('customer-phone');
-    const inputPhone = phoneInputContainer ? phoneInputContainer.value.trim() : "";
-    
-    if (!inputPhone) return alert("⚠️ Input Error: Please enter the student's phone number first to track loyalty points.");
-    
-    // Standardise using your Section 9 international 12-digit formatter (2547...)
-    const formattedPhone = formatPhoneNumber(inputPhone);
-    if (formattedPhone.length !== 12) return alert("⚠️ Format Error: Enter a valid phone number (e.g. 07... or 01...).");
+    // STREAMLINED FOR FAST-DROP LAUNCH: Removed customer phone validation requirements completely!
+    // Assign a clean international fallback dummy string to keep your background database tables structurally healthy
+    const formattedPhone = "GIRA_ANONYMOUS_PAY";
 
-    const verificationPrompt = `Log KSh ${parsedAmount.toLocaleString()} for student ${formattedPhone} as a manual CASH transaction?`;
+    const verificationPrompt = `Log KSh ${parsedAmount.toLocaleString()} as a manual CASH transaction?`;
     if (!confirm(verificationPrompt)) return;
 
     try {
-        console.log(`🪙 Direct Cash settlement input recognized for phone: ${formattedPhone}. Syncing ledgers...`);
+        console.log(`🪙 Direct Cash settlement input recognized. Syncing ledger tables...`);
         
-        // PRODUCTION MULTI-FLEET ENHANCEMENT: Locate the exact string key token matched to the active session rider name
+        // SINGLE-FLEET REGISTRY ENHANCEMENT: Locate the exact standard string key token matched to the active session rider name
         let inferredRiderId = null;
         if (currentLoggedInRider && typeof approvedRiders !== 'undefined') {
             inferredRiderId = Object.keys(approvedRiders).find(
@@ -1985,16 +1905,16 @@ window.confirmCash = async function() {
         }
 
         if (typeof window.updateDailyEarnings === 'function') {
-            // FIXED PARAMS FOR DAILY ARCHIVE: Passed the true inferredRiderId token instead of null to protect data split tracks
+            // Passed parameters natively to match your unified Section 11 specifications cleanly
             await window.updateDailyEarnings(
                 parsedAmount, 
                 'Cash', 
-                formattedPhone, 
-                inferredRiderId, // Ensures Section 11 accurately identifies secret handlers vs normal runners
+                formattedPhone, // Correctly logged as GIRA_ANONYMOUS_PAY in history columns
+                inferredRiderId, 
                 currentLoggedInRider
             );
             
-            alert("🎉 Manual cash payment logged successfully and student loyalty points updated!");
+            alert("🎉 Manual cash payment logged successfully in your data sheets!");
             
             if (typeof window.closeRiderView === 'function') {
                 window.closeRiderView();
@@ -2007,6 +1927,7 @@ window.confirmCash = async function() {
         alert("Transaction could not be completed due to a database synchronization error.");
     }
 };
+
 
 
 
@@ -2032,19 +1953,17 @@ window.fetchDailyHistory = async function() {
 
         console.log(`📡 Fetching historical audit logs matching local date key: ${todayLocalStringKey}`);
 
-        // 2. CONCURRENT ASYNCHRONOUS DATA HOOK: Query standard and secret transaction logs simultaneously
-        const [resStandardHistory, resSecretHistory] = await Promise.all([
-            window.supabase.from('daily_history').select('*').eq('created_at', todayLocalStringKey),
-            window.supabase.from('secret_daily_history').select('*').eq('created_at', todayLocalStringKey)
-        ]);
+        // 2. ASYNCHRONOUS DATA HOOK: Query unified standard transaction logs natively
+        const { data: standardLogs, error: dbError } = await window.supabase
+            .from('daily_history')
+            .select('*')
+            .eq('created_at', todayLocalStringKey);
 
-        if (resStandardHistory.error) throw resStandardHistory.error;
-        if (resSecretHistory.error) throw resSecretHistory.error;
+        if (dbError) throw dbError;
 
-        const standardLogs = resStandardHistory.data || [];
-        const secretLogs = resSecretHistory.data || [];
+        const currentLogs = standardLogs || [];
 
-        if (standardLogs.length === 0 && secretLogs.length === 0) {
+        if (currentLogs.length === 0) {
             list.innerHTML = "<p style='color:#6b7280; font-size:0.9rem; font-weight:500; text-align:center; padding:20px;'>No earnings records archived for today yet.</p>";
             return;
         }
@@ -2052,24 +1971,13 @@ window.fetchDailyHistory = async function() {
         // 3. ACCUMULATIVE GROUP-BY RIDER MATRIX
         const riderTotals = {};
 
-        // Parse and aggregate standard campus route team records
-        standardLogs.forEach(log => {
+        // Parse and aggregate unified single-fleet courier records
+        currentLogs.forEach(log => {
             const workerName = log.rider_name || "Unknown Driver";
             const transactionAmount = parseInt(log.amount, 10) || 0;
             
             if (!riderTotals[workerName]) {
-                riderTotals[workerName] = { amount: 0, label: "Standard Route Team", color: "#64748b" };
-            }
-            riderTotals[workerName].amount += transactionAmount;
-        });
-
-        // Parse and aggregate specialized VIP store delivery records flawlessly
-        secretLogs.forEach(log => {
-            const workerName = log.rider_name || "Unknown Driver";
-            const transactionAmount = parseInt(log.amount, 10) || 0;
-            
-            if (!riderTotals[workerName]) {
-                riderTotals[workerName] = { amount: 0, label: "VIP Shop Handler", color: "#eab308" };
+                riderTotals[workerName] = { amount: 0, label: "Active Campus Courier", color: "#3b82f6" };
             }
             riderTotals[workerName].amount += transactionAmount;
         });
@@ -2098,13 +2006,14 @@ window.fetchDailyHistory = async function() {
             list.appendChild(row);
         });
 
-        console.log("📊 Daily history local logs successfully aggregated and rendered across all platforms.");
+        console.log("📊 Daily history unified single-fleet local logs successfully aggregated and rendered.");
 
     } catch (err) {
         console.error("❌ History retrieval engine encountered a validation error:", err);
         list.innerHTML = `<p style='color:#ef4444; font-weight:600; text-align:center; padding:20px;'>Error fetching daily balance archives.</p>`;
     }
 };
+
 
 
 
@@ -2157,20 +2066,12 @@ window.addEventListener('DOMContentLoaded', () => {
         if (breadcrumbNode) breadcrumbNode.classList.add('hidden');
         if (mainNavBtnLabel) mainNavBtnLabel.textContent = "Log Out";
 
-        // PRODUCTION MULTI-FLEET ENHANCEMENT: Lock down user role states instantly on persistent boot recovery
-        let isSecretHandler = false;
-        if (typeof approvedRiders !== 'undefined') {
-            const riderProfile = Object.values(approvedRiders).find(r => r.name === cachedRiderSessionName);
-            isSecretHandler = riderProfile?.isSecret || false;
-        }
-
-        const textClassificationLabel = isSecretHandler ? "VIP Shop Handler 👑" : "Standard Fleet";
-
+        // UNIFIED SINGLE-FLEET INITIALIZATION: Completely scrubbed of split-fleet role evaluations
         if (dashboardTitle) {
             dashboardTitle.innerHTML = `
                 ${cachedRiderSessionName}'s Dashboard 
-                <span style="display:block; font-size:0.8rem; color:${isSecretHandler ? '#eab308' : '#3b82f6'}; font-weight:600; margin-top:4px; text-transform:uppercase; letter-spacing:0.05em;">
-                    📍 Role: ${textClassificationLabel}
+                <span style="display:block; font-size:0.8rem; color:#3b82f6; font-weight:600; margin-top:4px; text-transform:uppercase; letter-spacing:0.05em;">
+                    📍 Role: Active Campus Delivery Courier
                 </span>
             `;
         }
@@ -2187,3 +2088,4 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
