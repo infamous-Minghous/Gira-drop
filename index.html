@@ -11,17 +11,18 @@
     <!-- Color palette synchronization mapping directly to style.css and manifest variables -->
     <meta name="theme-color" content="#f97316">
     
-    <!-- ==========================================================================
-         PRODUCTION REFINEMENT: APPLE iOS NATIVE LAUNCHER INTERFACES FIXED
-         ========================================================================== -->
-    <!-- 1. Forces iOS to download and render your true icon binary layout instead of fallback text letters -->
-    <link rel="apple-touch-icon" href="images/icon-192.png">
-
-    <!-- 2. Forces iOS Safari to hide the URL top-bar and launch in full-screen standalone app mode -->
+    <!-- B. APPLE iOS EXCLUSIVE META GATES & TOUCH ICON LINK -->
+    <!-- Forces iOS Safari to load your HD square logo on the iPhone launcher grid instantly -->
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    
+    <!-- Launches Gira as a standalone full-screen app frame, stripping away Safari's browser URL bars -->
     <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <!-- Sets the text layout title string beneath the iPhone home screen app grid launcher card -->
+    <meta name="apple-mobile-web-app-title" content="Gira">
+    
+    <!-- Ensures your phone's top hardware status battery strip blends cleanly into your Onyx Black theme color -->
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-startup-image" href="images/icon-512.png">
-
     <!-- Primary Application Modular Stylesheets Stylesheet -->
     <link rel="stylesheet" href="style.css">
 </head>
