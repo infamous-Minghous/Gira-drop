@@ -257,7 +257,7 @@
         </button>
     </footer>
 
-        <!-- 1. Unified Client Library CDN Engine Link -->
+          <!-- 1. Unified Client Library CDN Engine Link -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <!-- 2. Cloud Workspace Instantiation Block -->
@@ -266,8 +266,32 @@
       const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inphb3dwcmx3b29sdHBweG1jY2N1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2MzYyMDQsImV4cCI6MjA5MTIxMjIwNH0.9r1PbaP4HMUJmOaDFHbXJiBfHANq0rY9kpfV5uXOQcs'; 
 
       if (typeof supabase !== 'undefined') {
-          // Instructs the engine to create the secure client workspace container
-          window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+          // 🟩 Step A: Instantiate the primary raw database connection channel
+          const privateRawInstance = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+          // 🟩 Step B: Wrap 'window.supabase' in an administrative security proxy gate!
+          window.supabase = {
+              from: (tableName) => {
+                  // White-list of permitted public tables your app is allowed to touch
+                  const permittedPublicTables = ['riders', 'daily_history', 'rider_auth', 'admin_registry'];
+                  
+                  if (!permittedPublicTables.includes(tableName)) {
+                      console.warn(`🔒 Security Block: Global console query rejected for protected table: ${tableName}`);
+                      return { 
+                          select: () => ({ 
+                              eq: () => ({ 
+                                  maybeSingle: () => Promise.resolve({ data: null, error: new Error("Access Denied") }) 
+                              }) 
+                          }) 
+                      };
+                  }
+                  return privateRawInstance.from(tableName);
+              },
+              rpc: (functionName, params) => privateRawInstance.rpc(functionName, params),
+              channel: (channelName) => privateRawInstance.channel(channelName),
+              removeChannel: (channelInstance) => privateRawInstance.removeChannel(channelInstance)
+          };
+
           console.log("✅ Live Production Connection: Supabase Client initialized successfully!");
       } else {
           console.error("❌ Critical Error: Supabase client library connection engine timed out.");

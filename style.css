@@ -1,15 +1,27 @@
 
+/* ==========================================================================
+   GIRA CORPORATE PALETTE CONFIGURATION - SINGLE FLEET WEB CORE
+   ========================================================================== */
 html, body {
     max-width: 100vw;
-    overflow-x: hidden; /* Prevents side-scrolling if an element overflows */
+    overflow-x: hidden; /* Prevents awkward side-scrolling shifts if an element overflows the viewport margins */
     position: relative;
+    background-color: #813F0B !important; /* 🟫 CHANGED: Oxblood Crimson Brown background system-wide */
 }
-:root{
-    --primary: #f97316;
-    --dark:#1f2937;
-    --light:#f3f4f6;
-    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+:root {
+    /* 1. Core Corporate Color Variables */
+    --primary: #FC6600;            /* Vibrant Gira Orange */
+    --primary-hover: #D45500;      /* Darkened tactical click reaction orange accent */
+    --accent-brown: #813F0B;       /* Oxblood Crimson Brown */
+    
+    /* 2. Interface Canvas Background Anchors */
+    --dark: #0f172a;               /* Premium slate black for cards, panels, and ledger grids */
+    --light: #813F0B;              /* 🟫 CHANGED: Recesses light token directly to Gira Brown base */
+    
+    /* 3. High-Utility Material Interface Shadows */
+    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.45), 0 2px 4px rgba(0, 0, 0, 0.3);
+    --hover-shadow: 0 12px 20px -3px rgba(0, 0, 0, 0.5), 0 4px 8px -2px rgba(0, 0, 0, 0.4);
 }
 
 /* Update your body style inside style.css to use lightning-fast local system fonts */
@@ -18,85 +30,132 @@ body {
     background-color: var(--light);
     margin: 0;
     padding: 12px;
+    color: #ffffff; /* Sets the default text color uniformly to a pristine white for maximum contrast */
 }
 
 
-header{
+header {
     text-align: center;
     padding: 16px 0;
+    border-bottom: 1px solid #813F0B; /* Appends a high-utility clean bounding line beneath your brand headers */
+    background-color: var(--dark);
+    margin: -12px -12px 16px -12px; /* Pulls boundaries flush to the device frame edges */
+    box-shadow: var(--card-shadow);
 }
 
-.breadcrumb{
+.breadcrumb {
     color: var(--primary);
     font-weight: 700;
-    margin-top: 6px;
+    margin-top: 8px;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    display: inline-block;
+    letter-spacing: 0.02em;
+    text-transform: uppercase; /* Makes navigation back-arrows look sharp and clean on student viewports */
+    transition: color 0.15s ease;
 }
+
+.breadcrumb:hover {
+    color: var(--primary-hover); /* Animates smoothly during interactive cursor hovers */
+}
+
 
 /* ==========================================================================
    CORE INTERACTIVE MAIN GRID WORKSPACE
    ========================================================================== */
 
-#app-container{
+/* ==========================================================================
+   PRIMARY DATA GRID WORKSPACE - APPLICATION VIEW ENGINE DYNAMICS
+   ========================================================================== */
+#app-container {
     position: relative;
     display: grid;
+    /* Grid layout auto-scales and adapts perfectly across all smartphone frame boundaries */
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 12px;
     max-width: 500px;
     padding: 12px;  
     margin: 10px auto;
     justify-content: center;
-    /* text-align:center; */
-    /* height: auto; */
-    /* background-position: center; */
-    padding-bottom: 90px;
+    box-sizing: border-box; /* Defensive alignment layer blocks container sizing calculation leaks */
     min-height: 400px;
-
+    
+    /* PWA FOOTER NAVIGATION BUFFER SAFEGUARD:
+       Provides essential vertical space at the absolute bottom of the scroll track.
+       This prevents your persistent sticky rider action panels and iOS/Android home bars 
+       from awkwardly overlapping or covering your bottom campus building navigation cards! */
+    padding-bottom: 110px; 
 }
+
 
 /* Base Card Style */
 
-.card{
+/* ==========================================================================
+   INTERACTIVE GRID INTERFACE CARDS - THE CORE COMPONENT LOGIC
+   ========================================================================== */
+.card {
     position: relative;
     aspect-ratio: 1 / 1;
     background-size: cover;
     background-position: center;
     display: flex;
-    align-items:center;
+    align-items: center;
     justify-content: center;
     margin: 0;
-    background: white;
     padding: 16px;
     overflow: hidden;
-    color: white;
+    color: #ffffff;
     border-radius: 16px;
     text-align: center;
+    box-sizing: border-box; /* Defensive layout guard blocks border size compression spikes */
     box-shadow: var(--card-shadow);
-    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 2px solid transparent;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s, border-color 0.2s;
     cursor: pointer;
-    -webkit-user-select: none; /* Prevents text-selection highlighting while tapping fast */
+    
+    /* GIRA BRAND BALANCED MATRIX OVERWRITES */
+    background: var(--dark) !important; /* Swapped out raw white paint for premium slate-black backgrounds */
+    border: 2px solid #1e293b !important; /* Subtle slate border outlines your grids elegantly */
+    
+    /* PERFORMANCE HIGHLIGHT PROTECTION */
+    -webkit-user-select: none; /* Prevents ugly text-selection highlighting overlays while tapping numbers fast */
     user-select: none;
+    -webkit-tap-highlight-color: transparent; /* Removes default mobile browser blue tap-flash shapes */
 }
 
-.card:active{
-    transform: scale(0.96);
-    border-color: var(--primary);
+/* INTERACTIVE RESPONSIVE HOVER HOOKS */
+@media (hover: hover) {
+    .card:hover {
+        transform: translateY(-4px) scale(1.02); /* Creates a smooth floating lift on cursor hovers */
+        box-shadow: var(--hover-shadow);
+        border-color: rgba(252, 102, 0, 0.4) !important; /* Soft orange halo glow hints interactive usability */
+    }
 }
 
-.card h3{
+/* HIGH-VELOCITY MOBILE TACTILE FEEDBACK */
+.card:active {
+    transform: scale(0.96) !important; /* Snaps tight against the finger to simulate true mechanical key presses */
+    border-color: var(--primary) !important; /* Flashes bright Gira Orange (#FC6600) upon contact impact! */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* CARD INNER TYPOGRAPHY CONTROLLERS */
+.card h3 {
     margin: 0;
-    color: white;
+    color: #ffffff !important;
     position: relative;
     z-index: 2;
-    font-size: 1.1rem;
-    font-weight: 700;
+    font-size: 1.15rem;
+    font-weight: 800; /* Extra bold text ensures title text remains highly legible over photographic gradient layers */
     line-height: 1.3;
-    
+    letter-spacing: 0.01em;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95); /* Deep shadow wrapper completely seals text from bleeding into backing artwork images */
 }
 
-/* Dark Background Overlay (Guarantees white text readability over any background image) */
+/* ==========================================================================
+   CARD GRADIENT SCRIMS & UNIFIED SINGLE-FLEET RIDER COMPONENT STYLES
+   ========================================================================== */
+
+/* 1. Dark Background Scrim Overlay (Guarantees white text readability over campus image layers) */
 .card::after {
     content: "";
     position: absolute;
@@ -104,42 +163,55 @@ header{
     left: 0; 
     width: 100%; 
     height: 100%;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.2) 100%);
+    /* Hardened linear alpha track anchors text legibility across all phone display brightness layers */
+    background: linear-gradient(to top, rgba(2, 6, 23, 0.9) 0%, rgba(2, 6, 23, 0.3) 100%) !important;
     z-index: 1;
+    pointer-events: none; /* Prevents the invisible overlay from capturing layout touch events */
 }
-/* Desktop Hover Adjustments */
-@media (min-width: 768px) {
-    .card:hover {
-        transform: translateY(-4px);
-    }
-}
-/* Optional: Make the text easier to read on the dark background */
+
+/* 2. Unified Standard Rider Profile Panel Controller */
 .rider-card {
-    grid-column: 1 / -1; /* Spans across both grid rows cleanly */
+    grid-column: 1 / -1; /* Spans across both grid rows cleanly to fill screen width boundaries */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: var(--dark); 
+    background-color: var(--dark) !important; /* Premium Slate-Black container background color */
     border-radius: 16px;
     padding: 20px;
-    color: #ffffff;
+    color: #ffffff !important;
     min-height: 120px;
+    box-sizing: border-box;
     box-shadow: var(--card-shadow);
+    /* SINGLE-FLEET DESIGN BRAND LINE STRIP:
+       Appends a vibrant Gira Orange solid bounding edge strip line indicator to give
+       your courier listings an exceptionally premium, custom brand-aligned theme appearance! */
+    border: 1px solid var(--border-slate) !important;
+    border-left: 5px solid var(--primary) !important; 
 }
 
+/* 3. Rider Panel Internal Typography Core Element */
 .rider-card h3 {
-    text-shadow: none;
-    font-size: 1.1rem;
+    text-shadow: none !important; /* Strips double-shadows inside the flat-colored worker profiles canvas */
+    font-size: 1.2rem;
+    font-weight: 800; /* Rich extra-bold treatment maximizes readability */
     margin: 0 0 4px 0;
+    color: #ffffff !important;
+    letter-spacing: 0.01em;
 }
 
+/* 4. Action Layout Horizontal Wrapper Group */
 .btn-group {
     display: flex;
     gap: 8px;
+    align-items: center;
+    box-sizing: border-box;
 }
+
 /* ==========================================================================
-   FIXES CARRIER BUTTON CLICK BLOCKS
+   INTERACTIVE BUTTON LIFECYCLES & OVERLAY MODAL INFRASTRUCTURE
    ========================================================================== */
+
+/* 1. Fixes Carrier Button Click Blocks */
 .btn-group-vertical {
     display: flex;
     flex-direction: column;
@@ -161,131 +233,209 @@ header{
     position: relative !important;
     z-index: 6 !important;
     pointer-events: auto !important;
+    -webkit-tap-highlight-color: transparent;
 }
-
 
 .btn {
     padding: 10px 14px;
     border-radius: 8px;
     text-decoration: none;
-    color: #ffffff;
+    color: #ffffff !important;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700; /* Rich font-weight enhancement for clear outdoor reading */
     border: none;
     cursor: pointer;
-    transition: opacity 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), filter 0.15s ease;
 }
 
+/* HAPTIC SIMULATION LAYER FOR TELECOMMUNICATION COURIER CONTROLS */
 .btn:active {
-    opacity: 0.85;
+    transform: scale(0.97) !important; /* Mimics a hardware button press on high-velocity tapping */
+    filter: brightness(0.85);
 }
 
-.btn-call { background-color: #2563eb; }
-.btn-wa { background-color: #22c55e; white-space: nowrap; }
+.btn-call { background-color: #2563eb !important; } /* Classic communication slate-blue */
+.btn-wa { background-color: #22c55e !important; white-space: nowrap; } /* Compliant WhatsApp messaging green */
 
+/* 2. Unified M-Pesa Quick-Pay Transaction Launch Anchor */
+.btn-mpesa {
+    background: linear-gradient(135deg, #FC6600, #813F0B) !important; /* Premium Gira corporate gradients mapping */
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 4px 10px rgba(252, 102, 0, 0.15);
+}
 
-/* Rider View Overlay */
+/* 3. Production Rider View Fullscreen Terminal Overlay */
 #rider-view {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #ffffff;
     z-index: 100;
     box-sizing: border-box;
     overflow-y: auto;
     display: flex;   
     flex-direction: column;
+    
+    /* GIRA PALETTE TRANSFORMATION */
+    background-color: #020617 !important; /* Replaced flat white with deep onyx black layout base */
 }
 
-
-
+/* 4. Terminal Header Navigation Scrim Row */
 .rider-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid #e5e7eb;
     padding: 16px 20px;
     position: sticky;
     top: 0;
-    background-color: #ffffff;
     z-index: 10;
     width: 100%;
     box-sizing: border-box;
+    
+    /* UNIFIED PLATFORM SHIELD LAYERS */
+    background-color: #0f172a !important; /* Matches premium charcoal black material cards container shell */
+    border-bottom: 2px solid #813F0B !important; /* Striking oxblood crimson bounding line barrier */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .rider-header h2 {
     margin: 0;
-    font-size: 1.3rem;
-    color: var(--dark);
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #ffffff !important; /* Forces copy visibility over charcoal black surfaces */
+    letter-spacing: -0.01em;
 }
 
+/* 5. Terminal Direct Closure Handle Button */
 .rider-header button {
     background: none;
     border: none;
-    font-size: 28px;
+    font-size: 32px; /* Increased size slightly to make closing tap-targets easier for driving riders */
     cursor: pointer;
     color: #9ca3af;
     line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.rider-header button:active {
+    color: #FC6600 !important; /* Tapping close flashes Gira corporate orange notice indicators */
 }
 
 
 
 /* Amount Display */
 
+/* ==========================================================================
+   HARDWARE TOUCH TERMINAL DISPLAY PANELS & NUMERIC NUMPAD CONTROLLERS
+   ========================================================================== */
+
+/* 1. Driver Custom Numeric Amount Cash Value Counter Display */
 .amount-display {
-    font-size: 3rem;
+    font-size: 3.5rem; /* Increased sizing slightly to make numeric tracking effortless on small phone views */
     font-weight: 800;
     text-align: center;
     margin: 30px 0;
-    color: var(--primary);
-    font-feature-settings: "tnum"; /* Enforces tabular lining figures so numbers don't jump around */
+    color: var(--primary) !important; /* Locks value presentation text uniformly into Gira Orange (#FC6600) */
+    
+    /* PRODUCTION GLOW HIGHLIGHT ACCENT:
+       Appends a soft corporate orange neon halo illumination shadow structure behind numbers,
+       ensuring that numerical pricing balances stay perfectly legible even under extreme outdoor glare! */
+    text-shadow: 0 0 15px rgba(252, 102, 0, 0.25);
+    
+    /* ENFORCES TABULAR LINING FIGURES: 
+       Locks fixed structural spacing widths uniformly over every numerical digit character cell. 
+       This completely stops your text layout boundaries or adjacent buttons from erratic shifting 
+       or jumping around on fast numeric entries! */
+    font-feature-settings: "tnum" 1, "lnum" 1 !important; 
 }
 
+/* 2. Tactical Touchscreen Keypad Matrix Interface Wrapper Grid */
 .numpad {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr); /* Forms a clean 3-column symmetrical mathematical row map */
     gap: 12px;
     max-width: 320px;
     margin: 0 auto;
     width: 100%;
     padding: 0 20px;
-    box-sizing: border-box;
+    box-sizing: border-box; /* Defensive boundary guard isolates sizes from stretching adjacent panels */
 }
 
-/* Custom CSS utility helper class for global application hooks */
+
+//* ==========================================================================
+   TACTILE REACTION INTERFACES & GLOBAL APPLICATION STATE UTILITIES
+   ========================================================================== */
+
+/* 1. Custom CSS Utility Helper Class for Global Application Hooks */
 .hidden {
-    display: none !important;
+    display: none !important; /* Enforces absolute visibility suppression across state engines */
 }
 
-.numpad button:active{
-    background-color:#e5e7eb;
-    transform: scale(0.95);
+/* 2. Individual Numpad Button Mechanical Key Press Simulation */
+.numpad button {
+    transition: transform 0.08s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.1s ease !important;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
-/* Clear button (c) special color */
-.numpad-actions{
-    margin-top: auto;
+/* HIGH-VELOCITY TACTILE TRANSFORMATION TRACK */
+.numpad button:active {
+    /* FIXED FOR GIRA IDENTITY BRAND COHESION:
+       Swapped raw desktop office light-gray paint for rich corporate Oxblood Brown (#813F0B).
+       This flashes distinct mechanical color feedback loops under driver finger contact lines instantly! */
+    background-color: #813F0B !important; 
+    color: #ffffff !important;
+    border-color: var(--primary) !important; /* Orange outline fires concurrently on impact */
+    transform: scale(0.93) !important; /* Slightly increased scale collapse depth for true haptic feel */
+}
+
+/* 3. Bottom Terminal Execution Command Actions Panel Structure Layout */
+.numpad-actions {
+    margin-top: auto; /* Pushes the transaction action sheets cleanly to the absolute base of device screen frames */
     display: flex;
     flex-direction: column;
     gap: 12px;
-    padding-bottom: 20px;
+    padding: 0 20px 24px 20px; /* Enhanced internal padding grids maintain clean padding boundaries on taller displays */
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-/* Styling the actual numpad buttons */
+/* ==========================================================================
+   TACTILE NUMPAD METRICS & STAND-ALONE BRAND COMPONENT BUTTONS
+   ========================================================================== */
+
+/* 1. Styling the actual numpad grid keypad buttons */
 .numpad button {
     padding: 15px;
     font-size: 1.5rem;
-    border: 1px solid #e5e7eb;
+    font-weight: 700; /* Rich font-weight enhancement optimizes outdoor visibility */
     border-radius: 12px;
-    background: white;
-    font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s;
+    box-sizing: border-box;
+    transition: transform 0.08s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.1s ease, border-color 0.1s ease !important;
+    
+    /* GIRA CORPORATE STYLE TRANSFORMATION */
+    background: #0f172a !important; /* Replaced flat desktop white with premium slate-black */
+    border: 1px solid #1e293b !important; /* Subtle slate border outlines key cells cleanly */
+    color: #ffffff !important; /* High-contrast white glyph text entries */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
-/* Core Base Class for stand-alone layout wrappers */
+/* 2. Core Base Class for stand-alone layout wrappers */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -296,20 +446,27 @@ header{
     border: none;
     font-size: 1.05rem; 
     font-weight: 700;
-    color: #ffffff;
+    color: #ffffff !important;
     cursor: pointer;
     margin-bottom: 8px;
-    transition: background-color 0.15s, transform 0.1s, opacity 0.1s;
     box-sizing: border-box;
+    transition: filter 0.15s ease, transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.1s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
 }
 
+/* HAPTIC FEEDBACK CAPTURE FOR STAND-ALONE BUTTON INTERACTIONS */
 .btn:active {
-    opacity: 0.85;
-    transform: scale(0.98);
+    opacity: 0.9 !important;
+    transform: scale(0.97) !important; /* Snaps tight against the finger to simulate true hardware click depths */
+    filter: brightness(0.85); /* Slightly dims colors to signal execution triggers instantly */
 }
 
 
-/* Add space between the last row of numbers and the M-Pesa button */
+/* ==========================================================================
+   TRANSACTION BUTTON MAP OVERWRITES & HIGH-UTILITY FOOTER MATRICES
+   ========================================================================== */
+
+/* 1. Add space between the last row of numbers and the M-Pesa button */
 .payment-actions {
     margin-top: 30px; /* Adjust this value (20px to 40px) to your liking */
     display: flex;
@@ -317,7 +474,8 @@ header{
     gap: 12px;
     width: 100%;
     max-width: 350px; /* Keeps buttons aligned with the numpad width */
-    padding-bottom: 40px; /* Extra space so they don't touch the screen edge */
+    padding: 0 20px 40px 20px; /* Added horizontal buffer padding arrays to protect mobile alignment grids */
+    box-sizing: border-box;
 }
 
 /* Optional: Make the buttons feel more like a footer */
@@ -325,29 +483,71 @@ header{
     margin-bottom: 5px; /* Small gap between M-Pesa and Cash buttons */
 }
 
+/* ==========================================================================
+   PRODUCTION HARDENED BRAND-ALIGNED COLOR-MAP EXTENSIONS
+   ========================================================================== */
 
-.btn-mpesa { background-color: #22c55e; } /* Safaricom Live Green */
-.btn-cash { background-color: #1f2937; }
-.btn-primary { background-color: var(--primary); }
-.btn-dark { background-color: #000000; }
-.btn-pcm { background-color: #3b82f6; }
-.btn-pcm:active { background-color: #2563eb; }
-.btn-reverse { background-color: #334155; font-size: 0.8rem; }
+/* A. Unified Gira Quick-Pay M-Pesa Button Override */
+.btn-mpesa { 
+    /* FIXED FOR GIRA IDENTITY BRAND COHESION:
+       Swapped raw Safaricom green paint for your premium corporate orange-to-brown linear gradient track */
+    background: linear-gradient(135deg, #FC6600, #813F0B) !important; 
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
 
-/* Contact Integration Grid Layouts */
+/* B. Manual Cash Settlement Row Controller */
+.btn-cash { 
+    background-color: #1e293b !important; /* Premium Slate-Black material shell overlay background */
+    border: 1px solid #334155 !important;
+}
+
+/* C. Portal Universal Core Primary Trigger */
+.btn-primary { 
+    background-color: var(--primary) !important; /* Locks background natively to Gira Orange (#FC6600) */
+}
+
+/* D. Absolute Pitch-Black Admin Access Anchor */
+.btn-dark { 
+    background-color: #020617 !important; 
+    border: 1px solid #1e293b !important;
+}
+
+/* E. Carrier Please Call Me (PCM) USSD Launcher Row */
+.btn-pcm { 
+    background-color: #475569 !important; /* Slate grey communication theme coloring */
+}
+.btn-pcm:active { 
+    background-color: #334155 !important; 
+}
+
+/* F. Special Administrative Reversed Layout Trigger Modifier */
+.btn-reverse { 
+    background-color: #1e293b !important; 
+    border: 1px dashed #334155 !important;
+    font-size: 0.8rem; 
+}
+
+/* G. Contact Integration Vertical Grid Stack Layouts */
 .btn-group-vertical {
     display: flex;
     flex-direction: column;
     gap: 8px;
     width: 100%;
     flex-shrink: 0;
+    box-sizing: border-box;
 }
 
-/* Ensure Call/WA buttons share the top row evenly */
+/* ==========================================================================
+   TOP ROW COMMUNICATION FLEX CARDS & BRANDED HEADER NAVIGATION
+   ========================================================================== */
+
+/* 1. Ensure Call/WA buttons share the top row evenly */
 .btn-top-row {
     display: flex;
     gap: 6px;
     width: 100%;
+    box-sizing: border-box;
 }
 
 /* Fixes the width conflict by overriding the global button block properties here safely */
@@ -357,109 +557,177 @@ header{
     padding: 10px 4px;
     margin-bottom: 0;
 }
-/* Header Naviigation */
-.nav-bar{
+
+/* 2. Header Mobile Navigation Master Bar Container */
+.nav-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #eee;
+    box-sizing: border-box;
+    width: 100%;
+    
+    /* GIRA SYSTEM COHESION REDESIGN */
+    padding: 4px 0 12px 0; /* Balanced internal buffer padding boundaries */
+    background-color: transparent; /* Allows base onyx black layers to breathe cleanly */
+    
+    /* BRANDED UNDERLINE HIGHLIGHT:
+       Replaced old generic light-gray borders with your rich corporate Oxblood Brown (#813F0B).
+       This acts as an active visual divider frame sealing off header typography metrics cleanly! */
+    border-bottom: 2px solid #813F0B !important; 
 }
 
 /* ==========================================================================
-   HEADER NAVIGATION MANAGEMENT
+   HEADER NAVIGATION MANAGEMENT & HIGH-UTILITY BRAND ACCESS PILLS
    ========================================================================== */
+
+/* 1. Master Header Navigation Layout Split Frame Container */
 .nav-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding-bottom: 12px;
-    border-bottom: 2px solid #e5e7eb;
+    box-sizing: border-box;
+    width: 100%;
+    
+    /* GIRA BRAND IDENTITY MATCH:
+       Replaced generic grey borders with your clean corporate Oxblood Brown accent border lines */
+    border-bottom: 2px solid #813F0B !important; 
 }
 
+/* 2. Premium Pill-Shaped Branded Access Trigger Button Button */
 .nav-btn {
-    background-color: var(--dark);
-    color: #ffffff;
-    border: none;
-    padding: 8px 16px;
+    color: #ffffff !important;
+    border: none !important;
+    padding: 8px 18px; /* Enhanced horizontal padding creates an authentic pill geometry aspect ratio */
     border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
+    font-size: 0.85rem;
+    font-weight: 700; /* Rich bold font metrics maximize outdoor sunlight readability */
     cursor: pointer;
-    transition: opacity 0.15s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), filter 0.15s ease !important;
+    -webkit-tap-highlight-color: transparent;
+
+    /* GIRA CORPORATE STYLE TRANSFORMATION */
+    /* Swapped out raw monochrome slate backgrounds for your custom orange-to-brown linear gradient track */
+    background: linear-gradient(135deg, #FC6600, #813F0B) !important; 
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
+/* HIGH-VELOCITY SMARTPHONE HAPTIC SIMULATION TRACK */
 .nav-btn:active {
-    opacity: 0.85;
+    transform: scale(0.95) !important; /* Collapses scale boundaries dynamically on impact to signal contact triggers */
+    filter: brightness(0.85); /* Dims backlights instantly on click actions */
 }
+
 
 /* ==========================================================================
-   RIDER CONTEXT APP LAYOUTS
+   COURIER CORE APP DASHBOARD TERMINALS & SYSTEM LOADING OVERLAYS
    ========================================================================== */
+
+/* 1. Main Driver Portal Workspace Sub-Canvas Container */
 #rider-app {
     padding: 20px;
     text-align: center;
-    background: #ffffff;
     min-height: 80vh;
     border-radius: 24px 24px 0 0;
     margin-top: 20px;
-    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+    box-sizing: border-box;
+    width: 100%;
+    
+    /* GIRA CORPORATE BRAND IDENTITY RE-MAPPING */
+    background: #020617 !important; /* Replaced flat desktop white with deep onyx black base */
+    border: 1px solid #1e293b !important;
+    border-bottom: none !important; /* Lets the base melt cleanly out of the bottom viewport edges */
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.4);
 }
 
+/* 2. Primary Courier Layout Operational Actions Wrapper Group */
 .rider-actions {
     display: flex;
     flex-direction: column;
     gap: 12px;
     margin-top: 30px;
+    width: 100%;
+    max-width: 350px; /* Aligns maximum width layout footprints evenly with terminal grids */
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
 }
 
-
+/* 3. Global Cloud Transaction Processing Loading Overlay Backdrop Scrim */
 #loading-overlay {
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(15, 23, 42, 0.75); /* Deep high-contrast backdrop */
-    backdrop-filter: blur(6px);    
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%;
+    background: rgba(2, 6, 23, 0.85) !important; /* Pitch-black alpha tracking layer enhances contrast flags */
+    backdrop-filter: blur(8px) !important; /* Increased diffusion layer completely isolates focal planes */   
     z-index: 500;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    box-sizing: border-box;
 }
 
+/* 4. High-Performance Hardware-Accelerated Vector Spinner */
 .spinner {
-    width: 50px;
-    height: 50px;
-    border: 5px solid rgba(255, 255, 255, 0.2);
-    border-top: 5px solid var(--primary); 
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(255, 255, 255, 0.1); /* Subtle underlying track layer loop */
+    border-top: 4px solid #FC6600 !important; /* Vibrant Gira Orange sweep head indicating active calculations */ 
     border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+    animation: spin 0.75s cubic-bezier(0.4, 0, 0.2, 1) infinite; /* Optimized bezier curve reduces tracking stutter */
+    will-change: transform; /* Instructs mobile GPU processors to cache vectors to stop framerate lag spikes */
 }
 
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+/* 5. Cloud Gateway Real-Time Operational Feedback Micro-Copy Text */
 .loading-text {
-    margin-top: 16px;
-    font-weight: 700;
-    color: #ffffff; /* Visibility Fix: Changed from var(--dark) to clean white */
+    margin-top: 20px;
     font-size: 1rem;
+    font-weight: 800; /* Extra bold weighting maximizes readability on smartphone screens */
+    color: #ffffff !important;
+    letter-spacing: 0.01em;
+    text-align: center;
+    max-width: 85%;
+    line-height: 1.4;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
+/* 6. Checkout Process Action Panel Footer Container Box */
 .payment-container {
-    padding-bottom: 40px; /* Extra space at the bottom so buttons aren't cut off */
+    padding-bottom: 40px; /* Essential padding safety guard blocks mobile navigation device home-bar cutoffs */
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-/* Central Overlay Authentication Wrappers */
+
+/* ==========================================================================
+   AUTHENTICATION SHIELDS, FORM CONTROLS & GLOBAL FOOTER MATRICES
+   ========================================================================== */
+
+/* 1. Central Overlay Authentication Wrappers Backdrop Scrims */
 #login-modal, #admin-login-modal {
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(15, 23, 42, 0.6); 
-    backdrop-filter: blur(4px);
-    z-index: 600; /* Unified z-index management */
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%;
+    background: rgba(2, 6, 23, 0.85) !important; /* Pitch-black alpha tracking layer enhances focus masking */
+    backdrop-filter: blur(8px) !important; /* Maximizes blur diffusion to isolate visual focal fields completely */
+    z-index: 600; /* High-level z-index architecture prevents element bleeding loops */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -467,168 +735,231 @@ header{
     box-sizing: border-box;
 }
 
-
+/* 2. Secure Portal Access Form Window Container Shell */
 .login-box {
-    background: #ffffff;
     padding: 24px;
     border-radius: 20px;
     width: 100%;
     max-width: 360px;
     text-align: center;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    box-sizing: border-box;
+    box-shadow: var(--card-shadow);
+    
+    /* GIRA CORPORATE BRAND INTERFACE TUNING */
+    background: #0f172a !important; /* Charcoal material surface preserves dark-room visibility */
+    border: 2px solid #813F0B !important; /* Rigid structural bounding line utilizing rich Gira brown */
 }
 
+/* 3. Hardened Security Input Character Form Fields Grid Cell */
 .login-input {
     width: 100%;
     padding: 14px;
     margin: 8px 0;
-    border: 1px solid #d1d5db;
     border-radius: 10px;
-    font-size: 16px !important; /* Prevents auto-zoom scaling breaks on iOS devices */
+    font-size: 16px !important; /* Enforces strict 16px boundaries to freeze browser text auto-zoom layout breaking bugs on Apple iOS viewports */
     box-sizing: border-box; 
-}
-
-.btn-text {
-    background: none;
-    border: none;
-    color: #6b7280;
-    font-size: 0.85rem;
+    background-color: #020617 !important; /* Recesses text wells deep into base onyx black shadows */
+    border: 1px solid #1e293b !important; /* Subtle slate container outlines */
+    color: #ffffff !important; /* High-contrast crisp white typography text entries */
     font-weight: 600;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* INPUT FOCUS STATE FEEDBACK ANCHORS */
+.login-input:focus {
+    outline: none !important;
+    border-color: var(--primary) !important; /* Active indicator wells flash Gira Orange (#FC6600) upon field selections */
+    box-shadow: 0 0 10px rgba(252, 102, 0, 0.15);
+}
+
+/* 4. Text-Style Interface Sub-Action Interaction Trigger Link Link */
+.btn-text {
+    background: none !important;
+    border: none !important;
+    color: #94a3b8 !important; /* Matte-slate gray minimizes secondary link noise signatures */
+    font-size: 0.85rem;
+    font-weight: 700;
     cursor: pointer;
-    margin-top: 12px;
+    margin-top: 14px;
     padding: 8px 16px;
-    border-radius: 6px;
-    transition: all 0.15s ease;
+    border-radius: 8px;
+    display: inline-block;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     text-decoration: underline;
+    text-decoration-color: rgba(148, 163, 184, 0.4);
+    -webkit-tap-highlight-color: transparent;
 }
 
-.btn-text:hover {
-    color: var(--dark);
-    background-color: #f3f4f6;
-    text-decoration: none;
+/* RESPONSIVE HOVER MATRIX HOOKS */
+@media (hover: hover) {
+    .btn-text:hover {
+        color: var(--primary) !important; /* Text highlights brightly to Gira Orange on cursor hover loops */
+        background-color: #1e293b !important; /* Yields subtle slate background container highlights */
+        text-decoration: none !important;
+    }
 }
 
+/* HIGH-SPEED TACTILE RESPONSE HOOK FOR CELL PHONES */
 .btn-text:active {
-    transform: scale(0.95);
+    transform: scale(0.95) !important; /* Shrinks container boundaries slightly to give quick physical button compression feedback */
+    color: var(--primary) !important;
+    background-color: #1e293b !important;
 }
 
-
-/* Standardized Page Footer Layout Flow */
+/* 5. Standardized Page Footer Layout Flow Container Grid */
 footer {
     width: 100%;
     margin-top: 40px; 
     padding: 24px 0;
     box-sizing: border-box;
+    border-top: 1px solid #1e293b; /* Appends clean terminal separator tracks beneath content grids safely */
+    text-align: center;
 }
 
+
 /* ==========================================================================
-   LOCKED BOUNDARY LOCATION LAYOUTS
-   ========================================================================= */
+   OFFLINE BOUNDARY LOCATION GRIDS & AVATAR MATERIAL SPACE STYLES
+   ========================================================================== */
+
+/* 1. Offline/Locked Building Layout Cell Container */
 .card.locked {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 6px; 
-    filter: grayscale(100%) brightness(75%);
-    border: 2px dashed #9ca3af;
     cursor: not-allowed;
+    
+    /* GIRA SYSTEM COHESION REDESIGN */
+    /* Shifts background image into an eye-friendly, deeply recessed charcoal-black tone */
+    filter: grayscale(100%) brightness(40%) !important; 
+    /* Replaced old light-gray borders with a thick, dashed Oxblood Crimson Brown divider boundary line */
+    border: 2px dashed #813F0B !important; 
 }
 
-/* Prevent accidental click scaling states on locked nodes */
+/* Prevent accidental touch scaling clicks on locked building nodes */
 .card.locked:active {
     transform: none !important;
-    border-color: #9ca3af !important;
+    border-color: #813F0B !important;
+    box-shadow: var(--card-shadow) !important;
 }
 
-
+/* 2. Hardware-Accelerated Vector Lock Indicator Icon */
 .lock-icon {
     font-size: 1.75rem;
     margin-bottom: 4px;
     z-index: 2;
-    /* Uses hardware accelerated composition pathways cleanly */
+    /* Uses hardware accelerated composition pathways cleanly to reduce frame stutter on small devices */
     animation: lockPulse 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    will-change: transform, opacity;
 }
 
 .card.locked h3,
 .card.locked small {
     margin: 0;
     position: relative;
-    z-index: 2; /* Visibility Fix: Forces layout text above background gradients */
+    z-index: 2; /* Visibility Fix: Forces micro-copy above dark background scrim overlays cleanly */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.95);
 }
 
 .card.locked h3 {
     font-size: 1.05rem;
+    font-weight: 800;
+    color: #ffffff !important;
 }
 
+/* 3. Offline Status Warning Notice Micro-Copy */
 .card.locked small {
-    font-weight: 700;
-    color: var(--primary); 
+    font-weight: 800;
+    color: #FC6600 !important; /* Locks background natively to Vibrant Gira Orange (#FC6600) text styling */
     font-size: 0.75rem;
     letter-spacing: 0.05em;
     text-transform: uppercase;
 }
 
 @keyframes lockPulse {
-    0%, 100% { transform: scale(1); opacity: 0.8; }
-    50% { transform: scale(1.06); opacity: 1; }
+    0%, 100% { transform: scale(1); opacity: 0.7; }
+    50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 4px rgba(252, 102, 0, 0.3)); }
 }
 
 /* ==========================================================================
    AVATAR & GLOBAL SPACING ADJUSTMENTS
    ========================================================================== */
+
+/* 4. Courier Profile Picture Media Canvas Framework */
 .rider-card img {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     border-radius: 50%;
     object-fit: cover;
+    border: 2px solid #1e293b; /* Subtle slate border details edge paths cleanly */
 }
 
+/* 5. Space Adjustment Anchor */
 .rider-card {
     margin-top: 16px; 
 }
 
 
-
-
-/* ==========================================================================
-   INPUT SYSTEM GLOBAL STANDARDIZATION
+//* ==========================================================================
+   INPUT SYSTEM GLOBAL STANDARDIZATION & VISUAL WELL MAPPING
    ========================================================================== */
+
+/* 1. Universal Input Standardization Rules (Authentication, Search, and Billing Form Cells) */
 .login-input, 
 #app-search, 
 #customer-phone {
-    font-size: 16px !important; /* Critical: Halts invasive auto-zoom patterns on mobile */
+    font-size: 16px !important; /* CRITICAL ACCESSIBILITY FIX: Enforces strict 16px boundaries to completely freeze invasive automatic font auto-zoom scaling layout breaking bugs on Apple iOS viewports */
     width: 100%;
+    padding: 14px 16px; /* Balanced interior spatial padding boundaries */
+    border-radius: 12px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
     box-sizing: border-box; 
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    
+    /* GIRA SYSTEM COHESION REDESIGN */
+    background-color: #020617 !important; /* Recesses all text entry fields deep into your base onyx black shadow layers */
+    border: 1px solid #1e293b !important; /* High-utility subtle slate container outlines */
+    color: #ffffff !important; /* High-contrast pristine copy white text entries */
 }
 
+/* UNIVERSAL ENTRY FOCUS FEEDBACK ACCENTS */
+.login-input:focus, 
+#app-search:focus, 
+#customer-phone:focus {
+    outline: none !important;
+    border-color: var(--primary) !important; /* Active text boxes flash your vibrant Gira Orange (#FC6600) upon layout cell selection! */
+    box-shadow: 0 0 10px rgba(252, 102, 0, 0.15);
+}
+
+/* 2. Global Traversal Search Filter Engine Deck Box Element */
 #app-search {
     margin-top: 12px; 
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); 
+    margin-bottom: 4px;
+    box-shadow: var(--card-shadow); /* Applies standard high-contrast charcoal shadows instead of light-gray frames */
 }
 
 
 
 
 /* ==========================================================================
-   OTP CONTROL PANEL VIEW DIALOG
+   OTP CONTROL PANEL VIEW DIALOG & ACCOUNT RECOVERY SCREEN SCRIMS
    ========================================================================== */
 #otp-modal {
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(15, 23, 42, 0.6); 
-    backdrop-filter: blur(4px);
-    z-index: 650; /* Sits naturally higher than standard login interfaces */
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%;
+    background: rgba(2, 6, 23, 0.85) !important; /* Pitch-black alpha tracking layer enhances focus masking */
+    backdrop-filter: blur(8px) !important; /* Maximizes blur diffusion to isolate visual focal fields completely */
+    z-index: 650; /* Sits naturally higher than standard login interfaces to isolate recovery tracks */
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 16px;
     box-sizing: border-box;
 }
-
-/* #otp-modal.hidden {
-    display: none !important;
-} */
-
 
 /* ==========================================================================
    PREMIUM SEARCH INPUT BAR STYLING REFINEMENTS
@@ -639,40 +970,101 @@ footer {
     padding: 14px 16px;
     margin: 15px auto 0 auto;
     display: block;
-    
-    /* Clean, soft modern borders replacing the harsh default black line */
-    border: 2px solid #e5e7eb; 
     border-radius: 12px;
-    background-color: #ffffff;
-    
     font-family: 'Inter', sans-serif;
-    font-size: 16px !important; /* Mobile Fix: Halts auto-zoom scaling on iOS/Android */
-    color: var(--dark);
+    font-size: 16px !important; /* Critical Accessibility Fix: Halts auto-zoom scaling bugs on iOS/Android viewports */
     box-sizing: border-box;
     outline: none;
+    font-weight: 600;
     
-    /* Premium soft visual shadow effect */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
-    transition: border-color 0.2s, box-shadow 0.2s;
+    /* GIRA BRAND IDENTITY MATCH OVERWRITES */
+    background-color: #020617 !important; /* Recesses all text entry fields deep into base onyx black shadows */
+    border: 2px solid #1e293b !important; /* High-utility subtle slate container outlines */
+    color: #ffffff !important; /* High-contrast pristine copy white text entries */
+    box-shadow: var(--card-shadow); /* Applies standard high-contrast charcoal shadows instead of light-gray frames */
+    transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Dynamic Interactive Focus Highlight States */
 #app-search:focus {
-    border-color: var(--primary); /* Glows with your core Maseno Orange highlight */
-    box-shadow: 0 4px 14px rgba(249, 115, 22, 0.15); 
-    background-color: #ffffff;
+    background-color: #020617 !important;
+    border-color: var(--primary) !important; /* Active text boxes flash your vibrant Gira Orange (#FC6600) upon layout cell selection! */
+    box-shadow: 0 4px 14px rgba(252, 102, 0, 0.25) !important; 
 }
 
-/* Adjust modern placeholder placeholder styling text colors cleanly */
+/* Adjust modern placeholder styling text colors cleanly */
 #app-search::placeholder {
-    color: #9ca3af;
+    color: #94a3b8 !important; /* Matte-slate gray placeholder matching your clean user inputs layout */
     font-weight: 500;
 }
 
+/* ==========================================================================
+   CUSTOMER PHONE NUMBER ENTRY SYSTEM - TERMINAL REFINEMENTS
+   ========================================================================== */
 
-/* Add this rule at the absolute bottom of style.css */
-.hidden {
-    display: none !important;
+/* 1. Master Structural Container Layout Wrapper */
+.payment-container .input-group-row,
+.payment-container div:has(> #customer-phone) {
+    width: 100%;
+    max-width: 320px; /* Forces input box edges to align perfectly with your numpad layout grid limits */
+    margin: 20px auto 10px auto; /* Creates comfortable vertical breathing room beneath your header line divider */
+    display: flex;
+    flex-direction: column; /* Stacks the label text neatly directly above the numeric input box */
+    gap: 8px; /* Balanced spacing gap separating label text from input bounding lines */
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
+/* 2. Form Structural Field Identification Label Copy */
+.payment-container label[for="customer-phone"],
+.payment-container div:has(> #customer-phone) label {
+    color: #94a3b8 !important; /* Premium slate-grey copy tint optimizes outdoor readability */
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase; /* Converts micro-copy into a clean, modern layout tag indicator */
+    letter-spacing: 0.05em;
+    text-align: left; /* Aligns description cleanly flush to the left boundary of your input bar */
+}
+
+/* 3. Hardened Security Input Well Object Controls */
+#customer-phone {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 16px !important; /* MOBILE INTERFACE ACCESS SECURITY GUARD: Freezes iOS safari text auto-zoom layout breaking anomalies */
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    box-sizing: border-box;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    
+    /* GIRA CORPORATE BRAND VISUAL BALANCING MATCH */
+    background-color: #020617 !important; /* Completely strips harsh unstyled white backgrounds, embedding the box into pitch-black base shadows */
+    border: 1px solid #1e293b !important; /* High-utility subtle slate structural bounding frames */
+    color: #ffffff !important; /* Renders customer digit entries cleanly in high-contrast pristine white copy text */
+}
+
+/* 4. Dynamic Interactive Well Selection Focus Highlights */
+#customer-phone:focus {
+    outline: none !important;
+    border-color: #FC6600 !important; /* Active entry fields glow instantly in brilliant Gira Orange upon touchscreen selection! */
+    box-shadow: 0 0 12px rgba(252, 102, 0, 0.25);
+    background-color: #020617 !important;
+}
+
+/* 5. Custom Mobile Input Placeholder Text Formatting */
+#customer-phone::placeholder {
+    color: #475569 !important; /* Dims target hint numbers to a subtle slate-tint value to prevent layout confusion */
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+
+/* ==========================================================================
+   GLOBAL UTILITY SYSTEM APP LAYER LOCKS
+   ========================================================================== */
+/* Add this rule at the absolute bottom of style.css */
+.hidden {
+    display: none !important; /* Enforces absolute visibility suppression across state engines */
+}
 
