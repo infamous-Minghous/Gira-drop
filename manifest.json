@@ -1,13 +1,13 @@
 {
-  "short_name": "MasenoFastDrop",
-  "name": "Gira Fast-Drop Delivery",
+  "short_name": "Gira",
+  "name": "MasenoFastDrop",
   "description": "Instant, reliable campus deliveries for Maseno University students.",
   "lang": "en-US",
-  "start_url": ".",
+  "start_url": "/index.html",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f3f4f6", 
-  "theme_color": "#f97316", 
+  "background_color": "#813F0B", 
+  "theme_color": "#020617", 
   "categories": ["shopping", "productivity"],
   "icons": [
     {
