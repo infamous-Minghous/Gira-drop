@@ -488,7 +488,6 @@
         // Forward operational parameters downstream to our secure card component painter loop
         paintSecureCourierTelemetryCards(matchingLocationRecord.riderProfiles, domCardsGridWrapperNode, buildingNameLabel);
     }
-
     // ==========================================================================
     // SECTION 4 - PART 2: SECURE COMPONENT CARD DOM INJECTION ENGINE (REFACTORED)
     // ==========================================================================
@@ -528,7 +527,7 @@
             domCourierNameHeader.style.cssText = "margin:0; color:#ffffff; font-size:1.15rem; font-weight:700; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;";
             domCourierNameHeader.textContent = riderProfileObj.name; // Strict text content protection
 
-            // 🟩 DYNAMIC STATUS TAG PATCH: Dynamically maps the rider's active location landmark
+            // DYNAMIC STATUS TAG PATCH: Dynamically maps the rider's active location landmark
             const domActiveStatusTagNode = document.createElement('small');
             domActiveStatusTagNode.style.cssText = "color:#94a3b8; font-weight:500; display:block; margin-top:2px;";
             domActiveStatusTagNode.textContent = `Active Nearby at ${buildingNameLabel}`;
@@ -551,19 +550,22 @@
             domCallTelephonyButtonAnchor.style.cssText = "margin:0; text-align:center; padding:11px 0; display:block; background:#3b82f6; border-radius:8px; color:#fff; font-weight:600; text-decoration:none; font-size:0.9rem;";
             domCallTelephonyButtonAnchor.textContent = "Call";
 
-            const domWhatsappMessengerAnchor = document.createElement('a');
-            domWhatsappMessengerAnchor.className = "btn btn-wa";
-            
-            // 🟩 PRODUCTION LONG-FORM ENDPOINT FIX: Swapped out 'wa.me' for the global '://whatsapp.com' pipeline to bypass DNS blocks!
-            domWhatsappMessengerAnchor.href = `https://://whatsapp.com/send?phone=${standardizedPhoneString}&text=${compiledUrlSafeMessageText}`;
+            // BUTTON CONVERSION: Built as a native button element to stabilize click handshakes and bypass browser blocks
+            const domWhatsappMessengerButton = document.createElement('button');
+            domWhatsappMessengerButton.type = "button";
+            domWhatsappMessengerButton.className = "btn btn-wa";
+            domWhatsappMessengerButton.style.cssText = "margin:0; text-align:center; padding:11px 0; display:block; background:#22c55e; border-radius:8px; color:#fff; font-weight:600; border:none; font-size:0.9rem; cursor:pointer; width:100%; box-sizing:border-box;";
+            domWhatsappMessengerButton.textContent = "WhatsApp";
 
-            domWhatsappMessengerAnchor.target = "_blank"; 
-            domWhatsappMessengerAnchor.rel = "noopener";
-            domWhatsappMessengerAnchor.style.cssText = "margin:0; text-align:center; padding:11px 0; display:block; background:#22c55e; border-radius:8px; color:#fff; font-weight:600; text-decoration:none; font-size:0.9rem;";
-            domWhatsappMessengerAnchor.textContent = "WhatsApp";
+            // PRODUCTION WINDOW OPEN FIX: Repaired the missing '$' syntax token and swapped to global api.whatsapp endpoint
+            domWhatsappMessengerButton.onclick = () => {
+                const cleanChatUrlRoute = `https://whatsapp.com{standardizedPhoneString}&text=${compiledUrlSafeMessageText}`;
+                console.log(`📡 Communication Hub Dispatch: Launching channel link: ${cleanChatUrlRoute}`);
+                window.open(cleanChatUrlRoute, '_blank', 'noopener,noreferrer');
+            };
 
             domTopRowSplitGridNode.appendChild(domCallTelephonyButtonAnchor);
-            domTopRowSplitGridNode.appendChild(domWhatsappMessengerAnchor);
+            domTopRowSplitGridNode.appendChild(domWhatsappMessengerButton);
 
             const domUssdPCMButtonAnchor = document.createElement('a');
             domUssdPCMButtonAnchor.className = "btn btn-pcm";
