@@ -24,10 +24,10 @@
     // CENTRALIZED WORKER REGISTRY (Single Source of Truth - Immutable Snapshot)
     const approvedRidersRegistry = Object.freeze({
         "RD001": Object.freeze({ 
-            id: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11", // Direct database UUID mapping reference
-            name: "Bravin", 
-            phone: "+254700000000", 
-            whatsapp: "254700000000", 
+            id: "f2b55262-c89f-4e90-ae54-a4f0f2fe1340", // Direct database UUID mapping reference
+            name: "Ghost", 
+            phone: "+254111776886", 
+            whatsapp: "+254111776886", 
             avatar: "images/bravin.jpg",
             paymentType: "Pochi",
             paymentWallet: "0700000000"
