@@ -531,7 +531,7 @@
 
             const domActiveStatusTagNode = document.createElement('small');
             domActiveStatusTagNode.style.cssText = "color:#9ca3af; font-weight:500; display:block; margin-top:2px;";
-            domActiveStatusTagNode.textContent = "Active Nearby at Gate";
+            domActiveStatusTagNode.textContent = "Give Us A Call";
 
             domNameMetadataTextNode.appendChild(domCourierNameHeader);
             domNameMetadataTextNode.appendChild(domActiveStatusTagNode);
