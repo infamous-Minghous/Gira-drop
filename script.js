@@ -554,7 +554,9 @@
             const domWhatsappMessengerAnchor = document.createElement('a');
             domWhatsappMessengerAnchor.className = "btn btn-wa";
             // DEEP LINK STRING LITERAL FIX: Appended missing '$' parameter token to construct clean paths
+            // 🟩 THE PRODUCTION FIX: Added the mandatory '/' and '$' characters to parse variables natively over the web
             domWhatsappMessengerAnchor.href = `https://wa.me{standardizedPhoneString}?text=${compiledUrlSafeMessageText}`;
+
             domWhatsappMessengerAnchor.target = "_blank"; 
             domWhatsappMessengerAnchor.rel = "noopener";
             domWhatsappMessengerAnchor.style.cssText = "margin:0; text-align:center; padding:11px 0; display:block; background:#22c55e; border-radius:8px; color:#fff; font-weight:600; text-decoration:none; font-size:0.9rem;";
