@@ -5,6 +5,10 @@
     <!-- Clean, accessible, standard responsive viewport configuration -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gira Fast-Drop Delivery</title>
+
+    <!-- Paste this right below your manifest link inside the <head> of index.html: -->
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+
     
     <!-- Progressive Web App Settings Container -->
     <link rel="manifest" href="manifest.json">
@@ -38,15 +42,28 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- ==========================================================================
+         PRODUCTION HARDENED MASENO HUB INTERFACE NAVIGATION HEADER 
+         ========================================================================== -->
+    <header role="banner">
+        <!-- TOP ROW CONTAINER: Keeps brand title left and portal button right -->
+        <div class="nav-bar" style="display: flex !important; justify-content: space-between !important; align-items: center !important; border-bottom: none !important; padding-bottom: 4px !important;">
+            <h1 style="margin: 0; font-size: 1.5rem; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; font-family: 'Inter', sans-serif;">
+                Maseno Hub
+            </h1>
 
-
-        <header>
-        <div class="nav-bar">
-            <h1>Why wait. Call</h1>
             <!-- Added explicit type formatting to ensure stable cross-browser button clicks -->
             <button type="button" class="nav-btn" onclick="toggleRiderApp()">Rider Portal</button>
         </div>
-        <div id="breadcrumb" class="breadcrumb">Select Area</div>
+        
+        <!-- SUB-HEADER SLOGAN COMPONENT: Positions your tagline cleanly beneath your main heading line -->
+        <div style="margin: 4px auto 8px auto; text-align: center; font-family: 'Inter', sans-serif;">
+            <p style="margin: 0; font-size: 0.75rem; font-weight: 800; color: var(--primary, #FC6600); text-transform: uppercase; letter-spacing: 0.06em; display: inline-block;">
+                Good Vibe. Good High. Perfect Comfort
+            </p>
+        </div>
+
+        <div id="breadcrumb" class="breadcrumb" style="margin-top: 2px !important;">Select Area</div>
         
         <div class="search-container" style="padding: 0 15px; max-width: 500px; margin: 0 auto;">
             <!-- Clean, native input type that provides a clear 'x' button on mobile to wipe search strings -->
@@ -58,11 +75,15 @@
     </header>
 
 
-    
-            <!-- Dynamic customer workspace container grid canvas -->
-    <main id="app-container">
-        <!-- Cards will be dynamically injected here by the JavaScript engine -->
-    </main>
+
+    <!-- Locate this main container block inside your index.html and update its inner structure: -->
+<main id="app-container">
+    <!-- FIXED: Added this explicit sub-grid container element to catch your script injections perfectly -->
+    <div id="areas-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; width: 100%;">
+        <!-- Your JavaScript card factory functions will inject your region cards natively inside this slot -->
+    </div>
+</main>
+
 
     <!-- Secure Rider Portal Operational Landing View Section -->
     <section id="rider-app" class="hidden" aria-labelledby="rider-dashboard-title">
@@ -79,38 +100,46 @@
         </div>
     </section>
 
-
-        <!-- Replaced generic div container with semantic section tags and dialogue role accessibility mapping -->
+    <!-- ==========================================================================
+         PRODUCTION HARDENED STATE-ENCAPSULATED SALES LOGGING INTERFACE
+         ========================================================================== -->
     <section id="rider-view" class="hidden" role="dialog" aria-labelledby="payment-title" aria-modal="true">
         <div class="rider-header">
             <!-- Expanded hit target touch areas with clean type rules -->
             <button type="button" onclick="closeRiderView()" aria-label="Close Payment Interface">×</button>
-            <h2 id="payment-title">Collect Payment</h2>
+            <h2 id="payment-title">Log Completed Delivery Sale</h2>
         </div>
         <div class="payment-container">
 
-            <div class="input-group">
-                <!-- Data Alignment Fix: Uniform structural mapping instructing riders to type a standard local number -->
-                <label for="customer-phone">Customer Phone Number</label>
-                <input type="tel" id="customer-phone" placeholder="e.g., 0712345678 or 0112345678" 
-                    maxlength="10" 
-                    inputmode="numeric" 
-                    autocomplete="tel">
-            </div>
+            <!-- 🟩 CLEANWELL REMOVAL FIX: The customer phone number input container well has been completely stripped out! -->
             
             <div class="amount-display">KSh <span id="display-amount">0</span></div>
             
-            <!-- Added explicit types to all touch interactive buttons grid nodes to ensure zero tap lag -->
+            <!-- Tactical touchscreen keypad buttons grid array -->
             <div class="numpad">
-                <button type="button" onclick="appendNum(1)">1</button><button type="button" onclick="appendNum(2)">2</button><button type="button" onclick="appendNum(3)">3</button>
-                <button type="button" onclick="appendNum(4)">4</button><button type="button" onclick="appendNum(5)">5</button><button type="button" onclick="appendNum(6)">6</button>
-                <button type="button" onclick="appendNum(7)">7</button><button type="button" onclick="appendNum(8)">8</button><button type="button" onclick="appendNum(9)">9</button>
-                <button type="button" onclick="clearNum()">C</button><button type="button" onclick="appendNum(0)">0</button>
+                <button type="button" onclick="appendNum(1)">1</button>
+                <button type="button" onclick="appendNum(2)">2</button>
+                <button type="button" onclick="appendNum(3)">3</button>
+                <button type="button" onclick="appendNum(4)">4</button>
+                <button type="button" onclick="appendNum(5)">5</button>
+                <button type="button" onclick="appendNum(6)">6</button>
+                <button type="button" onclick="appendNum(7)">7</button>
+                <button type="button" onclick="appendNum(8)">8</button>
+                <button type="button" onclick="appendNum(9)">9</button>
+                <button type="button" onclick="clearNum()">C</button>
+                <button type="button" onclick="appendNum(0)">0</button>
             </div>
             
+            <!-- Refactored Bookkeeping Action Button Footer -->
             <div class="payment-actions">
-                <button type="button" class="btn btn-mpesa" onclick="window.cleanProductionSTKGateway()">M-Pesa Push</button>
-                <button type="button" class="btn btn-cash" onclick="confirmCash()">Manual Cash</button>
+                <!-- Triggers your optimized Section 10 manual doorstep logging engine -->
+                <button type="button" class="btn btn-mpesa" onclick="window.cleanProductionSTKGateway()">
+                    📝 Log M-Pesa Till Sale
+                </button>
+                <!-- Triggers your optimized Section 16 manual cash transaction logger -->
+                <button type="button" class="btn btn-cash" onclick="window.confirmCash()">
+                    💵 Log Cash Delivery Sale
+                </button>
             </div>
         </div>
     </section>
@@ -149,7 +178,11 @@
             </div>
         
             <!-- PRODUCTION FUNCTION REALIGNMENT FIX: Connected cleanly to window.authenticateRider -->
-            <button type="button" class="btn btn-primary" onclick="window.authenticateRider()">Unlock Portal</button>
+            <!-- Locate this button in your index.html and update the function call inside onclick: -->
+<button type="button" class="btn btn-primary" onclick="window.executeRiderPortalValidationAuth(document.getElementById('rider-portal-id').value, document.getElementById('rider-portal-key').value)">
+    Unlock Portal
+</button>
+
             <button type="button" class="btn-text" onclick="hideLogin()">Cancel</button>
         </div>
     </div>
@@ -277,7 +310,7 @@
       const SUPABASE_URL = 'https://zaowprlwooltppxmcccu.supabase.co';
       const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inphb3dwcmx3b29sdHBweG1jY2N1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2MzYyMDQsImV4cCI6MjA5MTIxMjIwNH0.9r1PbaP4HMUJmOaDFHbXJiBfHANq0rY9kpfV5uXOQcs'; 
 
-      if (typeof supabase !== 'undefined') {
+         if (typeof supabase !== 'undefined') {
           // 🟩 Step A: Instantiate the primary raw database connection channel
           const privateRawInstance = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -285,7 +318,10 @@
           window.supabase = {
               from: (tableName) => {
                   // White-list of permitted public tables your app is allowed to touch
-                  const permittedPublicTables = ['riders', 'daily_history', 'rider_auth', 'admin_registry'];
+                  // FIXED: Appended campus_locations to resolve the security query block error
+                  // Locate this whitelist inside your index.html security proxy block:
+const permittedPublicTables = ['riders', 'daily_history', 'rider_auth', 'admin_registry', 'campus_areas'];
+
                   
                   if (!permittedPublicTables.includes(tableName)) {
                       console.warn(`🔒 Security Block: Global console query rejected for protected table: ${tableName}`);
@@ -299,6 +335,8 @@
                   }
                   return privateRawInstance.from(tableName);
               },
+              // FIXED: Explicitly exposed the auth engine instance path to resolve the getSession crash
+              auth: privateRawInstance.auth,
               rpc: (functionName, params) => privateRawInstance.rpc(functionName, params),
               channel: (channelName) => privateRawInstance.channel(channelName),
               removeChannel: (channelInstance) => privateRawInstance.removeChannel(channelInstance)
@@ -308,6 +346,7 @@
       } else {
           console.error("❌ Critical Error: Supabase client library connection engine timed out.");
       }
+
     </script>
 
     <!-- 3. Local Business Logic & Calculations Script Controllers Link -->

@@ -2,36 +2,40 @@
 /* ==========================================================================
    GIRA CORPORATE PALETTE CONFIGURATION - SINGLE FLEET WEB CORE
    ========================================================================== */
+/* ==========================================================================
+   MODERN HIGH-CONTRAST MINIMALIST DARK-MODE OVERWRITE
+   ========================================================================== */
 html, body {
     max-width: 100vw;
-    overflow-x: hidden; /* Prevents awkward side-scrolling shifts if an element overflows the viewport margins */
+    overflow-x: hidden;
     position: relative;
-    background-color: #813F0B !important; /* 🟫 CHANGED: Oxblood Crimson Brown background system-wide */
+    /* 🟩 LUXURY UPGRADE: Changed flat muddy brown to a clean, deep slate obsidian black */
+    background-color: #0b0f19 !important; 
 }
 
 :root {
     /* 1. Core Corporate Color Variables */
     --primary: #FC6600;            /* Vibrant Gira Orange */
-    --primary-hover: #D45500;      /* Darkened tactical click reaction orange accent */
-    --accent-brown: #813F0B;       /* Oxblood Crimson Brown */
+    --primary-hover: #D45500;      
+    --accent-brown: #813F0B;       
     
     /* 2. Interface Canvas Background Anchors */
-    --dark: #0f172a;               /* Premium slate black for cards, panels, and ledger grids */
-    --light: #813F0B;              /* 🟫 CHANGED: Recesses light token directly to Gira Brown base */
+    --dark: #0f172a;               /* Premium slate black for cards and panels */
+    /* 🟩 LUXURY UPGRADE: Recesses light tokens down into obsidian black base shadows */
+    --light: #0b0f19;              
     
-    /* 3. High-Utility Material Interface Shadows */
     --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.45), 0 2px 4px rgba(0, 0, 0, 0.3);
     --hover-shadow: 0 12px 20px -3px rgba(0, 0, 0, 0.5), 0 4px 8px -2px rgba(0, 0, 0, 0.4);
 }
 
-/* Update your body style inside style.css to use lightning-fast local system fonts */
 body {
-    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--light);
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: var(--light) !important;
     margin: 0;
     padding: 12px;
-    color: #ffffff; /* Sets the default text color uniformly to a pristine white for maximum contrast */
+    color: #ffffff; 
 }
+
 
 
 header {
@@ -156,7 +160,13 @@ header {
    ========================================================================== */
 
 /* 1. Dark Background Scrim Overlay (Guarantees white text readability over campus image layers) */
-.card::after {
+/* ==========================================================================
+   CARD GRADIENT SCRIMS EXCLUSION RULES (DIMMING LOOPHOLE FIX)
+   ========================================================================== */
+
+/* 1. Dark Background Scrim Overlay 
+   🟩 EXCLUSION FIX: Blocks dark gradient masks from rendering on top of active driver profiles! */
+.card:not(.rider-card-view-only)::after {
     content: "";
     position: absolute;
     top: 0; 
@@ -168,6 +178,7 @@ header {
     z-index: 1;
     pointer-events: none; /* Prevents the invisible overlay from capturing layout touch events */
 }
+
 
 /* 2. Unified Standard Rider Profile Panel Controller */
 .rider-card {
@@ -258,8 +269,68 @@ header {
     filter: brightness(0.85);
 }
 
-.btn-call { background-color: #2563eb !important; } /* Classic communication slate-blue */
-.btn-wa { background-color: #22c55e !important; white-space: nowrap; } /* Compliant WhatsApp messaging green */
+.btn-call { background-color: #2563eb !important; } 
+.btn-wa { background-color: #22c55e !important; white-space: nowrap; } 
+
+/* ==========================================================================
+   PRODUCTION HARDENED TELEMETRY COMMUNICATION BUTTONS STYLING
+   ========================================================================== */
+
+/* Base configuration setup for all split-row contact layout elements */
+.btn-call, .btn-wa {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    text-decoration: none !important;
+    border-radius: 8px !important;
+    padding: 12px 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    cursor: pointer !important;
+    transition: background-color 0.15s ease, transform 0.1s ease !important;
+    
+    /* 🟩 VIBRANCY PASS: Forces maximum color opacity saturation to match your PCM button style */
+    opacity: 1.0 !important;
+    visibility: visible !important;
+    filter: none !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2) !important;
+    position: relative !important;
+    z-index: 10 !important; /* Pulls elements clearly over any background card layouts */
+}
+/* PRODUCTION CRISP ROYAL BLUE DIALER BUTTON */
+.btn-call {
+    background-color: #2563eb !important; /* Rich, vibrant production royal blue */
+    color: #ffffff !important;            /* High-contrast crisp bright white text text nodes */
+    border: 1px solid #3b82f6 !important;
+}
+
+
+.btn-call:hover {
+    background-color: #1d4ed8 !important; /* Standard dark blue color filter on hover states */
+}
+
+
+/* PRODUCTION NATIVE APP MESSENGER GREEN BUTTON */
+.btn-wa {
+    background-color: #16a34a !important; /* Rich, vibrant native app communication green */
+    color: #ffffff !important;            /* High-contrast crisp bright white text text nodes */
+    border: 1px solid #22c55e !important;
+}
+
+.btn-wa:hover {
+    background-color: #15803d !important; /* Standard dark green color filter on hover states */
+}
+
+
+/* Subtle click-down tactile feedback animation layout rules */
+.btn-call:active, .btn-wa:active {
+    transform: scale(0.97) !important;
+    filter: brightness(0.85) !important;
+}
+
 
 /* 2. Unified M-Pesa Quick-Pay Transaction Launch Anchor */
 .btn-mpesa {
@@ -372,7 +443,7 @@ header {
 }
 
 
-//* ==========================================================================
+/* ==========================================================================
    TACTILE REACTION INTERFACES & GLOBAL APPLICATION STATE UTILITIES
    ========================================================================== */
 
@@ -560,39 +631,29 @@ header {
 
 /* 2. Header Mobile Navigation Master Bar Container */
 .nav-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-sizing: border-box;
-    width: 100%;
+    display: flex !important;
+    justify-content: space-between !important; /* Spreads items evenly to opposite edges */
+    align-items: center !important;     /* Vertically centers buttons with text lines */
+    box-sizing: border-box !important;
+    width: 100% !important;
+    padding: 6px 12px 14px 12px !important; /* Balanced internal buffer padding boundaries */
+    background-color: transparent !important;
     
-    /* GIRA SYSTEM COHESION REDESIGN */
-    padding: 4px 0 12px 0; /* Balanced internal buffer padding boundaries */
-    background-color: transparent; /* Allows base onyx black layers to breathe cleanly */
-    
-    /* BRANDED UNDERLINE HIGHLIGHT:
-       Replaced old generic light-gray borders with your rich corporate Oxblood Brown (#813F0B).
-       This acts as an active visual divider frame sealing off header typography metrics cleanly! */
+    /* BRANDED UNDERLINE BARRIER: Uses your rich corporate Oxblood Brown as an active boundary line */
     border-bottom: 2px solid #813F0B !important; 
 }
 
-/* ==========================================================================
-   HEADER NAVIGATION MANAGEMENT & HIGH-UTILITY BRAND ACCESS PILLS
-   ========================================================================== */
 
-/* 1. Master Header Navigation Layout Split Frame Container */
-.nav-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 12px;
-    box-sizing: border-box;
-    width: 100%;
-    
-    /* GIRA BRAND IDENTITY MATCH:
-       Replaced generic grey borders with your clean corporate Oxblood Brown accent border lines */
-    border-bottom: 2px solid #813F0B !important; 
+/* 2. Branded Typography Sub-Stack Controller
+   Guarantees that your main title and slogan stay stacked vertically on small viewports */
+.brand-identity-stack {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 3px !important; /* Comfortable vertical spacing gap separating title from slogan tag */
+    text-align: left !important;
+    overflow: hidden !important;
 }
+
 
 /* 2. Premium Pill-Shaped Branded Access Trigger Button Button */
 .nav-btn {
@@ -900,7 +961,7 @@ footer {
 }
 
 
-//* ==========================================================================
+/* ==========================================================================
    INPUT SYSTEM GLOBAL STANDARDIZATION & VISUAL WELL MAPPING
    ========================================================================== */
 
@@ -1068,3 +1129,103 @@ footer {
     display: none !important; /* Enforces absolute visibility suppression across state engines */
 }
 
+
+/* ==========================================================================
+   PRODUCTION HARDENED MOBILE UTILITY OVERRIDES & ACCESSIBILITY PATCHES
+   ========================================================================== */
+
+/* 1. OUTDOOR READABILITY UPGRADE: Hardens text labels to maximize contrast outdoors */
+.payment-container label,
+.payment-container div:has(> #customer-phone) label,
+.rider-actions small,
+#admin-panel label {
+    color: var(--primary, #FC6600) !important; /* Forces tags to flash vibrant corporate orange */
+    font-weight: 800 !important; /* Thickens typography weighting to block outdoor glare issues */
+    font-feature-settings: "tnum" 1;
+    letter-spacing: 0.06em !important;
+}
+
+/* 2. DYNAMIC CLICK FEEDBACK PATCH FOR MANUAL CASH TRIGGER ROWS */
+.btn-cash {
+    background-color: #1e293b !important;
+    border: 1px solid #334155 !important;
+    position: relative !important;
+    z-index: 5 !important;
+    pointer-events: auto !important;
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.15s ease !important;
+}
+
+/* TACTILE SELECTION ACTION HOOK: Flashes an indicator grey shade under finger pressure instantly */
+.btn-cash:active {
+    transform: scale(0.96) !important; /* Snaps tight against the finger to simulate structural key depths */
+    background-color: #334155 !important; /* brightens the surface to signal active contact */
+    border-color: var(--primary, #FC6600) !important; /* Halo orange border pops up on contact impacts */
+}
+
+/* 3. HARDENED DOORSTEP LOGGING LAYOUT ADJUSTMENTS */
+.payment-container {
+    padding: 0 20px 48px 20px !important; /* Safe padding boundary blocks device home-bar cutoffs */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Optimizes the button spacing tracks when customer input wells are hidden */
+.payment-actions {
+    margin-top: 16px !important; /* Tightens padding gaps to pull items together cleanly on small viewports */
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 320px; /* Locks width footprints to snap evenly with numeric terminals grids */
+    box-sizing: border-box;
+}
+
+/* 4. DRIVER BALANCE ACCENT BADGES TUNING */
+#active-orders, #display-amount {
+    color: var(--primary, #FC6600) !important;
+    font-weight: 800;
+    font-feature-settings: "tnum" 1, "lnum" 1 !important; /* Enforces absolute tabular digit grids */
+}
+
+
+/* ==========================================================================
+   MASENO HUBTagLINE TYPOGRAPHY CONTROLLERS & HOVER INTERACTION TUNING
+   ========================================================================== */
+
+/* Assigns clear typography scaling and matte-slate grey coloring to your slogan text */
+.brand-identity-stack p {
+    margin: 0 !important;
+    font-size: 0.76rem !important; /* Compact, modern layout sizing protects phone aspect ratios */
+    font-weight: 700 !important;   /* Thick text weighting ensures legibility outdoors */
+    color: #94a3b8 !important;     /* Matte-slate gray minimizes secondary link noise signatures */
+    text-transform: uppercase !important; /* Converts text into clean tracking labels */
+    letter-spacing: 0.04em !important;
+    line-height: 1.2 !important;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    white-space: nowrap !important; /* Blocks awkward text wrapping or layout drops */
+}
+
+/* Premium Pill-Shaped Branded Access Trigger Button Button Overwrite */
+.nav-btn {
+    color: #ffffff !important;
+    border: none !important;
+    padding: 8px 16px !important; /* Enhanced horizontal padding creates an authentic pill geometry aspect ratio */
+    border-radius: 20px !important;
+    font-size: 0.85rem !important;
+    font-weight: 700 !important; /* Rich bold font metrics maximize outdoor sunlight readability */
+    cursor: pointer !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), filter 0.15s ease !important;
+    -webkit-tap-highlight-color: transparent !important;
+    flex-shrink: 0 !important; /* Blocks your portal button from squishing on tight phone screens */
+
+    /* GIRA CORPORATE GRADIENT BACKGROUND MATRIX OVERWRITE */
+    background: linear-gradient(135deg, #FC6600, #813F0B) !important; 
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
