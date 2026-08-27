@@ -3,7 +3,9 @@
 // ==========================================================================
 
 // INCREMENTED PRODUCTION BUILD STRING TAG: Forces mobile web engines to clear old layouts instantly
-const CACHE_NAME = 'fastdrop-v3.2_production'; 
+// Locate this line right at the absolute top of your sw.js file and increment it exactly:
+const CACHE_NAME = 'fastdrop-v3.4_live_release'; // 🟩 FORCE-UPDATES ALL COURIER PHONES ON RELOAD!
+
 
 // Static core application shell structures compressed directly onto device storage disk
 const ASSETS = [

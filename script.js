@@ -489,9 +489,8 @@
         paintSecureCourierTelemetryCards(matchingLocationRecord.riderProfiles, domCardsGridWrapperNode, buildingNameLabel);
     }
 
-
-        // ==========================================================================
-    // SECTION 4 - PART 2: SECURE COMPONENT CARD DOM INJECTION ENGINE
+    // ==========================================================================
+    // SECTION 4 - PART 2: SECURE COMPONENT CARD DOM INJECTION ENGINE (REFACTORED)
     // ==========================================================================
     function paintSecureCourierTelemetryCards(riderProfilesList, targetGridContainer, buildingNameLabel) {
         riderProfilesList.forEach(riderProfileObj => {
@@ -529,9 +528,10 @@
             domCourierNameHeader.style.cssText = "margin:0; color:#ffffff; font-size:1.15rem; font-weight:700; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;";
             domCourierNameHeader.textContent = riderProfileObj.name; // Strict text content protection
 
+            // 🟩 DYNAMIC STATUS TAG PATCH: Dynamically maps the rider's active location landmark
             const domActiveStatusTagNode = document.createElement('small');
-            domActiveStatusTagNode.style.cssText = "color:#9ca3af; font-weight:500; display:block; margin-top:2px;";
-            domActiveStatusTagNode.textContent = "Give Us A Call";
+            domActiveStatusTagNode.style.cssText = "color:#94a3b8; font-weight:500; display:block; margin-top:2px;";
+            domActiveStatusTagNode.textContent = `Active Nearby at ${buildingNameLabel}`;
 
             domNameMetadataTextNode.appendChild(domCourierNameHeader);
             domNameMetadataTextNode.appendChild(domActiveStatusTagNode);
@@ -553,9 +553,9 @@
 
             const domWhatsappMessengerAnchor = document.createElement('a');
             domWhatsappMessengerAnchor.className = "btn btn-wa";
-            // DEEP LINK STRING LITERAL FIX: Appended missing '$' parameter token to construct clean paths
-            // 🟩 THE PRODUCTION FIX: Added the mandatory '/' and '$' characters to parse variables natively over the web
-            domWhatsappMessengerAnchor.href = `https://wa.me{standardizedPhoneString}?text=${compiledUrlSafeMessageText}`;
+            
+            // 🟩 PRODUCTION LONG-FORM ENDPOINT FIX: Swapped out 'wa.me' for the global '://whatsapp.com' pipeline to bypass DNS blocks!
+            domWhatsappMessengerAnchor.href = `https://://whatsapp.com/send?phone=${standardizedPhoneString}&text=${compiledUrlSafeMessageText}`;
 
             domWhatsappMessengerAnchor.target = "_blank"; 
             domWhatsappMessengerAnchor.rel = "noopener";
@@ -599,6 +599,7 @@
     if (window.showRiders === undefined) {
         window.showRiders = renderLiveCourierSelectionTerminal;
     }
+
 
 
     // ==========================================================================
