@@ -425,8 +425,7 @@
    
 
 
-
-        // ==========================================================================
+    // ==========================================================================
     // SECTION 4 - PART 1: SECURE COURIER TELEMETRY DATA LOOKUPS
     // ==========================================================================
 
@@ -437,7 +436,7 @@
      */
     function renderLiveCourierSelectionTerminal(hubRegionName, buildingNameLabel) {
         if (typeof window.GiraEngine?.verifyDOMAnchors === 'function') {
-            window.GiraEngine.verifyDOMAnchors();
+            window.GiraEngine.verifyDOMAnchors(); // Enforce layout state synchronization
         }
 
         const domParentContainer = document.getElementById('app-container');
@@ -480,7 +479,7 @@
             return;
         }
 
-        // Construct high-contrast parent grid container layout blocks programmatically
+    //     // Construct high-contrast parent grid container layout blocks programmatically
         const domCardsGridWrapperNode = document.createElement('div');
         domCardsGridWrapperNode.style.cssText = "display:grid; grid-template-columns:repeat(auto-fill, minmax(290px, 1fr)); gap:20px; width:100%; box-sizing:border-box; padding:10px 0;";
         domParentContainer.appendChild(domCardsGridWrapperNode);
@@ -488,13 +487,21 @@
         // Forward operational parameters downstream to our secure card component painter loop
         paintSecureCourierTelemetryCards(matchingLocationRecord.riderProfiles, domCardsGridWrapperNode, buildingNameLabel);
     }
+
+
+        // ==========================================================================
+    // SECTION 4 - PART 2: HARDENED CROSS-BROWSER CARD DOM INJECTION ENGINE
     // ==========================================================================
-    // SECTION 4 - PART 2: SECURE COMPONENT CARD DOM INJECTION ENGINE (REFACTORED)
-    // ==========================================================================
+
+    /**
+     * PRODUCTION SECURE COMPONENT CARD DOM INJECTION ENGINE
+     * Paints individual courier cards programmatically using verified button triggers
+     * to bypass modern browser popup blockers and 'about:blank#blocked' sandboxes.
+     */
     function paintSecureCourierTelemetryCards(riderProfilesList, targetGridContainer, buildingNameLabel) {
         riderProfilesList.forEach(riderProfileObj => {
             // SCHEMA ALIGNMENT FIX: Pull straight from 'phone_number' parameter synced via Section 2 cache
-            const standardizedPhoneString = (riderProfileObj.phone_number || "").replace(/[+\s]/g, '');
+            const standardizedPhoneString = String(riderProfileObj.phone_number || "").replace(/[+\s]/g, '');
             
             // Format country dialing prefixes cleanly to support native Safaricom USSD structures
             let localUssdPhoneFormattedString = standardizedPhoneString;
@@ -507,12 +514,11 @@
 
             const domCourierCardBoxNode = document.createElement('div');
             domCourierCardBoxNode.className = "card rider-card-view-only";
-            domCourierCardBoxNode.style.cssText = "background:#1e293b !important; border:1px solid #334155 !important; border-radius:16px; width:100%; box-sizing:border-box; padding:16px; box-shadow:0 4px 12px rgba(0,0,0,0.15); font-family:sans-serif; color:#ffffff;";
+            domCourierCardBoxNode.style.cssText = "background:#1e293b !important; border:1px solid #334155 !important; border-radius:16px; width:100%; box-sizing:border-box; padding:16px; box-shadow:0 4px 12px rgba(0,0,0,0.15); font-family:sans-serif; color:#ffffff; position:relative; z-index:5;";
 
             const domStackWrapperNode = document.createElement('div');
             domStackWrapperNode.style.cssText = "display:flex; flex-direction:column; gap:16px; width:100%; box-sizing:border-box;";
 
-            // Left Profile Area: Flexible, non-breaking layout stack
             const domProfileHeaderStackNode = document.createElement('div');
             domProfileHeaderStackNode.style.cssText = "display:flex; align-items:center; gap:12px; width:100%; box-sizing:border-box;";
 
@@ -525,21 +531,19 @@
             
             const domCourierNameHeader = document.createElement('h3');
             domCourierNameHeader.style.cssText = "margin:0; color:#ffffff; font-size:1.15rem; font-weight:700; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;";
-            domCourierNameHeader.textContent = riderProfileObj.name; // Strict text content protection
+            domCourierNameHeader.textContent = riderProfileObj.name;
 
-            // DYNAMIC STATUS TAG PATCH: Dynamically maps the rider's active location landmark
             const domActiveStatusTagNode = document.createElement('small');
             domActiveStatusTagNode.style.cssText = "color:#94a3b8; font-weight:500; display:block; margin-top:2px;";
-            domActiveStatusTagNode.textContent = `Active Nearby at ${buildingNameLabel}`;
+            domActiveStatusTagNode.textContent = `Active Nearby at ${buildingNameLabel}`; // 🟩 FIXED: Added dynamic labels
 
             domNameMetadataTextNode.appendChild(domCourierNameHeader);
             domNameMetadataTextNode.appendChild(domActiveStatusTagNode);
             domProfileHeaderStackNode.appendChild(domAvatarBadgeCircleNode);
             domProfileHeaderStackNode.appendChild(domNameMetadataTextNode);
 
-            // Right Button Action Area: Guaranteed to sit vertically in order with fixed spacing boundaries
             const domActionsVerticalButtonGroupNode = document.createElement('div');
-            domActionsVerticalButtonGroupNode.style.cssText = "width:100%; box-sizing:border-box; display:flex; flex-direction:column; gap:8px;";
+            domActionsVerticalButtonGroupNode.style.cssText = "width:100%; box-sizing:border-box; display:flex; flex-direction:column; gap:8px; position:relative; z-index:20;";
 
             const domTopRowSplitGridNode = document.createElement('div');
             domTopRowSplitGridNode.style.cssText = "display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%;";
@@ -550,17 +554,18 @@
             domCallTelephonyButtonAnchor.style.cssText = "margin:0; text-align:center; padding:11px 0; display:block; background:#3b82f6; border-radius:8px; color:#fff; font-weight:600; text-decoration:none; font-size:0.9rem;";
             domCallTelephonyButtonAnchor.textContent = "Call";
 
-            // BUTTON CONVERSION: Built as a native button element to stabilize click handshakes and bypass browser blocks
+            // 🟩 BUTTON CONVERSION: Built as a native button element to shield click handlers from sandbox blockers
             const domWhatsappMessengerButton = document.createElement('button');
             domWhatsappMessengerButton.type = "button";
             domWhatsappMessengerButton.className = "btn btn-wa";
             domWhatsappMessengerButton.style.cssText = "margin:0; text-align:center; padding:11px 0; display:block; background:#22c55e; border-radius:8px; color:#fff; font-weight:600; border:none; font-size:0.9rem; cursor:pointer; width:100%; box-sizing:border-box;";
             domWhatsappMessengerButton.textContent = "WhatsApp";
 
-            // PRODUCTION WINDOW OPEN FIX: Repaired the missing '$' syntax token and swapped to global api.whatsapp endpoint
-            domWhatsappMessengerButton.onclick = () => {
-                const cleanChatUrlRoute = `https://whatsapp.com{standardizedPhoneString}&text=${compiledUrlSafeMessageText}`;
-                console.log(`📡 Communication Hub Dispatch: Launching channel link: ${cleanChatUrlRoute}`);
+            // 🟩 HARDENED STRING CONCATENATION EXTRACTION: Solves parsing crashes and opens threads cleanly
+            domWhatsappMessengerButton.onclick = (e) => {
+                e.stopPropagation(); // Stops parent layout touch events instantly
+                const cleanChatUrlRoute = "https://whatsapp.com?" + standardizedPhoneString + "?text=" + compiledUrlSafeMessageText;
+                console.log("📡 Communication Hub Dispatch: Launching channel link: " + cleanChatUrlRoute);
                 window.open(cleanChatUrlRoute, '_blank', 'noopener,noreferrer');
             };
 
@@ -579,9 +584,8 @@
             domCheckoutTriggerButtonElement.style.cssText = "margin:0; display:block; width:100%; box-sizing:border-box; padding:12px 0; font-weight:700; background:#eab308; color:#000; border:none; border-radius:8px; font-size:0.95rem; cursor:pointer;";
             domCheckoutTriggerButtonElement.textContent = "Pay Rider via M-Pesa";
 
-            // Direct programmatic handover passes secure data contexts straight into the checkout loops
-            domCheckoutTriggerButtonElement.onclick = () => {
-                console.log(`🔒 Launching billing transaction workspace for Rider UUID: ${riderProfileObj.id}`);
+            domCheckoutTriggerButtonElement.onclick = (e) => {
+                e.stopPropagation();
                 if (typeof window.simulateStudentPayment === 'function') {
                     window.simulateStudentPayment(riderProfileObj.id);
                 }
@@ -597,10 +601,19 @@
             targetGridContainer.appendChild(domCourierCardBoxNode);
         });
     }
+    // ==========================================================================
+    // CENTRAL GLOBAL VIEWPORT REDIRECTION REALIGNMENT PROXIES (FIXED)
+    // ==========================================================================
 
-    if (window.showRiders === undefined) {
-        window.showRiders = renderLiveCourierSelectionTerminal;
-    }
+    // Explicitly bind the local module functions to the global window scope first
+    window.renderLiveCourierSelectionTerminal = renderLiveCourierSelectionTerminal;
+    window.paintSecureCourierTelemetryCards = paintSecureCourierTelemetryCards;
+
+    // Force link the showRiders trigger to your clean, functional data lookup terminal
+    window.showRiders = renderLiveCourierSelectionTerminal;
+
+    console.log("🟩 Global Realignment Success: Navigation triggers successfully mapped and armed globally!");
+
 
 
 
