@@ -564,7 +564,7 @@
             // 🟩 HARDENED STRING CONCATENATION EXTRACTION: Solves parsing crashes and opens threads cleanly
             domWhatsappMessengerButton.onclick = (e) => {
                 e.stopPropagation(); // Stops parent layout touch events instantly
-                const cleanChatUrlRoute = "https://whatsapp.com?" + standardizedPhoneString + "?text=" + compiledUrlSafeMessageText;
+                const cleanChatUrlRoute = "https://api.whatsapp.com/send?phone=" + standardizedPhoneString + "&text=" + compiledUrlSafeMessageText;
                 console.log("📡 Communication Hub Dispatch: Launching channel link: " + cleanChatUrlRoute);
                 window.open(cleanChatUrlRoute, '_blank', 'noopener,noreferrer');
             };
