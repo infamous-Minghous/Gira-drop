@@ -5,7 +5,7 @@
 // INCREMENTED PRODUCTION BUILD STRING TAG: Forces mobile web engines to clear old layouts instantly
 // Locate this line right at the absolute top of your sw.js file and increment it exactly:
 // Open sw.js and update the version string right at the top:
-const CACHE_NAME = 'fastdrop-v3.8_final_launch';
+const CACHE_NAME = 'fastdrop-v3.9_final_launch';
 
 
 

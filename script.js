@@ -303,7 +303,7 @@
         if (verifiedLogisticsLocationsList.length === 0) {
             const domNoticeLabel = document.createElement('p');
             domNoticeLabel.style.cssText = "grid-column: 1 / -1; color: #f97316; text-align: center; padding: 40px; font-weight: 700; font-family: sans-serif;";
-            domNoticeLabel.textContent = "⏳ Syncing: Awaiting active database rows from campus ledger matrix...";
+            domNoticeLabel.textContent = "Loading Campus Regions";
             domParentContainer.appendChild(domNoticeLabel);
             return;
         }
@@ -392,14 +392,18 @@
             if (buildingModelData.isLocked) {
                 domStatusSubLabel.style.color = "#64748b";
                 domStatusSubLabel.textContent = "No Riders Nearby";
+                
                 domCardWrapperNode.appendChild(domStatusSubLabel);
 
                 domCardWrapperNode.onclick = () => {
                     alert(`📍 Hub Notice: "${buildingModelData.name}" is currently offline. No delivery couriers are active here right now.`);
                 };
             } else {
-                domStatusSubLabel.style.color = "#22c55e";
-                domStatusSubLabel.textContent = `🟢 ${buildingModelData.currentStatus}`;
+                domStatusSubLabel.style.color = "#e0680e";
+                
+                domStatusSubLabel.style.fontWeight = "800";
+                domStatusSubLabel.style.textTransform = "uppercase";
+                domStatusSubLabel.textContent = `${buildingModelData.currentStatus}`;
                 domCardWrapperNode.appendChild(domStatusSubLabel);
 
                 // Hand execution off safely to downstream driver selection terminals
@@ -509,7 +513,7 @@
                 localUssdPhoneFormattedString = '0' + localUssdPhoneFormattedString.substring(3);
             }
 
-            const internalCoordinationMessage = `Hi ${riderProfileObj.name}, I am ordering from ${buildingNameLabel}. Are you near the gate?`;
+            const internalCoordinationMessage = `Hi ${riderProfileObj.name}, I am ordering from ${buildingNameLabel}. Are you near the place?`;
             const compiledUrlSafeMessageText = encodeURIComponent(internalCoordinationMessage);
 
             const domCourierCardBoxNode = document.createElement('div');
@@ -535,7 +539,7 @@
 
             const domActiveStatusTagNode = document.createElement('small');
             domActiveStatusTagNode.style.cssText = "color:#94a3b8; font-weight:500; display:block; margin-top:2px;";
-            domActiveStatusTagNode.textContent = `Active Nearby at ${buildingNameLabel}`; // 🟩 FIXED: Added dynamic labels
+            domActiveStatusTagNode.textContent = `Active around ${buildingNameLabel}`; // 🟩 FIXED: Added dynamic labels
 
             domNameMetadataTextNode.appendChild(domCourierNameHeader);
             domNameMetadataTextNode.appendChild(domActiveStatusTagNode);
