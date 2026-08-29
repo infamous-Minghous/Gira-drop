@@ -28,16 +28,16 @@
             name: "Ghost", 
             phone: "+254111776886", 
             whatsapp: "+254111776886", 
-            avatar: "images/bravin.jpg",
+            avatar: "images/ghost.jpg",
             paymentType: "Pochi",
             paymentWallet: "0700000000"
         }),
         "RD002": Object.freeze({ 
-            id: "b1eedc99-9c0b-4ef8-bb6d-6bb9bd380a22",
-            name: "Mercy",  
-            phone: "+254711111111", 
-            whatsapp: "254711111111", 
-            avatar: "images/mercy.jpg",
+            id: "a9b6c664-2d53-48b1-b6ec-fd58990d7d32",
+            name: "2-Bit",  
+            phone: "+254712628239", 
+            whatsapp: "254712628239", 
+            avatar: "images/2-bit.jpg",
             paymentType: "Pochi",
             paymentWallet: "0711111111"
         }),
