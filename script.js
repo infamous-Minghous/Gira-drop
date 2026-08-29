@@ -42,11 +42,29 @@
             paymentWallet: "0711111111"
         }),
         "RD003": Object.freeze({ 
-            id: "c2eeec99-9c0b-4ef8-bb6d-6bb9bd380a33",
-            name: "John",   
-            phone: "+254722222222", 
-            whatsapp: "254722222222", 
-            avatar: "images/john.jpg",
+            id: "74d68e25-0d56-481f-8efe-9833773dfff6",
+            name: "Tommy",   
+            phone: "+254105843533", 
+            whatsapp: "254105843533", 
+            avatar: "images/tommy.jpg",
+            paymentType: "Pochi",
+            paymentWallet: "0722222222"
+        }),
+         "RD004": Object.freeze({ 
+            id: "3fd644f6-3a34-4c5d-9a9d-eb3578c26b83",
+            name: "Kenan",   
+            phone: "+254793518199", 
+            whatsapp: "254793518199", 
+            avatar: "images/kenan.jpg",
+            paymentType: "Pochi",
+            paymentWallet: "0722222222"
+        }),
+         "RD005": Object.freeze({ 
+            id: "897800f6-a388-422d-b4e3-cd842b22546c",
+            name: "Luiz",   
+            phone: "+254740938306", 
+            whatsapp: "254740938306", 
+            avatar: "images/luiz.jpg",
             paymentType: "Pochi",
             paymentWallet: "0722222222"
         })
@@ -428,7 +446,6 @@
 
    
 
-
     // ==========================================================================
     // SECTION 4 - PART 1: SECURE COURIER TELEMETRY DATA LOOKUPS
     // ==========================================================================
@@ -491,6 +508,7 @@
         // Forward operational parameters downstream to our secure card component painter loop
         paintSecureCourierTelemetryCards(matchingLocationRecord.riderProfiles, domCardsGridWrapperNode, buildingNameLabel);
     }
+
 
 
         // ==========================================================================
