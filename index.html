@@ -296,11 +296,42 @@
         <!-- ==========================================================================
      APPLICATION FOOTER & SECURITY ROUTING NODES
      ========================================================================== -->
-    <footer style="text-align:center; padding:24px 0; opacity:0.4;">
-        <button type="button" onclick="window.openAdminPortal()" style="background:none; border:none; color:inherit; font-family:inherit; font-size:0.75rem; font-weight:600; cursor:pointer; text-decoration:underline;">
-            &copy; 2026 Maseno Fast-Drop Admin
+    <!-- ==========================================================================
+     INTEGRATED COMPLIANCE FOOTER & SECURITY ACCESS HANDSHAKE
+     ========================================================================== -->
+<footer style="text-align:center; padding:24px 0; opacity:0.6; font-family:sans-serif; width:100%; box-sizing:border-box;">
+    <!-- Keeps your original working Admin Portal terminal gateway open -->
+    <button type="button" onclick="window.openAdminPortal()" style="background:none; border:none; color:inherit; font-family:inherit; font-size:0.75rem; font-weight:600; cursor:pointer; text-decoration:underline;">
+        &copy; 2026 Maseno Fast-Drop Admin
+    </button>
+    
+    <span style="color:#64748b; margin:0 6px; font-size:0.75rem;">|</span>
+    
+    <!-- 🟩 LEGAL OVERLAY TRIGGER: Unlocks Google Play Store compliance guidelines -->
+    <span id="trigger-privacy-view" onclick="document.getElementById('privacy-policy-modal').style.display='flex'" style="color: #FC6600; cursor: pointer; text-decoration: underline; font-size:0.75rem; font-weight: 600;">
+        Privacy Policy
+    </span>
+</footer>
+
+<!-- SYSTEM OVERLAY MODAL CANVAS CONTAINER -->
+<div id="privacy-policy-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(8px); z-index: 99999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box;">
+    <div style="background: #0f172a; border: 1px solid #1e293b; max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto; padding: 30px; border-radius: 20px; color: #94a3b8; font-family: sans-serif; text-align: left; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
+        <h2 style="margin: 0 0 16px 0; color: #ffffff; font-size: 1.5rem; font-weight: 700;">Privacy Policy</h2>
+        <p style="font-size: 0.9rem; line-height: 1.6; margin-bottom: 12px;">Last Updated: August 2026</p>
+        <p style="font-size: 0.95rem; line-height: 1.6; margin-bottom: 16px;">MasenoFastDrop operates a campus delivery network for Maseno University students. We value user data protection and outline our processing standards below.</p>
+        
+        <h3 style="color: #ffffff; font-size: 1.1rem; margin: 16px 0 8px 0;">1. Information Collection</h3>
+        <p style="font-size: 0.95rem; line-height: 1.6; margin-bottom: 16px;">Our logistics system processes user names, mobile phone numbers, and location building landmarks strictly to fulfill on-campus delivery coordination. No background device data or biometric parameters are harvested.</p>
+        
+        <h3 style="color: #ffffff; font-size: 1.1rem; margin: 16px 0 8px 0;">2. Data Retention and Security</h3>
+        <p style="font-size: 0.95rem; line-height: 1.6; margin-bottom: 16px;">All processed information is saved behind protected cloud database architectures (Supabase) and encrypted transmission channels. No transactional logs are shared with alternative marketing entities or third-party networks.</p>
+        
+        <button type="button" onclick="document.getElementById('privacy-policy-modal').style.display='none'" style="width: 100%; padding: 12px; background: #FC6600; border: none; border-radius: 8px; color: #ffffff; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px;">
+            Close & Accept Terms
         </button>
-    </footer>
+    </div>
+</div>
+
 
           <!-- 1. Unified Client Library CDN Engine Link -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
