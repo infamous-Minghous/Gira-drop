@@ -1,8 +1,0 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "com.masenodrop.www.twa",
-        "sha256_cert_fingerprints": ["64:27:5E:BB:99:5A:A1:E3:A3:F2:0B:4D:E8:95:39:1B:15:35:93:93:E9:5B:01:E7:10:7E:9E:AC:F0:07:96:98"]
-      }
-    }]
